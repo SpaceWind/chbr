@@ -11,27 +11,36 @@ import BonusPoint from "../common/BonusPoint/BonusPoint";
 
 
 import DiscountExist from "../common/DiscountExist/index";
-import {LinearGradient} from "react-native-linear-gradient";
+import LinearGradient from "react-native-linear-gradient";
 
 export class DiscountPageC extends React.Component {
 
+
+    bonusAmount = 100000;
+
     render() {
-        let spend = 17280;
-        let left = 82720;
+        if (this.props.user) {
+            let spend = this.props.user.money_spent;
+            let discount = spend >= this.bonusAmount;
+            if (!discount) {
+                return this.renderState(this.props.user.money_spent, this.props.user.bonus_balance, this.props.user.bonus_future);
+            }
+            else {
+                return this.renderBonus(this.props.user.bonus_balance, this.props.user.bonus_future);
 
-        let discount = true;
-
-        if (!discount) {
-            return this.renderState();
+            }
         }
         else {
-            return this.renderBonus();
-
+            return this.renderState(0, 0, 0);
         }
     }
 
 
-    renderState() {
+    renderState(spend,bonus_balance,bonus_future) {
+        let left = this.bonusAmount - spend;
+
+        let bonusIndicatorStyle = {...styles.bonusIndicatorValue, width:  ((spend / this.bonusAmount)*100)+'%'};
+
         return (<Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
 
             <ScrollView>
@@ -64,7 +73,7 @@ export class DiscountPageC extends React.Component {
                                 colors={['#FBDA61', '#F76B1C']}
                                 start={{x:0, y:0}}
                                 end={{x:1, y:0}}
-                                style={styles.bonusIndicatorValue}
+                                style={bonusIndicatorStyle}
                             >
                             </LinearGradient>
 
@@ -94,8 +103,7 @@ export class DiscountPageC extends React.Component {
 
                 </View>
 
-
-                <BonusPoint showHint={true} bonus={214} waitingBonus={49}>
+                <BonusPoint showHint={true} bonus={bonus_balance} waitingBonus={bonus_future} navigation={this.props.navigation}>
 
                 </BonusPoint>
 
@@ -103,11 +111,11 @@ export class DiscountPageC extends React.Component {
         </Image>)
     }
 
-    renderBonus() {
+    renderBonus(bonus_balance, bonus_future) {
         return <View style={{backgroundColor: '#292D30', ...signStackStyle}}>
             <ScrollView>
-                <DiscountExist qrCode={'cc'} />
-                <BonusPoint showHint={true} bonus={214} waitingBonus={49} navigation={this.props.navigation}>
+                <DiscountExist qrCode={'cc'}/>
+                <BonusPoint showHint={true} bonus={bonus_balance} waitingBonus={bonus_future} navigation={this.props.navigation}>
 
                 </BonusPoint>
             </ScrollView>
@@ -121,7 +129,7 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
-    bi: state.restaurant.restaurants
+    user: state.user.userData
 });
 const DiscountPage = connect(mapStateToProps, bindAction)(DiscountPageC);
 export default DiscountPage;

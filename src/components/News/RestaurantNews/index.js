@@ -46,9 +46,21 @@ class News extends React.Component {
                             </Text>
                         }}
                         data={newsData}
-                        renderItem={(rowData) => <View style={{marginBottom: 25}}>
-                            <OneNews data={rowData.item} restaurants={[restaurant]}/>
-                        </View>}
+                        renderItem={(rowData) => {
+                            return <TouchableOpacity
+                                style={{marginBottom: 25}}
+                                onPress={
+                                    () => {
+                                        this.props.navigation.navigate('OneNewsPage', {
+                                            news: rowData.item,
+                                            restaurants:[restaurant]
+                                        })
+                                    }
+                                }
+                            >
+                                <OneNews data={rowData.item} restaurants={[restaurant]}/>
+                            </TouchableOpacity>
+                        }}
                         extraData={this.state}
                         keyExtractor={item => item.id}
                         refreshControl={

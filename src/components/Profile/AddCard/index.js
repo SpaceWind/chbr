@@ -3,7 +3,7 @@ import {
     Body, Button, Card, CardItem, Container, Icon, Left, List, ListItem, Picker, Right, Switch, Text,
     View
 } from 'native-base';
-import {Image, TouchableOpacity, Dimensions, ScrollView, ListView} from "react-native";
+import {Image, TouchableOpacity, Dimensions, ScrollView, ListView, Platform} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 
 import {connect} from "react-redux";
@@ -15,18 +15,41 @@ import Swipeout from "react-native-swipeout";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import MyModal from "../../Common/MyModal/index";
 import {modalCardStyles} from "../Profile/index";
-
+import {CardIOModule, CardIOUtilities} from 'react-native-awesome-card-io';
 
 class AddCard extends React.Component {
 
     state = {
         push: true,
         isDateOpen: false,
-        isCvvOpen: false
+        isCvvOpen: false,
+        cardNumber: '',
+        expiry: '',
+        cvv: '',
+        cardholderName: null
     };
 
     componentWillMount() {
+        if (Platform.OS === 'ios') {
+            CardIOUtilities.preload();
+        }
+    }
 
+    scanCard() {
+        CardIOModule
+            .scanCard()
+            .then(card => {
+
+                this.setState({
+                    cardNumber: card.cardNumber,
+                    expiry: ('0' + card.expiryMonth).slice(-2) + '/' + ('0' + card.expiryYear).slice(-2),
+                    cvv: card.cvv,
+                    cardholderName: card.cardholderName
+                })
+            })
+            .catch(() => {
+                // the user cancelled
+            })
     }
 
     componentWillUnmount() {
@@ -56,16 +79,17 @@ class AddCard extends React.Component {
                                     keyboardType="phone-pad"
                                     type={'custom'}
                                     ref={'phone'}
+                                    value={this.state.cardNumber}
                                     options={{mask: '9999 9999 9999 9999 999'}}
                                     underlineColorAndroid="transparent"
                                     onChangeText={(text) => {
-                                        this.changeNumber(text)
+                                        this.setState({cardNumber: text})
                                     }}
                                 />
                             </View>
 
-                            <TouchableOpacity>
-                                <ChesterIcon  name="camera-24" size={24} color={platform.brandWarning}/>
+                            <TouchableOpacity onPress={this.scanCard.bind(this)}>
+                                <ChesterIcon name="camera-24" size={24} color={platform.brandWarning}/>
                             </TouchableOpacity>
                         </View>
 
@@ -87,18 +111,18 @@ class AddCard extends React.Component {
                                     keyboardType="phone-pad"
                                     type={'custom'}
                                     ref={'phone'}
-
+                                    value={this.state.expiry}
                                     options={{mask: '99/99'}}
                                     placeholder={'ММ/ГГ'} placeholderTextColor={'#ffffff'}
                                     underlineColorAndroid="transparent"
                                     onChangeText={(text) => {
-                                        this.changeNumber(text)
+                                        this.setState({expiry: text})
                                     }}
                                 />
                                 <TouchableOpacity style={{paddingVertical: 16, paddingHorizontal: 8}} onPress={() => {
                                     this.setState({isDateOpen: true});
                                 }
-                                } >
+                                }>
                                     <ChesterIcon name="question-16" size={16} color={platform.brandWarning}/>
                                 </TouchableOpacity>
                             </View>
@@ -114,11 +138,12 @@ class AddCard extends React.Component {
                                     keyboardType="phone-pad"
                                     type={'custom'}
                                     ref={'phone'}
+                                    value={this.state.cvv}
                                     placeholder={'XXX'} placeholderTextColor={'#ffffff'}
                                     options={{mask: '999'}}
                                     underlineColorAndroid="transparent"
                                     onChangeText={(text) => {
-                                        this.changeNumber(text)
+                                        this.setState({cvv: text})
                                     }}
                                 />
                                 <TouchableOpacity style={{paddingVertical: 16, paddingHorizontal: 8}} onPress={() => {
@@ -133,11 +158,20 @@ class AddCard extends React.Component {
                     </View>
 
                     <View style={{marginTop: 15, borderColor: platform.brandDivider, borderTopWidth: 1}}>
-                        <InputBlock name="Держатель" placeholder={'Держатель карты'} placeholderTextColor={'#ffffff'}/>
+                        <InputBlock
+                            name="Держатель"
+                            placeholder={'Держатель карты'}
+                            placeholderTextColor={'#ffffff'}
+                            value={this.state.cardholderName}
+                            onPress={(text) => {
+                                this.setState({cardholderName: text});
+                            }
+                            }
+                        />
                     </View>
                     <View style={{marginTop: 30, paddingHorizontal: 16}}>
 
-                        <Button rounded warning style={{width: '100%', justifyContent: 'center'}} >
+                        <Button rounded warning style={{width: '100%', justifyContent: 'center'}}>
                             <Text uppercase={false}>Добавить карту</Text>
                         </Button>
                     </View>
@@ -207,6 +241,7 @@ class AddCard extends React.Component {
 function bindAction(dispatch) {
     return {};
 }
+
 const mapStateToProps = state => ({
     restaurants: state.restaurant.restaurants
 });

@@ -5,10 +5,11 @@ import {
 } from 'native-base';
 import MyModal from "../../Common/MyModal/index";
 import platform from "../../../../native-base-theme/variables/platform";
-import {Picker, TouchableOpacity} from "react-native";
+import {Picker, TouchableOpacity, Platform} from "react-native";
 import moment from "moment";
 import 'moment-round'
 import Octicons from 'react-native-vector-icons/Octicons';
+import AndroidPicker from 'react-native-picker';
 
 export default class SelectDate extends React.Component {
 
@@ -67,7 +68,7 @@ export default class SelectDate extends React.Component {
     }
 
 
-    getDays() {
+    getDays(count = 100) {
         let days = [];
         let start = 0;
         let currentHour = parseInt(moment().format('H'));
@@ -75,7 +76,7 @@ export default class SelectDate extends React.Component {
         if (currentHour > 23 || (currentHour === 23 && currentMinute > 30)) {
             start = 1;
         }
-        for (let i = start; i < 365; i++) {
+        for (let i = start; i < count; i++) {
             days.push({
                 name: i === 0 ? 'сегодня' : moment().add(i, 'days').format('ddd D MMMM'),
                 date: moment().add(i, 'days').floor(24, 'hours').format(),
@@ -85,9 +86,9 @@ export default class SelectDate extends React.Component {
         return days;
     }
 
-    getHours() {
+    getHours(startDate) {
 
-        let date = this.state.date.clone();
+        let date = startDate.clone();
         let currentHour = parseInt(moment().format('H'));
         let currentMinute = parseInt(moment().format('m'));
 
@@ -152,6 +153,78 @@ export default class SelectDate extends React.Component {
         this.setState({isOpen: visible});
     }
 
+    showModal() {
+        if (Platform.OS === 'ios') {
+            this.setModalVisible(true)
+        }
+        else {
+
+
+            let days = this.getDays(50).map((day) => {
+
+
+                let hours = this.getHours(moment(day.date));
+                let result = {};
+                result[day.name] = hours.map((hour) => {
+                    return hour.name;
+                });
+                return result;
+
+            });
+
+
+            let pickerData =
+                Array.from(new Array(20), (val, index) => index + 1).map((count) => {
+                    let result = {};
+                    result[count + " чел"] = days;
+                    return result;
+
+                });
+
+
+            let selected = [];
+
+            AndroidPicker.init({
+                pickerConfirmBtnText: 'Готово',
+                pickerCancelBtnText: 'Отмена',
+                pickerTitleText: '',
+                pickerConfirmBtnColor: [255, 185, 69, 1],
+                pickerCancelBtnColor: [255, 185, 69, 1],
+                pickerToolBarBg: [43, 48, 52, 1],
+                pickerBg: [43, 48, 52, 1],
+                pickerFontColor: [255, 255, 255, 1],
+                pickerData: pickerData,
+                pickerFontSize: 21,
+                pickerToolBarFontSize: 20,
+                selectedValue: [59],
+                onPickerConfirm: data => {
+
+
+                    let count = parseInt(data[0].split(' ')[0]);
+
+                    let date = moment(data[1] + ' ' + data[2], "ddd D MMMM HH:mm");
+
+                    this.props.onDateSelected({
+                        count: count,
+                        date: date
+                    });
+                    console.log(count + '    ' + date);
+
+
+                },
+                onPickerCancel: data => {
+                    console.log(data);
+                },
+                onPickerSelect: data => {
+                    selected = data;
+                    console.log(data);
+                }
+            });
+            AndroidPicker.show();
+        }
+
+    }
+
 
     render() {
         return <View>
@@ -159,7 +232,7 @@ export default class SelectDate extends React.Component {
 
             <View>
                 <TouchableOpacity onPress={() => {
-                    this.setModalVisible(true)
+                    this.showModal();
                 }}>
                     <View style={styles.selectDate}>
 
@@ -174,7 +247,7 @@ export default class SelectDate extends React.Component {
             </View>
 
             <View>
-                {this.state.isOpen &&
+                {Platform.OS === 'ios' && this.state.isOpen &&
                 <MyModal style={{height: 261, backgroundColor: "#2B3034"}} isOpen={this.state.isOpen} ref="modal"
                          position={'bottom'}
                          onRequestClose={() => {
@@ -254,7 +327,7 @@ export default class SelectDate extends React.Component {
                                     selectedValue={this.state.hour}
                                     onValueChange={(itemValue, itemIndex) => this.setHour(itemValue)}
                             >
-                                {this.getHours().map((item, i) => {
+                                {this.getHours(this.state.date).map((item, i) => {
                                     return <Picker.Item key={i} label={item.name} value={item.date}/>
                                 })}
                             </Picker>

@@ -127,7 +127,7 @@ const styles = {
         flex: 1,
         borderBottomWidth: 0,
         backgroundColor: '#4A545B',
-        height: 32,
+
         borderRadius: 5,
         paddingLeft: 10,
         flexDirection: 'row',
@@ -135,16 +135,16 @@ const styles = {
     searchInput: {
         flexDirection: 'row',
         borderBottomWidth: 0,
-        width: 115
-
+        width: 115,
+        height:32,
     },
     codeInput: {
         color: '#fff',
         paddingLeft: 0,
         marginLeft: 5,
         fontSize: 14,
+
         fontFamily: platform.fontFamily,
-        height: 30,
-    },
+    }
 
 };

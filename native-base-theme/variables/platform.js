@@ -113,7 +113,7 @@ export default {
     brandSuccess: "#6FB423",
     brandDanger: "#C95D51",
     brandWarning: "#EAA739",
-    brandWarningAccent:"#FFB945",
+    brandWarningAccent: "#FFB945",
     brandSidebar: "#252932",
     brandOutline: '#7A8187',
     brandDivider: '#3B4248',
@@ -123,6 +123,7 @@ export default {
     // Font
     fontFamily: platform === "ios" ? "Lumberjack" : "lumberjack",
     fontFamilyAccent: platform === "ios" ? "MozzartSketch-ExtBd" : "MozzartSketch-ExtBd",
+    fontFamilyAccentSemibold: platform === "ios" ? "MozzartSketchCond-Bd" : "MozzartSketchCond-Bd",
     fontSizeBase: 20,
 
     get fontSizeH1() {

@@ -10,7 +10,6 @@ export const BaseNavigationBarStyle = {
         paddingTop: Platform.OS === "ios" ? 20 : 0,
 
 
-
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 7,
@@ -20,8 +19,8 @@ export const BaseNavigationBarStyle = {
     headerTitleStyle: {
         fontSize: 24,
         fontFamily: platform.fontFamilyAccent,
-        fontWeight:"normal",
-        marginHorizontal:0
+        fontWeight:Platform.OS === "ios"? "800":'normal',
+        marginHorizontal: 0
     },
     headerTintColor: '#FFF'
 }

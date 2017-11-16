@@ -107,6 +107,7 @@ class SignSecondStep extends React.Component {
                 await this.confirmBookTable();
             }
             else {
+                this.props.getUserData();
                 this.setState({loading: false});
                 this.props.signInAfter();
             }
@@ -193,7 +194,7 @@ class SignSecondStep extends React.Component {
     }
 
     async updateUserData(first_name, last_name) {
-        let result = this.props.getUserData();
+        let result = await this.props.getUserData();
         result.first_name = first_name;
         result.last_name = last_name;
         await this.props.updateUserData(result);

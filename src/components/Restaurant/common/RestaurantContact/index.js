@@ -24,8 +24,7 @@ export default class RestaurantContact extends React.Component {
 
         if (this.props.restaurant.schedule) {
             let timeService = new TimeService();
-            if(!this.props.restaurant.schedule.length)
-            {
+            if (!this.props.restaurant.schedule.length) {
                 this.days = timeService.getTimesheet(this.props.restaurant.schedule);
                 this.currentDay = this.days.find((item) => item.isCurrent);
             }
@@ -62,14 +61,14 @@ export default class RestaurantContact extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={styles.contactBlock}>
-                    <View >
+                    <View>
 
 
                         <View style={styles.status}>
                             <ChesterIcon name="time-16" size={16} color={platform.brandWarning}
                                          style={styles.timeIcon}/>
                             <Text
-                                style={styles.statusText}>{ this.currentDay.isOpen ? 'Сегодня открыто' : "Закрыто"}</Text>
+                                style={styles.statusText}>{this.currentDay.isOpen ? 'Сегодня открыто' : "Закрыто"}</Text>
 
                         </View>
 
@@ -79,7 +78,11 @@ export default class RestaurantContact extends React.Component {
                                 style={styles.timeTableText}>{this.currentDay.start + " - " + this.currentDay.end}</Text>
 
                             <TouchableOpacity onPress={() => {
-                                this.setState({isOpenTime: !this.state.isOpenTime})
+                                this.setState({isOpenTime: !this.state.isOpenTime});
+                                if (this.state.isOpenTime) {
+                                    this.props.onOpen();
+                                }
+
                             }}>
                                 <View style={styles.schedule}>
                                     <Text style={styles.scheduleText}>Режим работы</Text>
@@ -114,8 +117,8 @@ export default class RestaurantContact extends React.Component {
                     </View>
                 </View>
 
-                <View >
-                    <Collapsible collapsed={this.state.isOpenTime}>
+                <View>
+                    <Collapsible collapsed={this.state.isOpenTime} duration={50}>
                         <View style={styles.timesheet}>
 
                             {

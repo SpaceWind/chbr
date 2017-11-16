@@ -13,13 +13,18 @@ import Amount from "../common/Amount/index";
 import CategoryList, {fakeCategoryListArray} from "../../Restaurant/Category/CategoryList";
 
 
-export default class BuyByBonusPage extends React.Component {
+export class BuyByBonusPageC extends React.Component {
 
     static navigationOptions = ({navigation, screenProps}) => ({
         title: navigation.state.params.name
     });
 
     state = {};
+
+    constructor(props) {
+        super(props);
+        this.history = this.props.navigation.state.params.history;
+    }
 
     componentWillMount() {
 
@@ -32,22 +37,59 @@ export default class BuyByBonusPage extends React.Component {
 
     render() {
 
-        let history = this.props.navigation.state.params.history;
+
+        let history = this.history;
+        let restaurant = this.props.restaurants[history.restaurant_id];
+        let restaurantName = restaurant.title_short;
+
+
+        let dish = this.getDish(restaurant, history);
+
+        if (dish) {
+            dish.count = 1;
+        }
+
+
         return (<Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
 
             <ScrollView>
                 <View style={historyStyles.scrollContainer}>
 
-                    <HistoryShortInfo info={history}/>
+                    <HistoryShortInfo info={history} result={history.result_data} restaurantName={restaurantName}/>
 
-                    <CategoryList data={fakeCategoryListArray} basket={true}/>
+                    {dish && <CategoryList data={[dish]} basket={true}/>}
                 </View>
 
 
             </ScrollView>
         </Image>)
     }
+
+    getDish(restaurant, history) {
+        return restaurant.menu.categories
+            .reduce((a, b) => {
+                let items = [];
+                if (b.categories) {
+                    items = b.categories.reduce((a, subCategory) => {
+                        return a.concat(subCategory.items);
+                    }, [])
+                } else {
+                    items = b.items;
+                }
+                return a.concat(items);
+            }, []).find(dish => dish.id === history.result_data.id);
+    }
 }
+
+function bindAction(dispatch) {
+    return {};
+}
+
+const mapStateToProps = state => ({
+    restaurants: state.restaurant.restaurants
+});
+const BuyByBonusPage = connect(mapStateToProps, bindAction)(BuyByBonusPageC);
+export default BuyByBonusPage;
 
 
 const styles = {

@@ -39,12 +39,12 @@ class HistoryPage extends React.Component {
                 this.props.navigation.navigate('TakeAwayOrderHistory', {name: title, history: item});
                 break;
             }
-            case 7: {
-                this.props.navigation.navigate('LunchHistory', {name: title, history: item});
+            case 5: {
+                this.props.navigation.navigate('BuyByBonusHistory', {name: title, history: item});
                 break;
             }
-            case 8: {
-                this.props.navigation.navigate('BuyByBonusHistory', {name: title, history: item});
+            case 7: {
+                this.props.navigation.navigate('LunchHistory', {name: title, history: item});
                 break;
             }
         }
@@ -74,10 +74,10 @@ class HistoryPage extends React.Component {
                 title = "Заказ на вынос";
                 break;
             }
-            /*case 5: {
+            case 5: {
                 title = "Покупка за баллы";
                 break;
-            }*/
+            }
             case 7: {
                 title = "Ланч в ресторане";
                 break;
@@ -112,7 +112,12 @@ class HistoryPage extends React.Component {
 
 
         let restaurant = this.props.restaurants[item.restaurant_id];
-        let restaurantName = restaurant.title_short;
+
+        let restaurantName = '';
+        if (restaurant) {
+            restaurantName = restaurant.title_short;
+        }
+
 
         return (
 
@@ -151,20 +156,16 @@ class HistoryPage extends React.Component {
     render() {
 
 
-        let empty = !this.props.history || this.props.history.list.length === 0;
+        let empty = !this.props.history ||!this.props.history.list|| this.props.history.list.length === 0;
 
 
-        if (empty) {
-            let k = {
-                id: 6,
-                type: 0,
-                price: 200,
-                date: moment(),
-                restaurant: 'Росторан в метрополис',
-                bonus: 20,
-                dateOrder: moment(),
-            }
+        let list =[];
+        if (!empty) {
+            list = this.props.history.list.filter((item) => {
+                return item.type !== 6;
+            });
         }
+
 
 
         return <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
@@ -172,7 +173,7 @@ class HistoryPage extends React.Component {
             {!empty
                 ? <FlatList
                     style={styles.list}
-                    data={this.props.history.list}
+                    data={list}
                     extraData={this.state}
                     keyExtractor={this._keyExtractor}
                     renderItem={this._renderItem}

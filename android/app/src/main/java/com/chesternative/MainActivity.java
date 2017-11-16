@@ -2,6 +2,8 @@ package com.chesternative;
 
 import com.facebook.react.ReactActivity;
 
+import android.content.Intent;
+
 public class MainActivity extends ReactActivity {
 
     /**
@@ -11,5 +13,12 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "ChesterNative";
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        int k =34;
     }
 }

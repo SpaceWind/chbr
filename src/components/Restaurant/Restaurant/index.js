@@ -8,6 +8,7 @@ import RestaurantLocation from "../common/RestaurantLocation/index";
 import RestaurantContact from "../common/RestaurantContact/index";
 import {connect} from "react-redux";
 import ImageSlider from "react-native-image-slider";
+import Swiper from 'react-native-swiper';
 
 
 class Restaurant extends React.Component {
@@ -47,7 +48,7 @@ class Restaurant extends React.Component {
         return (
 
             <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
-                <ScrollView>
+                <ScrollView ref='scroll'>
                     <View style={styles.container}>
 
                         <ImageSlider
@@ -62,12 +63,18 @@ class Restaurant extends React.Component {
 
                         <View style={styles.infoBlock}>
                             <Text style={styles.infoHeader}>{restaurant.title_full}</Text>
-                            <RestaurantLocation restaurant={restaurant}/>
+                            <RestaurantLocation restaurant={restaurant} />
 
                             <Text style={styles.infoText}>{restaurant.description}</Text>
                         </View>
                         <View style={styles.restaurantContact}>
-                            <RestaurantContact restaurant={restaurant}/>
+                            <RestaurantContact restaurant={restaurant} onOpen={() => {
+
+                                setTimeout(()=>{
+                                    this.refs.scroll.scrollToEnd();
+                                },60)
+
+                            }} />
                         </View>
                     </View>
                 </ScrollView>
@@ -93,6 +100,7 @@ const styles = {
         maxWidth: Dimensions.get('window').width
     },
     image: {
+        flex: 1,
         width: "100%"
     },
     infoBlock: {

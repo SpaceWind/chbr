@@ -1,3 +1,5 @@
+/*@flow*/
+
 import React from 'react';
 import {Image, TouchableOpacity} from "react-native";
 import {Button, Text, View} from "native-base";
@@ -5,9 +7,17 @@ import platform from "../../../../native-base-theme/variables/platform";
 import {connect} from "react-redux";
 import {setSignState, signOut, uploadPhoto} from "../../../actions/user";
 //import {ImagePicker} from "expo";
-var ImagePicker = require('react-native-image-picker');
+let ImagePicker = require('react-native-image-picker');
 
-class UserInfo extends React.Component {
+class UserInfoC extends React.Component {
+
+
+    props: {
+        showName: boolean,
+        navigation: any,
+        userData:any
+    }
+
     render() {
 
 
@@ -25,21 +35,36 @@ class UserInfo extends React.Component {
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={() => {
+                {this.props.showName ? <TouchableOpacity onPress={() => {
 
-                    this.props.navigation.navigate('Profile')
+                        this.props.navigation.navigate('Profile')
+                    }
+                    }>
+                        {this.props.userData && (this.props.userData.first_name || this.props.userData.last_name)
+                            ?
+                            <Text
+                                style={styles.bottomAvatarText}>{this.props.userData.first_name} {this.props.userData.last_name}</Text>
+                            :
+                            <Text style={styles.bottomAvatarText}>Ваш аккаунт</Text>
+                        }
+                    </TouchableOpacity>
+                    :
+                    <View>
+                        <Button style={styles.button} rounded warning onPress={() => {
+
+
+                            if (!this.props.showName) {
+                                this.props.navigation.navigate('Restaurants');
+                            }
+
+                            this.props.logOut();
+
+                        }}>
+                            <Text style={styles.buttonText} uppercase={false}>Выйти</Text>
+                        </Button>
+
+                    </View>
                 }
-                }>
-                    <Text style={styles.bottomAvatarText}>Ваш аккаунт</Text>
-                </TouchableOpacity>
-                <View>
-                    <Button style={styles.button} rounded warning onPress={() => {
-                        this.props.logOut()
-                    }}>
-                        <Text style={styles.buttonText} uppercase={false}>Выйти</Text>
-                    </Button>
-
-                </View>
             </View>)
         }
         else {
@@ -54,7 +79,7 @@ class UserInfo extends React.Component {
                 </View>
 
 
-                <Text style={styles.bottomAvatarText}>Ваш аккаунт</Text>
+                {this.props.showName && <Text style={styles.bottomAvatarText}>Ваш аккаунт</Text>}
 
                 <View>
                     <Button style={styles.button} rounded warning onPress={() => {
@@ -72,9 +97,9 @@ class UserInfo extends React.Component {
     _pickImage = async () => {
         let options = {
             title: 'Выбрать фото',
-            mediaType:'photo',
-            cameraType:'front',
-            allowsEditing:true,
+            mediaType: 'photo',
+            cameraType: 'front',
+            allowsEditing: true,
             cancelButtonTitle: ' Отменить ',
             takePhotoButtonTitle: 'Сделать снимок',
             chooseFromLibraryButtonTitle: 'Выбрать фотографию'
@@ -114,11 +139,12 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
     logged: state.user.logged,
+    userData: state.user.userData,
 });
 
 
-const UserInfoSwag = connect(mapStateToProps, bindAction)(UserInfo);
-export default UserInfoSwag;
+const UserInfo = connect(mapStateToProps, bindAction)(UserInfoC);
+export default UserInfo;
 /*<View style={styles.container} >
  <Image/>
  <Text style={styles.bottomAvatarText}>Катя кищук</Text>
@@ -154,7 +180,8 @@ const styles = {
         backgroundColor: 'transparent',
         fontSize: 28,
         lineHeight: 35,
-        fontFamily: platform.fontFamilyAccent,
+        fontFamily: platform.fontFamilyAccentSemibold,
+
         textAlign: 'center',
         marginBottom: 9
     },

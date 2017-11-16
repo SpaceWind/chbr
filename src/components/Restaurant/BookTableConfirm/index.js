@@ -309,8 +309,8 @@ class BookTableConfirmC extends React.Component {
                 data: data,
                 confirmBookTable: true,
                 number: phone,
-                first_name: this.state.first_name,
-                last_name: this.state.last_name
+                first_name: this.state.userData.first_name,
+                last_name: this.state.userData.last_name
 
             })
         }

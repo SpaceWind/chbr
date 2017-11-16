@@ -19,7 +19,7 @@ const defaultTobBar = {
     tabStyle: {
         paddingLeft: 0,
         paddingRight: 0,
-        marginRight: 5,
+        marginRight: 3,
         marginLeft: 5,
         paddingBottom: 16,
         paddingTop: 16,

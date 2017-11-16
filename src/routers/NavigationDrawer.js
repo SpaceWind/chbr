@@ -5,7 +5,7 @@ import {Button, Text, View} from "native-base";
 import {setSignState, signOut} from "../actions/user";
 import {connect} from "react-redux";
 //import {Constants} from 'expo';
-import {Image, ScrollView} from "react-native";
+import {Image, ScrollView, Platform, Dimensions, ImageBackground} from "react-native";
 import UserInfo from "./components/UserInfo/index";
 import platform from "../../native-base-theme/variables/platform";
 import ChesterIcon from "../components/Common/ChesterIcon/index";
@@ -14,6 +14,9 @@ import HistoryStack from "./HistoryStack";
 import NewsStack from "./NewsStack";
 import FeedBackStack from "./FeedBackStack";
 import MyCardStack from "./MyCardStack";
+
+import Constants from "../../utilities/Constants";
+
 
 export default NavigationDrawer = DrawerNavigator({
         Restaurant: {
@@ -83,38 +86,34 @@ class CustomNavigationDrawer extends React.Component {
 
 
         return (
-            <Image source={require('../../assets/images/navigation/nav-bg.png')} style={styles.background}>
+            <ImageBackground source={require('../../assets/images/navigation/nav-bg.png')} style={styles.background}>
 
 
-                <ScrollView style={styles.container}>
-                    <View style={styles.userInfo}>
-                        <UserInfo {...this.props} />
-                    </View>
+                <View style={styles.userInfo}>
+                    <UserInfo showName={true}   {...this.props} />
+                </View>
 
-                    <DrawerItems {...this.props}
-                                 activeTintColor={platform.brandWarning}
-                                 activeBackgroundColor="transparent"
-                                 labelStyle={styles.drawerItemsText}
-                                 style={{marginTop: -20}}
-                                 inactiveTintColor="#fff"
-                                 items={this.props.items.filter((item) => {
-                                     return item.key !== 'Profile' && item.key !== 'Корзина'
-                                 })}
+                <DrawerItems {...this.props}
+                             activeTintColor={platform.brandWarning}
+                             activeBackgroundColor="transparent"
+                             labelStyle={styles.drawerItemsText}
+                             style={{marginTop: -20}}
+                             inactiveTintColor="#fff"
+                             items={this.props.items.filter((item) => {
+                                 return item.key !== 'Profile' && item.key !== 'Корзина'
+                             })}
 
-                    />
-
-
-                    <Button bordered warning rounded style={styles.scanBarButton}>
-                        <ChesterIcon name="camera-24" size={20} color={platform.brandWarning}
-                                     style={{marginTop: -5, paddingRight: 5}}/>
-                        <Text style={styles.scanBarButtonText} uppercase={false}>Сканировать чек</Text>
-                    </Button>
+                />
 
 
-                </ScrollView>
+                <Button bordered warning rounded style={styles.scanBarButton}>
+                    <ChesterIcon name="camera-24" size={20} color={platform.brandWarning}
+                                 style={{marginTop: -5, paddingRight: 5}}/>
+                    <Text style={styles.scanBarButtonText} uppercase={false}>Сканировать чек</Text>
+                </Button>
 
 
-            </Image>
+            </ImageBackground>
         )
     }
 }
@@ -127,16 +126,15 @@ const mapStateToProps = state => ({});
 
 const styles = {
     container: {
-        paddingTop: 30,//Constants.statusBarHeight,
         flex: 1
     },
     background: {
-        flex: 1,
+        height: Dimensions.get('window').height - (Platform.OS !== 'ios' ? Constants.STATUSBAR_HEIGHT : 0),
+
         width: null,
-        height: null,
+        justifyContent:'space-around'
     },
     userInfo: {
-        marginBottom: 51
     },
     drawerItemsText: {
         fontFamily: platform.fontFamily,
@@ -150,9 +148,7 @@ const styles = {
     },
     scanBarButton: {
         alignSelf: "center",
-        marginTop: 63,
-        marginBottom: 35,
-        height: 36
+        height: 40
     },
     scanBarButtonText: {
         fontSize: 19

@@ -65,7 +65,7 @@ class Profile extends React.Component {
                 <ScrollView>
 
                     <View>
-                        <UserInfo/>
+                        <UserInfo navigation={this.props.navigation}/>
                     </View>
                     <View style={{
                         borderTopWidth: 1,

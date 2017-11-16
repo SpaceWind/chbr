@@ -37,9 +37,21 @@ class RestaurantServiceImpl {
                   }) {
 
         let res = await this.Api.put(`/restaurant/` + restaurantId + '/reserve', {
-            body:data
+            body: data
         });
         if (res.err) throw res.err;
+
+        return res.body;
+    }
+
+
+    async buyByBonus(restaurantId,
+                     dishId) {
+
+        let res = await this.Api.put(`/restaurant/` + restaurantId + '/buy/by-bonus/' + dishId, {
+            body: {}
+        });
+        if (res.err) throw res;
 
         return res.body;
     }

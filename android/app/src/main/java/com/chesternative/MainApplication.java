@@ -3,6 +3,9 @@ package com.chesternative;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.cardio.RNCardIOPackage;
+import com.beefe.picker.PickerViewPackage;
+import com.evollu.react.fcm.FIRMessagingPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.horcrux.svg.SvgPackage;
@@ -27,6 +30,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNCardIOPackage(),
+            new PickerViewPackage(),
+            new FIRMessagingPackage(),
             new ImagePickerPackage(),
             new VectorIconsPackage(),
             new SvgPackage(),

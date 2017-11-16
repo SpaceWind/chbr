@@ -1,7 +1,10 @@
 import {
     CLOSE_TUTORIAL,
     CONFIRM_CODE_FULFILLED,
-    CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, GET_RESERVE, GET_TABLE_RESERVES, GET_TABLE_RESERVES_FULFILLED,
+    CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, GET_RESERVE, GET_RESERVE_FULFILLED, GET_RESERVE_PENDING,
+    GET_RESERVE_REJECTED,
+    GET_TABLE_RESERVES,
+    GET_TABLE_RESERVES_FULFILLED,
     GET_TABLE_RESERVES_PENDING,
     GET_TABLE_RESERVES_REJECTED, GET_USER_DATA,
     GET_USER_DATA_FULFILLED,
@@ -40,6 +43,7 @@ export default function (state: State = initialState, action) {
             ...state,
             token: null,
             phone: '',
+            userData:null,
             logged: false,
             isAuth: false
         };
@@ -111,13 +115,13 @@ export default function (state: State = initialState, action) {
             ...state,
             confirmCodePending: false
         };
-    }
+    }*/
     if (action.type === UPDATE_USER_DATA_FULFILLED) {
         return {
             ...state,
-            confirmCodePending: false
+            userData: action.payload
         };
-    }*/
+    }
 
 
     if (action.type === SEND_TICKET_PENDING) {
@@ -141,14 +145,14 @@ export default function (state: State = initialState, action) {
         };
     }
 
-    if (action.type === GET_TABLE_RESERVES_PENDING) {
+    if (action.type === GET_RESERVE_PENDING) {
         return {
             ...state,
             isReservePending: true,
         };
     }
 
-    if (action.type === GET_TABLE_RESERVES_FULFILLED) {
+    if (action.type === GET_RESERVE_FULFILLED) {
         return {
             ...state,
             reserve: action.payload,
@@ -156,7 +160,7 @@ export default function (state: State = initialState, action) {
         };
     }
 
-    if (action.type === GET_TABLE_RESERVES_REJECTED) {
+    if (action.type === GET_RESERVE_REJECTED) {
         return {
             ...state,
             reserve: null,

@@ -17,6 +17,11 @@ export const RESERVE_PENDING = 'RESERVE_PENDING';
 export const RESERVE_FULFILLED = 'RESERVE_FULFILLED';
 export const RESERVE_REJECTED = 'RESERVE_REJECTED';
 
+export const BUY_BY_BONUS = 'BUY_BY_BONUS';
+export const BUY_BY_BONUS_PENDING = 'BUY_BY_BONUS_PENDING';
+export const BUY_BY_BONUS_FULFILLED = 'BUY_BY_BONUS_FULFILLED';
+export const BUY_BY_BONUS_REJECTED = 'BUY_BY_BONUS_REJECTED';
+
 
 export function getDataAction(promise) {
     return {
@@ -59,6 +64,21 @@ export function reserveAction(promise) {
 export const reserve = (restaurantId, data: { people_quantity: string, timestamp: string, comment: string }) => {
     return dispatch => {
         let promise = RestaurantService.reserve(restaurantId, data);
+        dispatch(reserveAction(promise));
+        return promise;
+    }
+};
+
+export function buyByBonusAction(promise) {
+    return {
+        type: BUY_BY_BONUS,
+        payload: promise
+    }
+}
+
+export const buyByBonus = (restaurantId,dishId) => {
+    return dispatch => {
+        let promise = RestaurantService.buyByBonus(restaurantId, dishId);
         dispatch(reserveAction(promise));
         return promise;
     }

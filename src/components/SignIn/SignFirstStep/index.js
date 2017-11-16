@@ -146,7 +146,7 @@ const styles = {
         borderBottomWidth: 1,
     },
     phone: {
-        width: 175,
+        width: 185,
     },
 
     button: {

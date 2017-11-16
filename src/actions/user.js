@@ -46,6 +46,11 @@ export const UPLOAD_PHOTO_PENDING = 'UPLOAD_PHOTO_PENDING';
 export const UPLOAD_PHOTO_FULFILLED = 'UPLOAD_PHOTO_FULFILLED';
 export const UPLOAD_PHOTO_REJECTED = 'UPLOAD_PHOTO_REJECTED';
 
+export const SEND_PUSH_TOKEN = 'SEND_PUSH_TOKEN';
+export const SEND_PUSH_TOKEN_PENDING = 'SEND_PUSH_TOKEN_PENDING';
+export const SEND_PUSH_TOKEN_FULFILLED = 'SEND_PUSH_TOKEN_FULFILLED';
+export const SEND_PUSH_TOKEN_REJECTED = 'SEND_PUSH_TOKEN_REJECTED';
+
 const delay = (ms) => new Promise(resolve =>
     setTimeout(resolve, ms)
 );
@@ -182,7 +187,7 @@ export function closeTutorial(promise) {
 
 function uploadPhotoAction(promise) {
     return {
-        type: SEND_TICKET,
+        type: UPLOAD_PHOTO,
         payload: promise
     }
 }
@@ -191,6 +196,21 @@ export const uploadPhoto = (data) => {
     return dispatch => {
         let promise = AuthService.uploadPhoto(data);
         dispatch(uploadPhotoAction(promise));
+        return promise;
+    }
+};
+
+function sendPushTokenAction(promise) {
+    return {
+        type: SEND_TICKET,
+        payload: promise
+    }
+}
+
+export const sendPushToken = (token) => {
+    return dispatch => {
+        let promise = AuthService.sendPushToken(token);
+        dispatch(sendPushTokenAction(promise));
         return promise;
     }
 };

@@ -13,6 +13,7 @@ import OrderPage from "../components/Basket/OrderPage";
 import CloseIcon from "./components/CloseIcon/index";
 import {View} from "native-base";
 import SignSecondStepSwag from "../components/SignIn/SignSecondStep/index";
+import OneNewsPage from "../components/News/OneNewsPage/index";
 
 export default RestaurantsStack = StackNavigator({
     Restaurants: {
@@ -53,7 +54,7 @@ export default RestaurantsStack = StackNavigator({
             },
             headerTitleStyle: {
                 ...BaseNavigationBarStyle.headerTitleStyle,
-                marginHorizontal: 0,
+                marginHorizontal: 5,
                 fontSize:17
             },
             drawerLockMode: 'locked-closed',
@@ -74,6 +75,7 @@ export default RestaurantsStack = StackNavigator({
             },
             headerTitleStyle: {
                 ...BaseNavigationBarStyle.headerTitleStyle,
+                marginHorizontal: 5,
                 fontSize:17
             },
             drawerLockMode: 'locked-closed',
@@ -131,7 +133,17 @@ export default RestaurantsStack = StackNavigator({
             },
             drawerLockMode: 'locked-closed',
         })
-    }
+    },
+    OneRestaurantNewsPage: {
+    screen: OneNewsPage,
+        navigationOptions: props => ({
+        title: 'Новости и акции',
+        headerBackTitleStyle: {
+            color: "transparent"
+        },
+        drawerLockMode:'locked-closed'
+    })
+}
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle,

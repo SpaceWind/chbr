@@ -63,13 +63,24 @@ class AuthServiceImpl {
         return res.body;
     }
 
+    async sendPushToken(token) {
+        let res = await this.Api.post(`/token/for_push`, {
+            body: {
+                device_token: token
+            }
+        });
+        if (res.err) throw res.err;
+        return res.body;
+    }
+
     async uploadPhoto(photoUri) {
-
-
         const form = new FormData();
         form.append('photo', {uri: photoUri, name: 'image.jpg', type: 'multipart/form-data'});
 
         let res = await this.Api.post(`/client/current/photo`, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
             body: form
         });
         if (res.err) throw res.err;

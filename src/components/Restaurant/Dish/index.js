@@ -11,12 +11,20 @@ import {signStackStyle} from "../../../routers/SignStack";
 import {addDish, initBasket, removeDish} from "../../../actions/billing";
 import {connect} from "react-redux";
 import LinearGradient from "react-native-linear-gradient";
+import {Alert} from "react-native";
+import {buyByBonus} from "../../../actions/restaurant";
+import Spinner from "react-native-loading-spinner-overlay";
 
 
 export class DishC extends React.Component {
     static navigationOptions = ({navigation, screenProps}) => ({
         title: navigation.state.params.name
     });
+
+    state = {
+        like: false,
+        loading: false
+    };
 
     constructor(props) {
         super(props);
@@ -36,12 +44,103 @@ export class DishC extends React.Component {
         this.props.removeDish(this.dish);
     }
 
-    state = {
-        like: false
-    };
 
     like() {
         this.setState({like: !this.state.like});
+    }
+
+    buyByBonusCallback() {
+
+        if (this.props.logged) {
+            Alert.alert(
+                'Вы уверены?',
+                `С вашего счета будет списано ${this.dish.price} баллов`,
+                [
+                    {text: 'Нет', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                    {
+                        text: 'Да', onPress: () => {
+
+
+                        this.buyByBonus();
+
+                    }
+                    },
+                ]
+            )
+        }
+        else {
+            Alert.alert(
+                'Вы не авторизованы',
+                `Выполните вход`,
+                [
+                    {text: 'ОК', onPress: () => console.log('Cancel Pressed')}
+                ]
+            )
+        }
+
+
+    }
+
+    async buyByBonus() {
+        this.setState({loading: true});
+        try {
+            let res = await this.props.buyByBonus(this.restaurantId, this.dish.id);
+            setTimeout(() => {
+                Alert.alert(
+                    'Успешно',
+                    'Вы приобрели блюдо за баллы. Обратитесь к ****.',
+                    [
+
+                        {
+                            text: 'Ок', onPress: () => {
+                            this.props.navigation.navigate('Restaurant', {key: this.props.navigation.state.params.restaurantId})
+                        }
+                        }
+                    ]
+                )
+            }, 10);
+        }
+        catch (err) {
+
+            let status = err.status;
+            switch (status) {
+                case 404: {
+                    setTimeout(() => {
+                        Alert.alert(
+                            'Ошибка',
+                            'Товар не найден. попробуйте позже.',
+                            [
+
+                                {
+                                    text: 'Ок', onPress: () => {
+
+                                }
+                                }
+                            ]
+                        )
+                    }, 10);
+                    break;
+                }
+                case 422: {
+                    setTimeout(() => {
+                        Alert.alert(
+                            'Ошибка',
+                            'Вам не хватает баллов для покупки.',
+                            [
+
+                                {
+                                    text: 'Ок', onPress: () => {
+                                }
+                                }
+                            ]
+                        )
+                    }, 10);
+                    break;
+                }
+            }
+
+        }
+        this.setState({loading: false});
     }
 
 
@@ -64,7 +163,7 @@ export class DishC extends React.Component {
         return (
 
             <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
-
+                <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
                 <ScrollView>
                     <View style={styles.container}>
                         <View>
@@ -73,8 +172,8 @@ export class DishC extends React.Component {
                             </Image>
                             <LinearGradient
                                 colors={['#000', 'transparent']}
-                                start={{x:0.5, y:1}}
-                                end={{x:0.5, y:0}}
+                                start={{x: 0.5, y: 1}}
+                                end={{x: 0.5, y: 0}}
                                 style={{
                                     position: 'absolute',
                                     bottom: 0,
@@ -140,10 +239,18 @@ export class DishC extends React.Component {
                                 <Text style={styles.text}>{dish.description}</Text>
                             </View>
                             <View style={styles.buttonBlock}>
-                                <Button success rounded
-                                        style={{width: '50%', marginRight: 13, justifyContent: 'center'}}>
+                                {this.dish.available_for_bonus === 1 && <Button
+                                    success rounded
+                                    onPress={() => {
+                                        this.buyByBonusCallback()
+                                    }}
+                                    style={{
+                                        width: '50%',
+                                        marginRight: 13,
+                                        justifyContent: 'center'
+                                    }}>
                                     <Text uppercase={false}>За баллы</Text>
-                                </Button>
+                                </Button>}
 
 
                                 {
@@ -211,6 +318,9 @@ function bindAction(dispatch) {
         removeDish: (dish) => {
             dispatch(removeDish(dish));
         },
+        buyByBonus: (restaurantId, dishId) => {
+            return dispatch(buyByBonus(restaurantId, dishId));
+        },
         initBasket: (restaurantId) => {
             dispatch(initBasket(restaurantId));
         }
@@ -218,7 +328,8 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
-    billing: state.billing
+    billing: state.billing,
+    logged: state.user.logged
 });
 
 const Dish = connect(mapStateToProps, bindAction)(DishC);

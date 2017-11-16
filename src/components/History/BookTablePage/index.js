@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {signStackStyle} from "../../../routers/SignStack";
-import {FlatList, Image, ScrollView} from "react-native";
+import {FlatList, Image, ScrollView, Alert} from "react-native";
 
 import {Text, View, Icon, Button} from "native-base";
 
@@ -10,8 +10,7 @@ import HistoryShortInfo from "../common/HistoryShortInfo/index";
 import FieldValue from "../common/FieldValue/index";
 import historyStyles from "../common/historyStyle";
 import {getReserve} from "../../../actions/user";
-import {Spinner} from "react-native-loading-spinner-overlay";
-
+import Spinner from "react-native-loading-spinner-overlay";
 
 class BookTablePageC extends React.Component {
 
@@ -22,10 +21,9 @@ class BookTablePageC extends React.Component {
     state = {};
 
 
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
-        this.reserveParam = this.props.navigation.state.params.history;
+        this.history = this.props.navigation.state.params.history;
     }
 
     componentWillMount() {
@@ -39,22 +37,24 @@ class BookTablePageC extends React.Component {
 
     render() {
 
-        let history = this.props.navigation.state.params.history;
+        let history = this.history;
+        let reserve = this.props.reserve || {};
 
+        let restaurant = this.props.restaurants[this.history.restaurant_id];
+        let restaurantName = restaurant.title_short;
 
         return (<Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
 
-            <ScrollView >
+            <ScrollView>
                 <View style={historyStyles.scrollContainer}>
 
 
-                    <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
-                    <HistoryShortInfo info={history}/>
-
+                    <Spinner visible={this.props.isReservePending} textStyle={{color: '#FFF'}}/>
+                    <HistoryShortInfo info={history} result={history.result_data} restaurantName={restaurantName}/>
 
 
                     <View style={styles.body}>
-                        <FieldValue name="Комментарий к заказу" value={history.comment}/>
+                        <FieldValue name="Комментарий к заказу" value={reserve.comment}/>
                     </View>
 
 
@@ -63,7 +63,7 @@ class BookTablePageC extends React.Component {
                         <View style={{
                             width: '50%', paddingRight: 7,
                         }}>
-                            <Button success full rounded
+                            <Button danger full rounded
                                     style={{
                                         justifyContent: 'center'
                                     }}
@@ -102,10 +102,29 @@ class BookTablePageC extends React.Component {
     }
 
 
-    async _getReserve()
-    {
+    async _getReserve() {
+        try {
+            await this.props.getReserve(this.history.restaurant_id, this.history.result_id);
+        }
+        catch
+            (ex) {
+            setTimeout(() => {
+                Alert.alert(
+                    'Ошибка',
+                    'Не удалось загрузить информацию.',
+                    [
 
-        this.props.getReserve()
+                        {
+                            text: 'Ок', onPress: () => {
+
+
+                        }
+                        }
+                    ]
+                )
+            }, 10);
+        }
+
     }
 }
 
@@ -119,9 +138,10 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
     reserve: state.user.reserve,
+    restaurants: state.restaurant.restaurants,
     isReservePending: state.user.isReservePending
 });
-const BookTablePage= connect(mapStateToProps, bindAction)(BookTablePageC);
+const BookTablePage = connect(mapStateToProps, bindAction)(BookTablePageC);
 export default BookTablePage;
 
 
