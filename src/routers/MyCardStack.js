@@ -5,6 +5,7 @@ import {BaseNavigationBarStyle} from "./BaseNavigationBarStyle";
 
 import DiscountPage from "../components/Cards/DiscountPage/index";
 import HowWorksPage from "../components/Common/HowWorksPage/index";
+import ScanBillPage from "../components/Cards/ScanBillPage/index";
 
 export default MyCardStack = StackNavigator({
     MayCardPage: {
@@ -21,8 +22,18 @@ export default MyCardStack = StackNavigator({
             headerBackTitleStyle: {
                 color: "transparent"
             },
-            drawerLockMode:'locked-closed'
+            drawerLockMode: 'locked-closed'
         })
+    },
+    ScanBill: {
+        screen: ScanBillPage,
+        navigationOptions: {
+            title: 'Сканирование чека',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            drawerLockMode:'locked-closed'
+        }
     },
 }, {
     navigationOptions: props => ({

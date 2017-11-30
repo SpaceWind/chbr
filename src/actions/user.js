@@ -19,6 +19,19 @@ export const GET_USER_DATA_PENDING = 'GET_USER_DATA_PENDING';
 export const GET_USER_DATA_FULFILLED = 'GET_USER_DATA_FULFILLED';
 export const GET_USER_DATA_REJECTED = 'GET_USER_DATA_REJECTED';
 
+export const SET_UID = 'SET_UID';
+
+export const CREATE_DEVICE = 'CREATE_DEVICE';
+export const CREATE_DEVICE_PENDING = 'CREATE_DEVICE_PENDING';
+export const CREATE_DEVICE_FULFILLED = 'CREATE_DEVICE_FULFILLED';
+export const CREATE_DEVICE_REJECTED = 'CREATE_DEVICE_REJECTED';
+
+export const ATTACH_DEVICE = 'ATTACH_DEVICE';
+export const ATTACH_DEVICE_PENDING = 'ATTACH_DEVICE_PENDING';
+export const ATTACH_DEVICE_FULFILLED = 'ATTACH_DEVICE_FULFILLED';
+export const ATTACH_DEVICE_REJECTED = 'ATTACH_DEVICE_REJECTED';
+
+
 export const UPDATE_USER_DATA = 'UPDATE_USER_DATA';
 export const UPDATE_USER_DATA_PENDING = 'UPDATE_USER_DATA_PENDING';
 export const UPDATE_USER_DATA_FULFILLED = 'UPDATE_USER_DATA_FULFILLED';
@@ -33,6 +46,12 @@ export const GET_TABLE_RESERVES = 'GET_TABLE_RESERVES';
 export const GET_TABLE_RESERVES_PENDING = 'GET_TABLE_RESERVES_PENDING';
 export const GET_TABLE_RESERVES_FULFILLED = 'GET_TABLE_RESERVES_FULFILLED';
 export const GET_TABLE_RESERVES_REJECTED = 'GET_TABLE_RESERVES_REJECTED';
+
+export const DELETE_OPERATION = 'DELETE_OPERATION';
+export const DELETE_OPERATION_PENDING = 'DELETE_OPERATION_PENDING';
+export const DELETE_OPERATION_FULFILLED = 'DELETE_OPERATION_FULFILLED';
+export const DELETE_OPERATION_REJECTED = 'DELETE_OPERATION_REJECTED';
+
 
 export const GET_RESERVE = 'GET_RESERVE';
 export const GET_RESERVE_PENDING = 'GET_RESERVE_PENDING';
@@ -50,6 +69,21 @@ export const SEND_PUSH_TOKEN = 'SEND_PUSH_TOKEN';
 export const SEND_PUSH_TOKEN_PENDING = 'SEND_PUSH_TOKEN_PENDING';
 export const SEND_PUSH_TOKEN_FULFILLED = 'SEND_PUSH_TOKEN_FULFILLED';
 export const SEND_PUSH_TOKEN_REJECTED = 'SEND_PUSH_TOKEN_REJECTED';
+
+export const CHECK_BILL = 'CHECK_BILL_TOKEN';
+export const CHECK_BILL_PENDING = 'CHECK_BILL_PENDING';
+export const CHECK_BILL_FULFILLED = 'CHECK_BILL_FULFILLED';
+export const CHECK_BILL_REJECTED = 'CHECK_BILL_REJECTED';
+
+export const GET_LIKES = 'GET_LIKES';
+export const GET_LIKES_PENDING = 'GET_LIKES_PENDING';
+export const GET_LIKES_FULFILLED = 'GET_LIKES_FULFILLED';
+export const GET_LIKES_REJECTED = 'GET_LIKES_REJECTED';
+
+export const GET_DISCOUNT_CODE = 'GET_DISCOUNT_CODE';
+export const GET_DISCOUNT_CODE_PENDING = 'GET_DISCOUNT_CODE_PENDING';
+export const GET_DISCOUNT_CODE_FULFILLED = 'GET_DISCOUNT_CODE_FULFILLED';
+export const GET_DISCOUNT_CODE_REJECTED = 'GET_DISCOUNT_CODE_REJECTED';
 
 const delay = (ms) => new Promise(resolve =>
     setTimeout(resolve, ms)
@@ -134,6 +168,47 @@ export const updateUserData = (data) => {
     }
 };
 
+
+
+export function setUID(uid) {
+    return {
+        type: SET_UID,
+        payload: uid
+    }
+}
+
+export function createDeviceAction(promise) {
+    return {
+        type: CREATE_DEVICE,
+        payload: promise
+    }
+}
+
+export const createDevice = (uid, data) => {
+    return dispatch => {
+        let promise = AuthService.createDevice(uid, data);
+        dispatch(createDeviceAction(promise));
+        return promise;
+    }
+};
+
+
+export function attachDeviceAction(promise) {
+    return {
+        type: ATTACH_DEVICE,
+        payload: promise
+    }
+}
+
+export const attachDevice = (uid) => {
+    return dispatch => {
+        let promise = AuthService.attachDevice(uid);
+        dispatch(attachDeviceAction(promise));
+        return promise;
+    }
+};
+
+
 export function sendTicketAction(promise) {
     return {
         type: SEND_TICKET,
@@ -160,6 +235,21 @@ export const getTableReserves = () => {
     return dispatch => {
         let promise = AuthService.getTableReserves();
         dispatch(getTableReservesAction(promise));
+        return promise;
+    }
+};
+
+export function deleteOperationAction(promise) {
+    return {
+        type: DELETE_OPERATION,
+        payload: promise
+    }
+}
+
+export const deleteOperation = (id) => {
+    return dispatch => {
+        let promise = AuthService.deleteOperation(id);
+        dispatch(deleteOperationAction(promise));
         return promise;
     }
 };
@@ -211,6 +301,52 @@ export const sendPushToken = (token) => {
     return dispatch => {
         let promise = AuthService.sendPushToken(token);
         dispatch(sendPushTokenAction(promise));
+        return promise;
+    }
+};
+
+function checkBillAction(promise) {
+    return {
+        type: CHECK_BILL,
+        payload: promise
+    }
+}
+
+export const checkBill = (token) => {
+    return dispatch => {
+        let promise = AuthService.checkBill(token);
+        dispatch(checkBillAction(promise));
+        return promise;
+    }
+};
+
+
+function getLikesAction(promise) {
+    return {
+        type: GET_LIKES,
+        payload: promise
+    }
+}
+
+export const getLikes = () => {
+    return dispatch => {
+        let promise = AuthService.getLikes();
+        dispatch(getLikesAction(promise));
+        return promise;
+    }
+};
+
+function getDiscountCodeAction(promise) {
+    return {
+        type: GET_DISCOUNT_CODE,
+        payload: promise
+    }
+}
+
+export const getDiscountCode = () => {
+    return dispatch => {
+        let promise = AuthService.getDiscountCode();
+        dispatch(getDiscountCodeAction(promise));
         return promise;
     }
 };

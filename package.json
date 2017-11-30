@@ -13,6 +13,7 @@
     ]
   },
   "dependencies": {
+    "base-64": "^0.1.0",
     "color": "^2.0.0",
     "frisbee": "^1.5.0",
     "geolib": "^2.0.22",
@@ -23,7 +24,10 @@
     "react": "16.0.0-alpha.12",
     "react-native": "0.48.4",
     "react-native-awesome-card-io": "^0.7.0",
+    "react-native-camera": "^0.12.0",
+    "react-native-circular-progress": "^0.1.0",
     "react-native-collapsible": "^0.8.0",
+    "react-native-device-info": "^0.13.0",
     "react-native-fcm": "^9.7.2",
     "react-native-image-picker": "^0.26.7",
     "react-native-image-slider": "^1.1.5",
@@ -40,6 +44,7 @@
     "react-native-svg": "^6.0.0-rc1",
     "react-native-swipeout": "^2.2.2",
     "react-native-swiper": "^1.5.13",
+    "react-native-uuid-generator": "^3.0.2",
     "react-native-vector-icons": "^4.4.0",
     "react-navigation": "git+https://github.com/react-community/react-navigation.git",
     "react-redux": "^5.0.2",

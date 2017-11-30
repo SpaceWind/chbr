@@ -13,6 +13,7 @@ import {CustomNavigationDrawerSwag} from "../../../routers/NavigationDrawer";
 import {getRestaurants} from "../../../actions/restaurant";
 import LinearGradient from 'react-native-linear-gradient';
 import TutorialPage from "../../Tutorial/index";
+import Camera from "react-native-camera";
 
 class Restaurants extends React.Component {
 
@@ -46,8 +47,8 @@ class Restaurants extends React.Component {
 
             <Card style={{...styles.card, ...styles.cardTransparent}}>
                 <CardItem cardBody style={styles.cardTransparent}>
-                    <Image source={{uri: item.photos[0].url}}
-                           style={styles.image}/>
+                    {item.photos.length>0 && <Image source={{uri: item.photos[0].url}}
+                           style={styles.image}/>}
                     <LinearGradient id="grad"
                                     colors={['#000', 'transparent']}
                                     start={{x: 0.5, y: 1}}
@@ -93,9 +94,17 @@ class Restaurants extends React.Component {
 
     render() {
         this.updateSchedule();
-        return (
-            <ImageBackground source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
 
+
+        let restaurants = Object.keys(this.props.restaurants)
+            .map((key) => this.props.restaurants[key])
+            .filter((item) => {
+                return item.status === 1;
+            });
+
+        return (
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
 
 
                 <View style={styles.container}>
@@ -103,7 +112,7 @@ class Restaurants extends React.Component {
 
                     <FlatList
 
-                        data={Object.keys(this.props.restaurants).map((key) => this.props.restaurants[key]).filter((item) => item.photos.length > 0)}
+                        data={restaurants}
                         renderItem={this._renderItem}
                         extraData={this.state}
                         keyExtractor={item => item.id}

@@ -1,7 +1,10 @@
 import {
     CLOSE_TUTORIAL,
     CONFIRM_CODE_FULFILLED,
-    CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, GET_RESERVE, GET_RESERVE_FULFILLED, GET_RESERVE_PENDING,
+    CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, GET_DISCOUNT_CODE, GET_DISCOUNT_CODE_FULFILLED, GET_LIKES,
+    GET_LIKES_FULFILLED, GET_RESERVE,
+    GET_RESERVE_FULFILLED,
+    GET_RESERVE_PENDING,
     GET_RESERVE_REJECTED,
     GET_TABLE_RESERVES,
     GET_TABLE_RESERVES_FULFILLED,
@@ -10,7 +13,7 @@ import {
     GET_USER_DATA_FULFILLED,
     SEND_CODE_FULFILLED, SEND_CODE_PENDING, SEND_CODE_REJECTED, SEND_TICKET, SEND_TICKET_FULFILLED, SEND_TICKET_PENDING,
     SEND_TICKET_REJECTED,
-    SET_SIGN_STATE,
+    SET_SIGN_STATE, SET_UID,
     SHOW_SIGN, SIGN_IN,
     SIGN_OUT, UPDATE_USER_DATA, UPDATE_USER_DATA_FULFILLED
 } from '../actions/user';
@@ -28,7 +31,9 @@ const initialState = {
     logged: false,
     showSign: true,
     showTutorial: true,
-    history: null
+    history: null,
+    likes: [],
+    uid: null
 };
 
 export default function (state: State = initialState, action) {
@@ -43,9 +48,10 @@ export default function (state: State = initialState, action) {
             ...state,
             token: null,
             phone: '',
-            userData:null,
+            userData: null,
             logged: false,
-            isAuth: false
+            isAuth: false,
+            likes: []
         };
     }
     if (action.type === SET_SIGN_STATE) {
@@ -110,6 +116,13 @@ export default function (state: State = initialState, action) {
         };
     }
 
+    if (action.type === SET_UID) {
+        return {
+            ...state,
+            uid: action.payload
+        };
+    }
+
     /*if (action.type === UPDATE_USER_DATA) {
         return {
             ...state,
@@ -117,6 +130,9 @@ export default function (state: State = initialState, action) {
         };
     }*/
     if (action.type === UPDATE_USER_DATA_FULFILLED) {
+
+
+        action.payload.avatar = state.userData.avatar;
         return {
             ...state,
             userData: action.payload
@@ -188,6 +204,21 @@ export default function (state: State = initialState, action) {
             ...state,
             history: null,
             getHistoryPending: false,
+        };
+    }
+
+
+    if (action.type === GET_DISCOUNT_CODE) {
+        return {
+            ...state,
+            discountCode: null
+        };
+    }
+
+    if (action.type === GET_DISCOUNT_CODE_FULFILLED) {
+        return {
+            ...state,
+            discountCode: action.payload
         };
     }
 

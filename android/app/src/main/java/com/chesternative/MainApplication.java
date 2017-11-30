@@ -3,6 +3,9 @@ package com.chesternative;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.reactlibrary.RNUUIDGeneratorPackage;
+import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.cardio.RNCardIOPackage;
 import com.beefe.picker.PickerViewPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
@@ -30,6 +33,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceInfo(),
+            new RNUUIDGeneratorPackage(),
+            new RCTCameraPackage(),
             new RNCardIOPackage(),
             new PickerViewPackage(),
             new FIRMessagingPackage(),

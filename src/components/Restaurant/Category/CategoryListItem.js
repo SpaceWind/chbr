@@ -111,7 +111,8 @@ export default class CategoryListItem extends React.Component {
 
                 <View>
 
-                    <Button bordered warning rounded style={styles.addItemButton} onPress={() => {
+                    <Button
+                        bordered warning rounded style={styles.addItemButton} onPress={() => {
                         this.props.addItem(item)
                     }}>
 
@@ -126,7 +127,10 @@ export default class CategoryListItem extends React.Component {
             )
         }
         else {
-            return (  <Button bordered warning rounded style={styles.addItemButton} onPress={() => {
+            return (  <Button
+                disabled={true}
+
+                bordered warning rounded style={styles.addItemButton} onPress={() => {
                 this.props.addItem(item)
             }}>
                 <Text style={styles.addItemButtonText} uppercase={false}>{item.price + " ₽"}</Text>

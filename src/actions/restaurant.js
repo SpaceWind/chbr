@@ -17,10 +17,26 @@ export const RESERVE_PENDING = 'RESERVE_PENDING';
 export const RESERVE_FULFILLED = 'RESERVE_FULFILLED';
 export const RESERVE_REJECTED = 'RESERVE_REJECTED';
 
+export const CANCEL_RESERVE = 'CANCEL_RESERVE';
+export const CANCEL_RESERVE_PENDING = 'CANCEL_RESERVE_PENDING';
+export const CANCEL_RESERVE_FULFILLED = 'CANCEL_RESERVE_FULFILLED';
+export const CANCEL_RESERVE_REJECTED = 'CANCEL_RESERVE_REJECTED';
+
 export const BUY_BY_BONUS = 'BUY_BY_BONUS';
 export const BUY_BY_BONUS_PENDING = 'BUY_BY_BONUS_PENDING';
 export const BUY_BY_BONUS_FULFILLED = 'BUY_BY_BONUS_FULFILLED';
 export const BUY_BY_BONUS_REJECTED = 'BUY_BY_BONUS_REJECTED';
+
+
+export const LIKE = 'LIKE';
+export const LIKE_PENDING = 'LIKE_PENDING';
+export const LIKE_FULFILLED = 'LIKE_FULFILLED';
+export const LIKE_REJECTED = 'LIKE_REJECTED';
+
+export const GET_DISH = 'GET_DISH';
+export const GET_DISH_PENDING = 'GET_DISH_PENDING';
+export const GET_DISH_FULFILLED = 'GET_DISH_FULFILLED';
+export const GET_DISH_REJECTED = 'GET_DISH_REJECTED';
 
 
 export function getDataAction(promise) {
@@ -69,6 +85,22 @@ export const reserve = (restaurantId, data: { people_quantity: string, timestamp
     }
 };
 
+export function cancelReserveAction(promise) {
+    return {
+        type: CANCEL_RESERVE,
+        payload: promise
+    }
+}
+
+export const cancelReserve = (restaurantId, reserveid) => {
+    return dispatch => {
+        let promise = RestaurantService.cancelReserve(restaurantId, reserveid);
+        dispatch(cancelReserveAction(promise));
+        return promise;
+    }
+};
+
+
 export function buyByBonusAction(promise) {
     return {
         type: BUY_BY_BONUS,
@@ -76,10 +108,40 @@ export function buyByBonusAction(promise) {
     }
 }
 
-export const buyByBonus = (restaurantId,dishId) => {
+export const buyByBonus = (restaurantId, dishId) => {
     return dispatch => {
         let promise = RestaurantService.buyByBonus(restaurantId, dishId);
         dispatch(reserveAction(promise));
+        return promise;
+    }
+};
+
+export function likeDishAction(promise) {
+    return {
+        type: LIKE,
+        payload: promise
+    }
+}
+
+export const likeDish = (restaurantId, categoryId, dishId, like) => {
+    return dispatch => {
+        let promise = RestaurantService.likeDish(restaurantId, categoryId, dishId, like);
+        dispatch(likeDishAction(promise));
+        return promise;
+    }
+};
+
+export function getDishAction(promise) {
+    return {
+        type: GET_DISH,
+        payload: promise
+    }
+}
+
+export const getDish = (restaurantId, categoryId, dishId) => {
+    return dispatch => {
+        let promise = RestaurantService.getDish(restaurantId, categoryId, dishId);
+        dispatch(getDishAction(promise));
         return promise;
     }
 };

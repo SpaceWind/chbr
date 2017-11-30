@@ -4,15 +4,18 @@ import {sendCode, setSignState} from "../../../actions/user";
 import connect from "react-redux/es/connect/connect";
 //import {Constants} from 'expo';
 import PhoneInput from "react-native-phone-input";
-import {Image, TouchableWithoutFeedback} from "react-native";
+import {Image, ImageBackground, TouchableWithoutFeedback} from "react-native";
 import {signStackStyle} from "../../../routers/SignStack";
 import SignPhoneInput from "../SignPhoneInput/index";
 import H3 from "../../../../native-base-theme/components/H3";
 import platform from "../../../../native-base-theme/variables/platform";
 import Spinner from "react-native-loading-spinner-overlay";
-import {Keyboard} from 'react-native';
+import {Keyboard, Alert} from 'react-native';
 
 class SignFirstStep extends React.Component {
+
+
+    state={};
 
     constructor(props) {
         super(props);
@@ -35,20 +38,41 @@ class SignFirstStep extends React.Component {
 
     async sendCode() {
 
-        let result = await this.props.sendCode(this.number);
+        this.setState({loading:true});
+        try {
+            let result = await this.props.sendCode(this.number);
 
-        this.props.navigation.navigate('SignSecond', {number: this.number})
+            this.props.navigation.navigate('SignSecond', {number: this.number})
+        }
+
+        catch (ex) {
+            setTimeout(() => {
+                Alert.alert(
+                    'Ошибка подключения к серверу',
+                    '',
+                    [
+                        {
+                            text: 'Ок'
+                            , onPress: () => {
+                            this.setState({loading: false});
+                        }
+                        }
+                    ]
+                )
+            }, 100);
+        }
+        this.setState({loading:false});
     }
 
 
     render() {
         return (
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-                <Container >
-                    <Image source={require('../../../../assets/images/login&registration/login-bg.png')}
-                           style={signStackStyle}>
+                <Container>
+                    <ImageBackground source={require('../../../../assets/images/login&registration/login-bg.png')}
+                                     style={signStackStyle}>
                         <View style={styles.container}>
-                            <Spinner visible={this.props.sendCodePending}
+                            <Spinner visible={this.state.loading}
                                      textStyle={{color: '#FFF'}}/>
 
                             <View style={styles.image}>
@@ -84,11 +108,12 @@ class SignFirstStep extends React.Component {
                                 </Button>
 
 
-                                <View >
+                                <View>
                                     <Button transparent warning onPress={() => {
                                         this.props.signInAfter()
                                     }}>
-                                        <Text style={{lineHeight: 29, fontSize: 20}} uppercase={false}>Вступить в клуб позже ></Text>
+                                        <Text style={{lineHeight: 29, fontSize: 20}} uppercase={false}>Вступить в клуб
+                                            позже ></Text>
                                     </Button>
                                 </View>
 
@@ -96,7 +121,7 @@ class SignFirstStep extends React.Component {
 
                         </View>
 
-                    </Image>
+                    </ImageBackground>
                 </Container>
             </TouchableWithoutFeedback>
 
@@ -110,6 +135,7 @@ function bindAction(dispatch) {
         sendCode: (number) => dispatch(sendCode(number))
     };
 }
+
 const mapStateToProps = state => ({
     sendCodePending: state.user.sendCodePending,
 });

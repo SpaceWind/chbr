@@ -8,6 +8,7 @@ import {BaseNavigationBarStyle} from "./BaseNavigationBarStyle";
 import BasketIcon from "./components/BasketIcon/index";
 import AllNews from "../components/News/AllNews/index";
 import OneNewsPage from "../components/News/OneNewsPage/index";
+import ScanBillPage from "../components/Cards/ScanBillPage/index";
 
 export default NewsStack = StackNavigator({
     News: {
@@ -26,7 +27,17 @@ export default NewsStack = StackNavigator({
             },
             drawerLockMode:'locked-closed'
         })
-    }
+    },
+    ScanBill: {
+        screen: ScanBillPage,
+        navigationOptions: {
+            title: 'Сканирование чека',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            drawerLockMode:'locked-closed'
+        }
+    },
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle

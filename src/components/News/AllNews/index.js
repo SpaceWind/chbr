@@ -3,7 +3,7 @@ import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
     View
 } from 'native-base';
-import {FlatList, Image, ListView, RefreshControl, TouchableOpacity} from "react-native";
+import {FlatList, Image, ImageBackground, ListView, RefreshControl, TouchableOpacity} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import {signStackStyle} from "../../../routers/SignStack";
@@ -40,8 +40,11 @@ class NewsC extends React.Component {
         }
 
 
+        let restaurants = this.props.restaurants.filter((rest) => rest.status === 1);
+
         return (
-            <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
                 <View style={styles.container}>
                     <FlatList
                         ListHeaderComponent={() => {
@@ -58,7 +61,7 @@ class NewsC extends React.Component {
                                             })
                                         }
                                         }
-                                        restaurants={this.props.restaurants}
+                                        restaurants={restaurants}
                                         restaurant={this.state.restaurant}/>
                                 </View>
 
@@ -74,6 +77,13 @@ class NewsC extends React.Component {
                             else {
                                 restaurants = [{id: 1, title_short: 'Все рестораны'}]
                             }
+
+                            if(this.state.restaurant !== 'all')
+                            {
+                                restaurants = [{id: 1, title_short: this.props.restaurants.find(rest => rest.id === this.state.restaurant).title_short}]
+                            }
+
+
                             return (<TouchableOpacity
                                 style={{marginBottom: 25}}
                                 onPress={
@@ -101,7 +111,7 @@ class NewsC extends React.Component {
                     >
                     </FlatList>
                 </View>
-            </Image>
+            </ImageBackground>
         );
     }
 }

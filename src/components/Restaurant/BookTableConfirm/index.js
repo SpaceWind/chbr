@@ -3,7 +3,7 @@ import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
     View
 } from 'native-base';
-import {Image, ScrollView, TextInput, TouchableOpacity, Dimensions, Alert} from "react-native";
+import {Image, ImageBackground, ScrollView, TextInput, TouchableOpacity, Dimensions, Alert} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import {signStackStyle} from "../../../routers/SignStack";
@@ -65,7 +65,8 @@ class BookTableConfirmC extends React.Component {
         return (
 
 
-            <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
                 <KeyboardAwareScrollView
                     resetScrollToCoords={{x: 0, y: 0}}
                     contentContainerStyle={styles.container}
@@ -83,7 +84,7 @@ class BookTableConfirmC extends React.Component {
                                         Заказ стола
                                     </Text>
                                     <Text style={styles.text}>
-                                        Рестобар Chester
+                                        {this.params.restaurant.title_full}
                                     </Text>
                                     <Text style={styles.dateText}>
                                         {this.getCurrentInfo()}
@@ -91,7 +92,7 @@ class BookTableConfirmC extends React.Component {
                                 </View>
 
 
-                                {!this.props.logged && <View style={{
+                                <View style={{
                                     borderTopWidth: 1,
                                     borderColor: platform.brandDivider
                                 }
@@ -152,7 +153,7 @@ class BookTableConfirmC extends React.Component {
                                     />
 
 
-                                </View>}
+                                </View>
 
                                 <View style={{
                                     borderTopWidth: 1,
@@ -202,7 +203,8 @@ class BookTableConfirmC extends React.Component {
                                             onPress={this.bookConfirm.bind(this)}
 
                                     >
-                                        <Text style={{textAlign: 'center', flex: 1}} uppercase={false}>Забронировать стол</Text>
+                                        <Text style={{textAlign: 'center', flex: 1}} uppercase={false}>Забронировать
+                                            стол</Text>
                                     </Button>
                                 </View>
 
@@ -211,7 +213,7 @@ class BookTableConfirmC extends React.Component {
                         </Content>
                     </Container>
                 </KeyboardAwareScrollView>
-            </Image>
+            </ImageBackground>
         );
     }
 
@@ -246,7 +248,7 @@ class BookTableConfirmC extends React.Component {
         let data = {
             people_quantity: this.props.navigation.state.params.people_quantity,
             timestamp: this.props.navigation.state.params.time.timestamp,
-            comment: this.state.text || 'empty'
+            comment: this.state.text
         };
         let restaurantId = this.props.navigation.state.params.restaurant.id;
 

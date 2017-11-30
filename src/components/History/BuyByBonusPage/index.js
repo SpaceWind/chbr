@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {signStackStyle} from "../../../routers/SignStack";
-import {FlatList, Image, ScrollView} from "react-native";
+import {FlatList, Image, ImageBackground, ScrollView} from "react-native";
 
 import {Text, View, Icon, Button} from "native-base";
 
@@ -40,29 +40,38 @@ export class BuyByBonusPageC extends React.Component {
 
         let history = this.history;
         let restaurant = this.props.restaurants[history.restaurant_id];
-        let restaurantName = restaurant.title_short;
+        let restaurantName = "";
+        if (restaurant) {
+            restaurantName = restaurant.title_short;
+        }
 
 
-        let dish = this.getDish(restaurant, history);
+        let dish = null;
+
+        if (restaurant) {
+            dish = this.getDish(restaurant, history);
+        }
+
 
         if (dish) {
             dish.count = 1;
         }
 
 
-        return (<Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                 style={signStackStyle}>
 
             <ScrollView>
                 <View style={historyStyles.scrollContainer}>
 
                     <HistoryShortInfo info={history} result={history.result_data} restaurantName={restaurantName}/>
 
-                    {dish && <CategoryList data={[dish]} basket={true}/>}
+                    {dish && <CategoryList data={[dish]} basket={true} navigation={this.props.navigation}/>}
                 </View>
 
 
             </ScrollView>
-        </Image>)
+        </ImageBackground>)
     }
 
     getDish(restaurant, history) {

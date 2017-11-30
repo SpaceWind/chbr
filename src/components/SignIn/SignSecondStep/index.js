@@ -2,10 +2,13 @@ import React from 'react';
 import {Button, Container, Form, Input, Item, Text, View} from 'native-base';
 import {connect} from "react-redux";
 import {dispatch} from "redux";
-import {confirmCode, getUserData, sendCode, setSignState, signIn, updateUserData} from "../../../actions/user";
+import {
+    attachDevice, confirmCode, getUserData, sendCode, setSignState, signIn,
+    updateUserData
+} from "../../../actions/user";
 import moment from "moment";
 import Spinner from "react-native-loading-spinner-overlay";
-import {Image, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert} from "react-native";
+import {Image, ImageBackground, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert} from "react-native";
 import {signStackStyle} from "../../../routers/SignStack";
 import platform from "../../../../native-base-theme/variables/platform";
 import {reserve} from "../../../actions/restaurant";
@@ -102,6 +105,13 @@ class SignSecondStep extends React.Component {
             }
             Api.jwt(this.props.token);
 
+            try {
+                this.props.attachDevice(this.props.uid);
+            }
+            catch (ex) {
+
+            }
+
             if (this.isConfirmBookTable) {
                 await this.updateUserData(this.props.navigation.state.params.first_name, this.props.navigation.state.params.last_name);
                 await this.confirmBookTable();
@@ -129,12 +139,12 @@ class SignSecondStep extends React.Component {
         return (
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <Container style={styles.container}>
-                    <Image source={require('../../../../assets/images/login&registration/login-bg.png')}
-                           style={signStackStyle}>
+                    <ImageBackground source={require('../../../../assets/images/login&registration/login-bg.png')}
+                                     style={signStackStyle}>
                         <View style={styles.container}>
 
 
-                            <Spinner visible={this.props.pending || this.state.loading} textStyle={{color: '#FFF'}}/>
+                            <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
 
                             <View style={styles.image}>
                             </View>
@@ -187,7 +197,7 @@ class SignSecondStep extends React.Component {
                             </View>
 
                         </View>
-                    </Image>
+                    </ImageBackground>
                 </Container>
             </TouchableWithoutFeedback>
         );
@@ -211,6 +221,7 @@ class SignSecondStep extends React.Component {
                 this.props.navigation.state.params.restaurantId,
                 this.props.navigation.state.params.data
             );
+            this.setState({loading: false});
             setTimeout(() => {
                 Alert.alert(
                     'Успешно.',
@@ -242,6 +253,7 @@ class SignSecondStep extends React.Component {
         }
         catch
             (ex) {
+            this.setState({loading: false});
             setTimeout(() => {
                 Alert.alert(
                     'Ошибка',
@@ -269,8 +281,9 @@ bindAction(dispatch) {
         signIn: () => dispatch(signIn()),
         confirmCode: (text) => dispatch(confirmCode(text)),
         sendCode: (number) => dispatch(sendCode(number)),
-
-
+        attachDevice: (uid) => {
+            return dispatch(attachDevice(uid));
+        },
         getUserData: (text) => dispatch(getUserData()),
         updateUserData: (data) => dispatch(updateUserData(data)),
         bookTable: (restaurantId, data) => dispatch(reserve(restaurantId, data))
@@ -282,7 +295,8 @@ const
         logged: state.user.logged,
         sent: state.user.sent,
         token: state.user.token,
-        pending: state.user.confirmCodePending
+        pending: state.user.confirmCodePending,
+        uid: state.user.uid
     });
 const
     styles = {

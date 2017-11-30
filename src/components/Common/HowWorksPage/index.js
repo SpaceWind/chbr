@@ -4,7 +4,7 @@ import {Button, Text, View} from "native-base";
 
 import platform from "../../../../native-base-theme/variables/platform";
 
-import {Image, ScrollView, TouchableOpacity} from "react-native";
+import {Image, ImageBackground, ScrollView, TouchableOpacity} from "react-native";
 import {signStackStyle} from "../../../routers/SignStack";
 
 
@@ -20,7 +20,7 @@ export default class HowWorksPage extends React.Component {
                     <Image style={styles.headerImage}
                            source={require('../../../../assets/images/howworks/bonus_icon.png')}/>
                 </View>
-                <View style={styles.pointRow}>
+                {false && <View style={styles.pointRow}>
 
                     <View style={styles.pointBlock}>
                         <Text style={styles.pointNumber}>1</Text>
@@ -28,24 +28,22 @@ export default class HowWorksPage extends React.Component {
 
                     <Text style={styles.pointText}>При первом заказе мы дарим вам
                         200 бонусных баллов!</Text>
-                </View>
+                </View>}
                 <View style={styles.pointRow}>
-                    <View style={styles.pointBlock}>
-                        <Text style={styles.pointNumber}>2</Text>
-                    </View>
+
                     <Text style={styles.pointText}>Сканируйте QR-коды с чека после оплаты счета в ресторане.</Text>
                 </View>
 
                 <Image style={styles.image} source={require('../../../../assets/images/howworks/qr-pic.png')}/>
-                <View style={styles.pointRow}>
+                {false && <View style={styles.pointRow}>
                     <View style={styles.pointBlock}>
                         <Text style={styles.pointNumber}>3</Text>
                     </View>
                     <Text style={styles.pointText}>Расскажите вашим друзьям о приложении в социальных сетях и получите
                         50
                         баллов.</Text>
-                </View>
-                <View style={styles.networkBlock}>
+                </View>}
+                {false && <View style={styles.networkBlock}>
                     <TouchableOpacity>
                         <Image style={styles.networkIcon}
                                source={require('../../../../assets/images/howworks/VK.png')}/>
@@ -66,19 +64,19 @@ export default class HowWorksPage extends React.Component {
                         <Image style={styles.networkIcon}
                                source={require('../../../../assets/images/howworks/OK.png')}/>
                     </TouchableOpacity>
-                </View>
-                <View style={styles.pointRow}>
+                </View>}
+                {false && <View style={styles.pointRow}>
                     <View style={styles.pointBlock}>
                         <Text style={styles.pointNumber}>4</Text>
                     </View>
                     <Text style={styles.pointText}>Оцените наше приложение в AppStore и получите дополнительные 40
                         баллов!</Text>
-                </View>
-                <View style={styles.buttonBlock}>
+                </View>}
+                {false && <View style={styles.buttonBlock}>
                     <Button warning rounded block>
                         <Text uppercase={false}>Оценить приложение</Text>
                     </Button>
-                </View>
+                </View>}
                 <View style={styles.textBlock}>
                     <Text style={styles.header}>На что потратить?</Text>
                     <Text style={styles.text}>Обменивайте свои баллы на бонусные десерты и напитки в приложении!</Text>
@@ -141,7 +139,8 @@ const styles = {
     pointText: {
         fontSize: 14,
         lineHeight: 20,
-        maxWidth: 250
+        color: platform.brandFontAccent,
+        marginBottom: 18
     },
     networkBlock: {
         flexDirection: 'row',

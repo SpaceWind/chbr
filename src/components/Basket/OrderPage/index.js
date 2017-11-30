@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Icon, Text, View} from 'native-base';
-import {Image, TouchableOpacity, ScrollView, TextInput} from "react-native";
+import {Image, ImageBackground, TouchableOpacity, ScrollView, TextInput} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import {Platform} from "react-native";
 import {connect} from "react-redux";
@@ -62,8 +62,7 @@ class OrderPage extends React.Component {
     }
 
     minusItem(item) {
-        if(this.state.countDevice>1)
-        {
+        if (this.state.countDevice > 1) {
             this.setState((prevState) => {
                 return {countDevice: prevState.countDevice - 1};
             });
@@ -116,7 +115,8 @@ class OrderPage extends React.Component {
         let type = this.props.navigation.state.params.type;
 
 
-        return <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                style={signStackStyle}>
 
             <ScrollView>
 
@@ -235,13 +235,14 @@ class OrderPage extends React.Component {
             </ScrollView>
 
 
-        </Image>
+        </ImageBackground>
     }
 }
 
 function bindAction(dispatch) {
     return {};
 }
+
 const mapStateToProps = state => ({
     restaurants: state.restaurant.restaurants
 });
@@ -293,11 +294,11 @@ const styles = {
         lineHeight: 31,
     },
     deviceCount: {
-        marginTop:15,
-        marginHorizontal:16,
+        marginTop: 15,
+        marginHorizontal: 16,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:'space-between'
+        justifyContent: 'space-between'
     },
     deviceCountText: {
         color: '#B3BBC1',

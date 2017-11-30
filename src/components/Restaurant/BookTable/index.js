@@ -3,7 +3,7 @@ import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
     View
 } from 'native-base';
-import {Image, ScrollView, TouchableOpacity} from "react-native";
+import {Image, ImageBackground, ScrollView, TouchableOpacity, Dimensions, ActivityIndicator} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import {signStackStyle} from "../../../routers/SignStack";
 import {connect} from "react-redux";
@@ -19,39 +19,30 @@ class BookTable extends React.Component {
 
     state = {
         isOpen: false,
-        count: 2
+        count: 2,
+        maxCount: 20
     };
+
+    scrollTo: false;
+
+    init = true;
 
     constructor(props) {
         super(props);
-        let currentHour = parseInt(moment().format('H'));
-        let currentMinute = parseInt(moment().format('m'));
-        if (currentHour < 12) {
-            this.state.date = moment().floor(24, 'hours').add(12, 'hours');
-        }
-        else if (currentHour < 23 || (currentHour === 23 && currentMinute <= 30)) {
-
-            if (currentHour + 2 < 23) {
-                this.state.date = moment().add(2, 'hours').ceil(30, 'minutes');
-            }
-            else {
-                this.state.date = moment().ceil(30, 'minutes');
-            }
-        }
-        else {
-            this.state.date = moment().ceil(24, 'hours').add(12, 'hours');
-        }
-
+        this.state.date = moment();
         this.restaurant = props.restaurants[this.props.navigation.state.params.key];
         this.state.count = 2;
+
+
+        this.state.maxCount = Math.max.apply(null, this.restaurant.halls.reduce((all, hall) => {
+            return all.concat(hall.tables.map(table => table.capacity))
+        }, []))
     }
 
 
     componentDidMount() {
-        this.props.getTime(this.restaurant.id, {
-            people_quantity: this.state.count,
-            timestamp: this.state.date.unix()
-        })
+        this.getDate(this.state.count, this.state.date.unix());
+
     }
 
 
@@ -61,7 +52,8 @@ class BookTable extends React.Component {
         return (
 
 
-            <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
 
                 <View style={styles.container}>
 
@@ -69,6 +61,8 @@ class BookTable extends React.Component {
                     <Container>
 
                         <Content>
+
+
                             <View style={{paddingHorizontal: 16, marginBottom: 20}}>
                                 <Text style={styles.header}>
                                     Бронирование стола
@@ -82,48 +76,63 @@ class BookTable extends React.Component {
                             <SelectDate
                                 date={this.state.date}
                                 count={this.state.count}
+                                maxCount={this.state.maxCount}
                                 onDateSelected={(selected) => {
 
-                                    this.props.getTime(this.restaurant.id, {
-                                        people_quantity: selected.count,
-                                        timestamp: selected.date.unix()
-                                    });
 
                                     this.setState({date: selected.date, count: selected.count});
+
+
+                                    //if (moment(this.state.date).format('YYYY DD MM') !== moment(selected.date).format('YYYY DD MM')) {
+                                    this.getDate(selected.count, selected.date.unix());
+                                    // }
+
+
                                 }}/>
 
                             <View style={styles.timeSheet}>
                                 <Text style={styles.timeSheetHint}>Забронируйте столик на удобное вам время:</Text>
 
 
-                                <ScrollView horizontal style={{paddingBottom: 22, paddingTop: 14}}>
+                                <ScrollView horizontal style={{paddingBottom: 22, paddingTop: 14}} ref='scroll'>
                                     <View style={{flexDirection: 'row'}}>
 
+
                                         {
-                                            this.getTimeSheet().map(time => {
+                                            this.props.getTimePending ?
 
-                                                if (time.state === 'enabled') {
-                                                    return <TouchableOpacity style={styles.timeButton}
-                                                                             key={time.timestamp}
-                                                                             onPress={() => {
-                                                                                 this.navigateToBook(time)
-                                                                             }}>
-                                                        <Text style={styles.timeButtonText}>
-                                                            {moment.unix(time.timestamp).format('HH:mm')}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                }
-                                                else {
-                                                    return <View style={styles.timeButtonFill} key={time.timestamp}
-                                                    >
-                                                        <Text style={styles.timeButtonFillText}>
-                                                            {time.title}
-                                                        </Text>
-                                                    </View>
-                                                }
-                                            })
+                                                <View style={styles.activityIndicator}>
+
+                                                    <ActivityIndicator
+
+
+                                                    />
+                                                </View>
+
+                                                :
+                                                this.getTimeSheet().map(time => {
+
+                                                    if (time.state === 'enabled') {
+                                                        return <TouchableOpacity style={styles.timeButton}
+                                                                                 key={time.timestamp}
+                                                                                 onPress={() => {
+                                                                                     this.navigateToBook(time)
+                                                                                 }}>
+                                                            <Text style={styles.timeButtonText}>
+                                                                {moment.unix(time.timestamp).format('HH:mm')}
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    }
+                                                    else {
+                                                        return <View style={styles.timeButtonFill} key={time.timestamp}
+                                                        >
+                                                            <Text style={styles.timeButtonFillText}>
+                                                                {moment.unix(time.timestamp).format('HH:mm')}
+                                                            </Text>
+                                                        </View>
+                                                    }
+                                                })
                                         }
-
 
                                     </View>
                                 </ScrollView>
@@ -134,15 +143,96 @@ class BookTable extends React.Component {
                     </Container>
 
                 </View>
-            </Image>
+            </ImageBackground>
         );
+    }
+
+
+    getDate(count, date) {
+        this.props.getTime(this.restaurant.id, {
+            people_quantity: count,
+            timestamp: date
+        });
+
+    }
+
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.timeSheet) {
+
+            if (this.init) {
+
+                let date = null;
+                let currentHour = parseInt(moment().format('H'));
+                let currentMinute = parseInt(moment().format('m'));
+                if (currentHour < 12) {
+                    date = moment().floor(24, 'hours').add(12, 'hours');
+                }
+                else if (currentHour < 23 || (currentHour === 23 && currentMinute <= 30)) {
+
+                    if (currentHour + 2 < 23) {
+                        date = moment().add(2, 'hours').ceil(30, 'minutes');
+                    }
+                    else {
+                        date = moment().ceil(30, 'minutes');
+                    }
+                }
+                else {
+                    date = moment().ceil(24, 'hours').add(12, 'hours');
+                }
+                this.init = false;
+                this.setState({
+                    date: date
+                })
+
+            }
+
+
+            setTimeout(() => {
+                this.scrollToDate(this.state.date)
+            }, 20)
+
+        }
+
+    }
+
+
+    scrollToDate(date) {
+        let index = this.getTimeSheet().indexOf(this.props.timeSheet.find(time => moment.unix(time.timestamp).format('HH:mm') === date.format('HH:mm')));
+
+        if (index >= 0 && this.props.timeSheet[index].state !== 'enabled') {
+            let next = -1;
+            for (let i = index; i < this.props.timeSheet.length; i++) {
+                if (this.props.timeSheet[i].state === 'enabled') {
+                    next = i;
+                }
+            }
+
+            if (next !== -1) {
+                index = next;
+            }
+        }
+
+
+        if (index > 0) {
+            let currentPosition = index * 85;
+            let offset = Dimensions.get('window').width / 2 - 43;
+            if (currentPosition - offset > 0) {
+                setTimeout(() => {
+                    this.refs.scroll.scrollTo({x: currentPosition - offset, y: 0});
+                }, 10)
+            }
+
+        }
+
+
     }
 
 
     getTimeSheet() {
         return this.props.timeSheet.filter(time => {
-            return time.timestamp > this.state.date.unix();
-        })
+            return time.timestamp > moment().unix();
+        });
     }
 
     navigateToBook(time) {
@@ -164,7 +254,8 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
     restaurants: state.restaurant.restaurants,
-    timeSheet: state.restaurant.timeSheet
+    timeSheet: state.restaurant.timeSheet,
+    getTimePending: state.restaurant.getTimePending
 });
 const BookTableSwag = connect(mapStateToProps, bindAction)(BookTable);
 export default BookTableSwag;
@@ -204,6 +295,10 @@ const styles = {
         lineHeight: 20,
         paddingHorizontal: 16
     },
+    activityIndicator: {
+        width: Dimensions.get('window').width,
+        justifyContent: 'center'
+    },
     timeButton: {
         height: 32,
         width: 77,
@@ -211,7 +306,7 @@ const styles = {
         backgroundColor: platform.brandWarning,
         overflow: 'hidden',
         marginLeft: 4,
-        marginRight: 3
+        marginRight: 4
     },
     timeButtonText: {
         fontFamily: platform.fontFamily,
@@ -225,7 +320,8 @@ const styles = {
         borderRadius: 8,
         overflow: 'hidden',
         backgroundColor: platform.brandOutline,
-        marginHorizontal: 5
+        marginLeft: 4,
+        marginRight: 4
     },
     timeButtonFillText: {
         fontFamily: platform.fontFamily,

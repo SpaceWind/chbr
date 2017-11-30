@@ -21,6 +21,78 @@ class Menu extends React.Component {
         hour: 30
     };
 
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <Container style={{flex: 1}}>
+                    <Content keyboardShouldPersistTaps="always" style={{flex: 1, minHeight: '100%'}}>
+                        <SearchInput onChangeText={(text) => {
+                            this.onStartSearch(text)
+                        }}/>
+                        {this._renderList()}
+                    </Content>
+                </Container>
+            </View>
+
+        );
+    }
+
+
+    _renderList() {
+
+        let categories = this.props.restaurants[this.props.navigation.state.params.key].menu.categories.filter(item => item.status ===1);
+
+        if (!this.state.results) {
+            return categories.map((item, i) => {
+                if (item.categories) {
+                    return (
+                        <View key={i}>
+                            {this._renderHeader(item, true)}
+                            <Collapsible collapsed={this.state.activeSection !== item.id}>
+                                {this.state.activeSection === item.id ? this._renderContent(item) :
+                                    <View/>}
+                            </Collapsible>
+                        </View>)
+                }
+                else {
+                    return (
+                        <View key={i}>
+                            {this._renderHeader(item)}
+                        </View>)
+                }
+
+            });
+        }
+        else {
+            if (this.state.results.length > 0) {
+                return (<CategoryList data={this.state.results} navigation={this.props.navigation}/>)
+            }
+            else {
+                return <View style={{alignItems: 'center', marginTop: 40}}>
+
+                    <View style={{alignItems: 'center', width: 300}}>
+                        <Text style={{
+                            fontSize: 22,
+                            lineHeight: 33,
+                            textAlign: 'center'
+                        }}>Не найдено</Text>
+                        <Text style={{
+                            fontSize: 16,
+                            lineHeight: 24,
+                            textAlign: 'center'
+                        }}>Поиск «{this.state.text}» не дал результатов. Попытайтесь задать что-нибудь другое.</Text>
+
+                    </View>
+
+                </View>
+            }
+
+        }
+
+
+    }
+
     changeState(item) {
 
         if (this.state.activeSection === item) {
@@ -101,6 +173,7 @@ class Menu extends React.Component {
 
     getAllDish() {
         return this.props.restaurants[this.props.navigation.state.params.key].menu.categories
+            .filter(item => item.status ===1)
             .reduce((a, b) => {
                 let items = [];
                 if (b.categories) {
@@ -110,7 +183,7 @@ class Menu extends React.Component {
                 } else {
                     items = b.items;
                 }
-                return a.concat(items);
+                return a.concat(items.filter(item => item.status ===1));
             }, []);
     }
 
@@ -139,80 +212,10 @@ class Menu extends React.Component {
     }
 
 
-    render() {
 
 
-        return (
-
-            <View style={styles.container}>
-                <Container style={{flex: 1}}>
-                    <Content keyboardShouldPersistTaps="always" style={{flex: 1, minHeight: '100%'}}>
-                        <SearchInput onChangeText={(text) => {
-
-                            this.onStartSearch(text)
-                        }}/>
-                        {this._renderList()}
-                    </Content>
-                </Container>
-            </View>
-
-        );
-    }
 
 
-    _renderList() {
-
-        let categories = this.props.restaurants[this.props.navigation.state.params.key].menu.categories;
-
-        if (!this.state.results) {
-            return categories.map((item, i) => {
-                if (item.categories) {
-                    return (
-                        <View key={i}>
-                            {this._renderHeader(item, true)}
-                            <Collapsible collapsed={this.state.activeSection !== item.id}>
-                                {this.state.activeSection === item.id ? this._renderContent(item) :
-                                    <View/>}
-                            </Collapsible>
-                        </View>)
-                }
-                else {
-                    return (
-                        <View key={i}>
-                            {this._renderHeader(item)}
-                        </View>)
-                }
-
-            });
-        }
-        else {
-            if (this.state.results.length > 0) {
-                return (<CategoryList data={this.state.results} navigation={this.props.navigation}/>)
-            }
-            else {
-                return <View style={{alignItems: 'center', marginTop: 40}}>
-
-                    <View style={{alignItems: 'center', width: 300}}>
-                        <Text style={{
-                            fontSize: 22,
-                            lineHeight: 33,
-                            textAlign: 'center'
-                        }}>Не найдено</Text>
-                        <Text style={{
-                            fontSize: 16,
-                            lineHeight: 24,
-                            textAlign: 'center'
-                        }}>Поиск «{this.state.text}» не дал результатов. Попытайтесь задать что-нибудь другое.</Text>
-
-                    </View>
-
-                </View>
-            }
-
-        }
-
-
-    }
 }
 
 function bindAction(dispatch) {

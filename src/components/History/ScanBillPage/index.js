@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {signStackStyle} from "../../../routers/SignStack";
-import {FlatList, Image, ScrollView} from "react-native";
+import {FlatList, Image, ImageBackground, ScrollView} from "react-native";
 
 import {Text, View, Icon, Button} from "native-base";
 
@@ -9,9 +9,10 @@ import platform from "../../../../native-base-theme/variables/platform";
 import HistoryShortInfo from "../common/HistoryShortInfo/index";
 import FieldValue from "../common/FieldValue/index";
 import historyStyles from "../common/historyStyle";
+import {getUserData} from "../../../actions/user";
 
 
-export default class ScanBillPage extends React.Component {
+export class ScanBillPageC extends React.Component {
 
     static navigationOptions = ({navigation, screenProps}) => ({
         title: navigation.state.params.name
@@ -20,7 +21,7 @@ export default class ScanBillPage extends React.Component {
     state = {};
 
     componentWillMount() {
-
+        this.props.getUserData();
     }
 
     componentWillUnmount() {
@@ -32,8 +33,9 @@ export default class ScanBillPage extends React.Component {
 
         let history = this.props.navigation.state.params.history;
 
-
-        return (<Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        history.price = history.summ;
+        return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                 style={signStackStyle}>
 
             <ScrollView>
                 <View style={historyStyles.scrollContainer}>
@@ -44,7 +46,7 @@ export default class ScanBillPage extends React.Component {
                         <View style={styles.textBlock}>
                             <View style={{marginRight: 50}}>
                                 <Text style={styles.title}>Ваши баллы</Text>
-                                <Text style={styles.value}>{history.bonusTotal}</Text>
+                                <Text style={styles.value}>{this.props.user.bonus_balance}</Text>
                             </View>
                             <View>
                                 <Text style={styles.title}>Будет начислено</Text>
@@ -57,9 +59,22 @@ export default class ScanBillPage extends React.Component {
 
 
             </ScrollView>
-        </Image>)
+        </ImageBackground>)
     }
 }
+
+function bindAction(dispatch) {
+    return {
+        getUserData: () => dispatch(getUserData()),
+    };
+}
+
+const mapStateToProps = state => ({
+    user: state.user.userData
+});
+
+const ScanBillPage = connect(mapStateToProps, bindAction)(ScanBillPageC);
+export default ScanBillPage;
 
 
 const styles = {

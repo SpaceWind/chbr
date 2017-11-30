@@ -1,3 +1,5 @@
+//@flow
+
 import React from 'react';
 import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
@@ -13,6 +15,10 @@ import AndroidPicker from 'react-native-picker';
 
 export default class SelectDate extends React.Component {
 
+    props: {
+        maxCount: number
+    }
+
     state = {
         count: 2
     };
@@ -20,6 +26,7 @@ export default class SelectDate extends React.Component {
     constructor(props) {
         super();
         this.state.date = props.date;
+        this.initDate = this.state.date;
         this.state.day = this.state.date.clone().floor(24, 'hours').format();
         this.state.hour = this.state.date.format();
     }
@@ -174,7 +181,7 @@ export default class SelectDate extends React.Component {
 
 
             let pickerData =
-                Array.from(new Array(20), (val, index) => index + 1).map((count) => {
+                Array.from(new Array(this.props.maxCount), (val, index) => index + 1).map((count) => {
                     let result = {};
                     result[count + " чел"] = days;
                     return result;
@@ -225,6 +232,16 @@ export default class SelectDate extends React.Component {
 
     }
 
+    componentWillReceiveProps(nextProps) {
+
+        if (nextProps.date && nextProps.date !== this.props.date) {
+
+            this.setState({
+                date: nextProps.date
+            })
+
+        }
+    }
 
     render() {
         return <View>
@@ -309,7 +326,7 @@ export default class SelectDate extends React.Component {
                                     selectedValue={this.state.count}
                                     onValueChange={(itemValue, itemIndex) => this.setState({count: itemValue})}
                             >
-                                {Array.from(new Array(20), (val, index) => index + 1).map((item, i) => {
+                                {Array.from(new Array(this.props.maxCount), (val, index) => index + 1).map((item, i) => {
                                     return <Picker.Item key={i} label={item + " чел"} value={item}/>
                                 })}
                             </Picker>

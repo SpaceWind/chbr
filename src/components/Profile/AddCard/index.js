@@ -3,7 +3,7 @@ import {
     Body, Button, Card, CardItem, Container, Icon, Left, List, ListItem, Picker, Right, Switch, Text,
     View
 } from 'native-base';
-import {Image, TouchableOpacity, Dimensions, ScrollView, ListView, Platform} from "react-native";
+import {Image, ImageBackground, TouchableOpacity, Dimensions, ScrollView, ListView, Platform} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 
 import {connect} from "react-redux";
@@ -58,7 +58,8 @@ class AddCard extends React.Component {
 
     render() {
 
-        return <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                style={signStackStyle}>
             <KeyboardAwareScrollView
                 resetScrollToCoords={{x: 0, y: 0}}
                 contentContainerStyle={styles.container}
@@ -232,7 +233,7 @@ class AddCard extends React.Component {
 
             </MyModal>
 
-        </Image>
+        </ImageBackground>
     }
 
 

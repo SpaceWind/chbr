@@ -3,7 +3,7 @@ import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
     View
 } from 'native-base';
-import {Image, TouchableOpacity} from "react-native";
+import {Image, ImageBackground, ScrollView, TouchableOpacity} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import moment from "moment";
 import {signStackStyle} from "../../../routers/SignStack";
@@ -17,39 +17,40 @@ export default class OneNewsPage extends React.Component {
         let news = this.props.navigation.state.params.news;
         let restaurants = this.props.navigation.state.params.restaurants;
         return (
-            <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
-            <View style={styles.container}>
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
+                <ScrollView>
 
 
-                <Image source={require('../../../../assets/images/cafe-1.png')} style={styles.image}>
-                </Image>
-                <View style={{marginHorizontal: 16}}>
-                    <View style={styles.infoBlock}>
+                    <Image source={require('../../../../assets/images/cafe-1.png')} style={styles.image}>
+                    </Image>
+                    <View style={{marginHorizontal: 16}}>
+                        <View style={styles.infoBlock}>
 
-                        <Text style={styles.infoDate}>{moment(news.event_date).format('D MMM')}</Text>
-                        {
-                            restaurants.map((rest) => {
-                                return (
-                                    <View style={{flexDirection: 'row', alignItems: 'center'}} key={rest.id}>
-                                        <View style={styles.infoPoint}/>
-                                        <Text style={styles.infoName}>{rest.title_short}</Text>
-                                    </View>
-                                )
-                            })
-                        }
+                            <Text style={styles.infoDate}>{moment(news.event_date).format('D MMM')}</Text>
+                            {
+                                restaurants.map((rest) => {
+                                    return (
+                                        <View style={{flexDirection: 'row', alignItems: 'center'}} key={rest.id}>
+                                            <View style={styles.infoPoint}/>
+                                            <Text style={styles.infoName}>{rest.title_short}</Text>
+                                        </View>
+                                    )
+                                })
+                            }
 
+                        </View>
+                        <Text style={styles.header}>
+                            {news.title}
+                        </Text>
+                        <Text style={styles.text}>
+                            {news.text}
+                        </Text>
                     </View>
-                    <Text style={styles.header}>
-                        {news.title}
-                    </Text>
-                    <Text style={styles.text}>
-                        {news.text}
-                    </Text>
-                </View>
 
 
-            </View>
-            </Image>
+                </ScrollView>
+            </ImageBackground>
 
         );
     }

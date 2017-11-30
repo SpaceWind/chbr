@@ -1,6 +1,14 @@
 import React from 'react';
 import {Body, Button, Card, CardItem, Container, Content, Icon, Left, Right, Text, View} from 'native-base';
-import {FlatList, Image, TouchableOpacity, Animated, TouchableWithoutFeedback, Alert} from "react-native";
+import {
+    FlatList,
+    Image,
+    ImageBackground,
+    TouchableOpacity,
+    Animated,
+    TouchableWithoutFeedback,
+    Alert
+} from "react-native";
 import {signStackStyle} from "../../../routers/SignStack";
 
 import CategoryList from "./CategoryList";
@@ -25,33 +33,36 @@ class Category extends React.Component {
             return item.id === id;
         });
 
+
+        let items = currentCategory.items.filter(item => item.status === 1 && item.available === 1)
         this.restaurantId = restaurant.id;
         if (this.props.billing.restaurantId === restaurant.id) {
 
             for (let item of this.props.billing.dishes) {
-                let dishInCategory = currentCategory.items.find(dish => dish.id === item.id);
+                let dishInCategory = items.find(dish => dish.id === item.id);
                 if (dishInCategory) {
                     dishInCategory.count = item.count;
                 }
             }
         }
         else {
-            for (let item of currentCategory.items) {
+            for (let item of items) {
                 item.count = 0;
             }
         }
 
         return (
-            <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
 
-                <CategoryList data={Object.assign([], currentCategory.items)}
+                <CategoryList data={Object.assign([], items)}
                               navigation={this.props.navigation}
                               onAddDish={this.addDish.bind(this)}
                               onRemoveDish={this.removeDish.bind(this)}
                 />
 
 
-            </Image>
+            </ImageBackground>
 
         );
     }

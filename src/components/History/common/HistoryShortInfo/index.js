@@ -87,20 +87,38 @@ export default class HistoryShortInfo extends React.Component {
                  status = "Ожидает выдачи";
                  break;
              }*/
-            case 1:
-            case 2:
-            case 3: {
+            case 1: {
+                if (this.props.info.type === 3) {
+                    status = "Ожидает подтверждения";
+                }
+                else {
+                    status = "В обработке";
+                }
+                break;
+            }
+            case 2: {
                 status = "В обработке";
                 break;
             }
+            case 3:
             case 4:
-            case 5:{
-                status = "Готов";
+            case 5: {
+
+                if (this.props.info.type === 3) {
+                    status = "Подтвержден";
+                }
+                else {
+                    status = "Готов";
+                }
+
+
                 break;
             }
 
             case 6: {
-                status = "Отменен";
+
+                status = "Отказ";
+
                 break;
             }
         }
@@ -117,8 +135,8 @@ export default class HistoryShortInfo extends React.Component {
         return <View>
             <View style={styles.order}>
                 <Text
-                    style={styles.orderText}>{'Заказ №' + this.props.info.numberOrder + ' от ' + moment(this.props.info.created_at).format('D MMM HH:mm')}</Text>
-                {this.props.info.status === 4 ?
+                    style={styles.orderText}>{'Заказ' + (this.props.info.numberOrder ? (' №' + this.props.info.numberOrder) : '') + ' от ' + moment.utc(this.props.info.created_at).local().format('D MMM HH:mm')}</Text>
+                {this.props.info.status === 3 || this.props.info.status === 5 ?
                     <View style={styles.orderStatusSuccess}>
                         <Text style={styles.orderStatusText}>{status}</Text>
                     </View>
@@ -135,7 +153,7 @@ export default class HistoryShortInfo extends React.Component {
                 <Text style={styles.headerText}>{title}</Text>
                 <Text style={styles.restaurantText}>{this.props.restaurantName}</Text>
                 <View style={styles.pointBlock}>
-                    <Text style={styles.pointText}>{moment(date).format('D MMM, HH:mm')}</Text>
+                    <Text style={styles.pointText}>{moment.utc(date).local().format('D MMM, HH:mm')}</Text>
                     {this.props.info.type !== 5 && this.props.info.type !== 3 && <View style={styles.priceBlock}>
                         <View style={styles.infoPoint}/>
                         <Text style={styles.pointText}>{this.props.info.price + ' ₽'}</Text>
@@ -178,7 +196,7 @@ const styles = {
     },
     orderStatusText: {
         paddingHorizontal: 10,
-        paddingBottom:1,
+        paddingBottom: 1,
         fontSize: 14,
         lineHeight: 20,
         color: '#fff'

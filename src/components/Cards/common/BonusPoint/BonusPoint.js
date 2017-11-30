@@ -18,7 +18,8 @@ export default class BonusPoint extends React.Component {
         return <View style={styles.block}>
             {this.props.showHint && <View style={styles.hintBlock}>
                 <Text style={styles.header}>Бонусные баллы</Text>
-                <Text>Бонусные баллы накапливаются при сканировании чека. 1 балл = 50 потраченных рублей.</Text>
+                <Text style={styles.text}>Бонусные баллы накапливаются при сканировании чека.</Text>
+                <Text style={styles.text}>1 балл = 50 потраченных рублей.</Text>
             </View>}
             <View>
                 <Text style={styles.bonusHeader}>Ваши баллы:</Text>
@@ -28,7 +29,7 @@ export default class BonusPoint extends React.Component {
                 </Text>}
             </View>
             <View style={styles.buttonRow}>
-                <Button warning rounded bordered onPress={()=>{
+                <Button style={{flex:1,justifyContent:'center'}} warning rounded bordered onPress={()=>{
                     this.props.navigation.navigate('HowWorksPage')
                 }}>
                     <Text uppercase={false}>Как накопить и тратить баллы?</Text>
@@ -63,7 +64,7 @@ const styles = {
     bonusValue: {
         fontSize: 63,
         backgroundColor: 'transparent',
-        marginTop: -15,
+        marginTop: -10,
         marginBottom: -10
     },
     buttonRow: {

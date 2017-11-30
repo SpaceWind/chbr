@@ -18,7 +18,7 @@ class BasketIconC extends React.Component {
 
         return (
             <View>
-                <TouchableOpacity onPress={() => {
+                {/*release <TouchableOpacity onPress={() => {
                     navigation.navigate('Basket');
                 }}>
                     <View style={{padding: 10, marginLeft: 10, flexDirection: 'row'}}>
@@ -38,7 +38,7 @@ class BasketIconC extends React.Component {
                     </View>
 
 
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
             </View>
         );
     }

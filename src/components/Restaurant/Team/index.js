@@ -3,7 +3,7 @@ import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
     View
 } from 'native-base';
-import {Image, TouchableOpacity} from "react-native";
+import {Image, ImageBackground, TouchableOpacity} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import {signStackStyle} from "../../../routers/SignStack";
@@ -16,7 +16,7 @@ class Team extends React.Component {
     renderMember(item) {
         return (
             <View style={styles.member} key={item.id}>
-                <Image source={{uri:item.avatar_url}} style={styles.memberImage}>
+                <Image source={{uri: item.avatar_url}} style={styles.memberImage}>
                 </Image>
 
                 <View style={styles.memberInfo}>
@@ -36,10 +36,11 @@ class Team extends React.Component {
         return (
 
 
-            <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
 
                 <View style={styles.container}>
-                    <Container >
+                    <Container>
                         <Content>
                             <View style={{paddingHorizontal: 16}}>
                                 <Text style={styles.header}>
@@ -66,13 +67,15 @@ class Team extends React.Component {
                     </Container>
 
                 </View>
-            </Image>
+            </ImageBackground>
         );
     }
 }
+
 function bindAction(dispatch) {
     return {};
 }
+
 const mapStateToProps = state => ({
     restaurants: state.restaurant.restaurants
 });

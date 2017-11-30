@@ -1,19 +1,21 @@
 import React from 'react';
 import {connect} from "react-redux";
 
-import {FlatList, Image, RefreshControl, ScrollView, TouchableOpacity} from "react-native";
+import {FlatList, Image, ImageBackground, RefreshControl, ScrollView, TouchableOpacity} from "react-native";
 import moment from "moment";
 import {Text, View, Icon, Button} from "native-base";
 import Swipeout from "react-native-swipeout";
 import platform from "../../../../native-base-theme/variables/platform";
 import {signStackStyle} from "../../../routers/SignStack";
-import {getTableReserves} from "../../../actions/user";
-
+import {deleteOperation, getTableReserves} from "../../../actions/user";
+import Spinner from "react-native-loading-spinner-overlay";
 
 class HistoryPage extends React.Component {
 
 
-    state = {};
+    state = {
+        opened: null
+    };
 
     componentWillMount() {
 
@@ -91,7 +93,7 @@ class HistoryPage extends React.Component {
                 },
                 component: (<Button danger style={styles.swipeButton}
                                     onPress={() => {
-
+                                        this._deleteOperation(item.id);
                                     }}
                 >
                     <Text style={styles.swipeButtonText} uppercase={false}>Удалить</Text>
@@ -104,10 +106,10 @@ class HistoryPage extends React.Component {
         let bonusText = bonus + ' ' + 'бал.';
 
 
-        let date = item.created_at;
+        let date = moment.utc(item.created_at).local();
         if (item.type === 3) {
             bonusText = item.result_data.people_quantity + ' чел.';
-            date = item.result_data.timestamp;
+            date = moment.utc(item.result_data.timestamp);
         }
 
 
@@ -121,8 +123,13 @@ class HistoryPage extends React.Component {
 
         return (
 
-            <Swipeout backgroundColor={'#2B3034'} right={swipeoutBtns} buttonWidth={88}
-                      autoClose={true} scroll={() => false}>
+            <Swipeout backgroundColor={'#2B3034'}
+                      right={swipeoutBtns}
+
+                      buttonWidth={88}
+
+                      autoClose={true}
+                      scroll={() => false}>
                 <TouchableOpacity style={styles.listItemTouch} onPress={() => {
                     this.openHistory(item, title)
                 }}>
@@ -131,10 +138,11 @@ class HistoryPage extends React.Component {
                         <View style={styles.listItemBody}>
                             <Text style={styles.listItemHeader}>{title}</Text>
                             <View style={styles.listItemPointBlock}>
-                                <Text style={styles.listItemPointText}>{moment(date).format('D MMM, HH:mm')}</Text>
+                                <Text
+                                    style={styles.listItemPointText}>{date.format('D MMM, HH:mm')}</Text>
                                 {item.type !== 5 && item.type !== 3 && <View style={styles.listItemPriceBlock}>
                                     <View style={styles.infoPoint}/>
-                                    <Text style={styles.listItemPointText}>{item.price + ' ₽'}</Text>
+                                    <Text style={styles.listItemPointText}>{(item.price || item.summ) + ' ₽'}</Text>
                                 </View>}
                                 <View style={styles.infoPoint}/>
                                 <Text style={styles.listItemPointText}>{bonusText}</Text>
@@ -149,6 +157,7 @@ class HistoryPage extends React.Component {
         )
     };
 
+
     capitalize(s) {
         return s[0].toUpperCase() + s.slice(1);
     }
@@ -156,20 +165,24 @@ class HistoryPage extends React.Component {
     render() {
 
 
-        let empty = !this.props.history ||!this.props.history.list|| this.props.history.list.length === 0;
+        let empty = !this.props.history || !this.props.history.list || this.props.history.list.length === 0;
 
 
-        let list =[];
+        let list = [];
         if (!empty) {
             list = this.props.history.list.filter((item) => {
-                return item.type !== 6;
+                return item.type !== 6 && item.type !== 8 && item.type !== 9 && item.type !== 10;
             });
+            if (list.length === 0) {
+                empty = true;
+            }
         }
 
 
+        return <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                style={signStackStyle}>
 
-        return <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
-
+            <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
             {!empty
                 ? <FlatList
                     style={styles.list}
@@ -190,19 +203,38 @@ class HistoryPage extends React.Component {
                     ListHeaderComponent={() => (<View style={styles.listHeader}/>)}
                     ListFooterComponent={() => (<View style={styles.listFooter}/>)}
                 />
-                : <View style={{alignItems: 'center', width: '100%', marginTop: 10}}>
+                : <View style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flex: 1,
+                    width: null,
+                    height: null,
+                }}>
                     <Text style={{
                         fontSize: 22,
                         lineHeight: 33,
                         textAlign: 'center'
-                    }}>Ваша история пуста</Text>
+                    }}>История заказов пуста</Text>
 
                 </View>}
 
 
-        </Image>
+        </ImageBackground>
     }
 
+    async _deleteOperation(id) {
+        this.setState({loading: true});
+        try {
+            let result = await this.props.deleteOperation(id);
+            await this.props.getTableReserves();
+        }
+        catch (ex) {
+
+        }
+        this.setState({loading: false});
+        this.setState({opened: null})
+
+    }
 
     onRefresh() {
         this.props.getTableReserves()
@@ -212,7 +244,10 @@ class HistoryPage extends React.Component {
 function bindAction(dispatch) {
     return {
         getTableReserves: () => {
-            dispatch(getTableReserves());
+            return dispatch(getTableReserves());
+        },
+        deleteOperation: (id) => {
+            return dispatch(deleteOperation(id));
         }
     };
 }

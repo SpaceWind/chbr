@@ -1,6 +1,6 @@
 import React from 'react';
 import {Body, Button, Card, CardItem, Container, Content, Icon, Left, Picker, Right, Text, View} from 'native-base';
-import {Image, TouchableOpacity, Dimensions, ScrollView, Animated} from "react-native";
+import {Image, ImageBackground, TouchableOpacity, Dimensions, ScrollView, Animated} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import {Platform} from "react-native";
 
@@ -79,7 +79,8 @@ class BasketPage extends React.Component {
         }
 
 
-        return <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                style={signStackStyle}>
 
             <ScrollView>
 
@@ -150,7 +151,7 @@ class BasketPage extends React.Component {
                                 }}>
                             <Text uppercase={false}>Оформить заказ</Text>
                         </Button>
-                        <Text style={styles.mark}>Вы получите {Math.ceil(price* 0.02)} баллов</Text>
+                        <Text style={styles.mark}>Вы получите {Math.ceil(price * 0.02)} баллов</Text>
 
                     </View>
                 </View>
@@ -222,7 +223,7 @@ class BasketPage extends React.Component {
 
             </MyModal>
 
-        </Image>
+        </ImageBackground>
     }
 
     getAllDish(restaurantId) {

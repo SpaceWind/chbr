@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {signStackStyle} from "../../../routers/SignStack";
-import {FlatList, Image, ScrollView} from "react-native";
+import {FlatList, Image, ImageBackground, ScrollView} from "react-native";
 
 import {Text, View, Icon, Button} from "native-base";
 
@@ -33,7 +33,8 @@ export default class TakeAwayOrderPage extends React.Component {
     render() {
 
         let history = this.props.navigation.state.params.history;
-        return (<Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                 style={signStackStyle}>
 
             <ScrollView>
                 <View style={historyStyles.scrollContainer}>
@@ -53,7 +54,7 @@ export default class TakeAwayOrderPage extends React.Component {
 
 
             </ScrollView>
-        </Image>)
+        </ImageBackground>)
     }
 }
 

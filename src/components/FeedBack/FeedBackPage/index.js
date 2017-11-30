@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Icon, List, ListItem, Switch, Text, View} from 'native-base';
-import {Image, TouchableOpacity, ScrollView, Alert, TextInput, LayoutAnimation} from "react-native";
+import {Image, ImageBackground, TouchableOpacity, ScrollView, Alert, TextInput, LayoutAnimation} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 
 import {connect} from "react-redux";
@@ -62,7 +62,8 @@ class FeedBackPageC extends React.Component {
 
     render() {
 
-        return <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                style={signStackStyle}>
             <KeyboardAwareScrollView
                 resetScrollToCoords={{x: 0, y: 0}}
                 contentContainerStyle={styles.container}
@@ -243,7 +244,7 @@ class FeedBackPageC extends React.Component {
             </KeyboardAwareScrollView>
 
 
-        </Image>
+        </ImageBackground>
     }
 
 

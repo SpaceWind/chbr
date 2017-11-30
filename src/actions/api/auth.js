@@ -47,9 +47,34 @@ class AuthServiceImpl {
     }
 
 
+    async createDevice(uid, data) {
+        let res = await this.Api.post(`/device/${uid}`, {
+            body: data
+        });
+        if (res.err) throw res.err;
+        return res.body;
+    }
+
+    async attachDevice(uid) {
+        let res = await this.Api.put(`/device/${uid}/client`, {
+            body: {}
+        });
+        if (res.err) throw res.err;
+        return res.body;
+    }
+
+
     async getTableReserves() {
         let res = await this.Api.get(`/client/current/operations`, {
             body: {timestamp: moment().add(-3, 'years').unix()}
+        });
+        if (res.err) throw res.err;
+        return res.body;
+    }
+
+    async deleteOperation(id) {
+        let res = await this.Api.del(`/client/current/operations`, {
+            body: {id}
         });
         if (res.err) throw res.err;
         return res.body;
@@ -82,6 +107,32 @@ class AuthServiceImpl {
                 'Content-Type': 'multipart/form-data',
             },
             body: form
+        });
+        if (res.err) throw res.err;
+        return res.body;
+    }
+
+    async getLikes() {
+        let res = await this.Api.get(`/client/current/likes/food`, {
+            body: {}
+        });
+        if (res.err) throw res.err;
+        return res.body;
+    }
+
+    async checkBill(code) {
+        let res = await this.Api.post(`/client/current/cheque`, {
+            body: {
+                cipher: code
+            }
+        });
+        if (res.err) throw res.err;
+        return res.body;
+    }
+
+    async getDiscountCode() {
+        let res = await this.Api.get(`/client/current/discount-code`, {
+            body: {}
         });
         if (res.err) throw res.err;
         return res.body;

@@ -3,7 +3,7 @@ import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
     View
 } from 'native-base';
-import {FlatList, Image, ListView, RefreshControl, TouchableOpacity} from "react-native";
+import {FlatList, Image, ImageBackground, ListView, RefreshControl, TouchableOpacity} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import {signStackStyle} from "../../../routers/SignStack";
@@ -34,7 +34,8 @@ class News extends React.Component {
         });
 
         return (
-            <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
 
                 <View style={styles.container}>
 
@@ -53,7 +54,7 @@ class News extends React.Component {
                                     () => {
                                         this.props.navigation.navigate('OneNewsPage', {
                                             news: rowData.item,
-                                            restaurants:[restaurant]
+                                            restaurants: [restaurant]
                                         })
                                     }
                                 }
@@ -75,7 +76,7 @@ class News extends React.Component {
 
                     </FlatList>
                 </View>
-            </Image>
+            </ImageBackground>
         );
     }
 }

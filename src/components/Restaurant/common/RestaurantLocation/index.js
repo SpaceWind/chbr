@@ -51,22 +51,26 @@ export default class RestaurantLocation extends React.Component {
     _getLocationAsync = async () => {
 
         navigator.geolocation.getCurrentPosition((location) => {
-                let distance = geolib.getDistance(location.coords, {
-                    latitude: this.props.restaurant.address_lat,
-                    longitude: this.props.restaurant.address_lon
-                });
 
-                if (distance > 1000) {
-                    distance = (distance / 1000).toFixed(2) + "км"
+                if (this.props.restaurant.address_lat && this.props.restaurant.address_lon) {
+                    let distance = geolib.getDistance(location.coords, {
+                        latitude: this.props.restaurant.address_lat,
+                        longitude: this.props.restaurant.address_lon
+                    });
+
+                    if (distance > 1000) {
+                        distance = (distance / 1000).toFixed(2) + "км"
+                    }
+                    else {
+                        distance = distance + "м"
+                    }
+
+
+                    this.setState({
+                        distance
+                    });
                 }
-                else {
-                    distance = distance + "м"
-                }
 
-
-                this.setState({
-                    distance
-                });
             },
             () => {
             },

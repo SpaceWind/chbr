@@ -14,6 +14,8 @@ import CloseIcon from "./components/CloseIcon/index";
 import {View} from "native-base";
 import SignSecondStepSwag from "../components/SignIn/SignSecondStep/index";
 import OneNewsPage from "../components/News/OneNewsPage/index";
+import ScanBillPage from "../components/Cards/ScanBillPage/index";
+
 
 export default RestaurantsStack = StackNavigator({
     Restaurants: {
@@ -55,7 +57,7 @@ export default RestaurantsStack = StackNavigator({
             headerTitleStyle: {
                 ...BaseNavigationBarStyle.headerTitleStyle,
                 marginHorizontal: 5,
-                fontSize:17
+                fontSize: 17
             },
             drawerLockMode: 'locked-closed',
         }
@@ -65,7 +67,7 @@ export default RestaurantsStack = StackNavigator({
         navigationOptions: {
             headerBackTitleStyle: {
                 color: "transparent",
-                width:0
+                width: 0
             },
             headerStyle: {
                 ...BaseNavigationBarStyle.headerStyle,
@@ -76,7 +78,7 @@ export default RestaurantsStack = StackNavigator({
             headerTitleStyle: {
                 ...BaseNavigationBarStyle.headerTitleStyle,
                 marginHorizontal: 5,
-                fontSize:17
+                fontSize: 17
             },
             drawerLockMode: 'locked-closed',
         }
@@ -135,15 +137,25 @@ export default RestaurantsStack = StackNavigator({
         })
     },
     OneRestaurantNewsPage: {
-    screen: OneNewsPage,
+        screen: OneNewsPage,
         navigationOptions: props => ({
-        title: 'Новости и акции',
-        headerBackTitleStyle: {
-            color: "transparent"
-        },
-        drawerLockMode:'locked-closed'
-    })
-}
+            title: 'Новости и акции',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            drawerLockMode: 'locked-closed'
+        }),
+    },
+    ScanBill: {
+        screen: ScanBillPage,
+        navigationOptions: {
+            title: 'Сканирование чека',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            drawerLockMode:'locked-closed'
+        }
+    },
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle,

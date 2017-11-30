@@ -6,6 +6,7 @@ import DrawerIcon from './components/DrawerIcon'
 import {BaseNavigationBarStyle} from "./BaseNavigationBarStyle";
 
 import BasketIcon from "./components/BasketIcon/index";
+import ScanBillPage from "../components/Cards/ScanBillPage/index";
 export default ProfileStack = StackNavigator({
     Profile: {
         screen: Profile,
@@ -17,7 +18,6 @@ export default ProfileStack = StackNavigator({
     },
     AddCard: {
         screen: AddCard,
-
         navigationOptions: props => ({
             title: 'Добавление карты',
             headerBackTitleStyle: {
@@ -25,7 +25,17 @@ export default ProfileStack = StackNavigator({
             },
             drawerLockMode:'locked-closed'
         })
-    }
+    },
+    ScanBill: {
+        screen: ScanBillPage,
+        navigationOptions: {
+            title: 'Сканирование чека',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            drawerLockMode:'locked-closed'
+        }
+    },
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle

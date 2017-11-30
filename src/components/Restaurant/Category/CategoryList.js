@@ -3,7 +3,15 @@
  */
 import React from 'react';
 import {Body, Button, Card, CardItem, Container, Content, Icon, Left, Right, Text, View} from 'native-base';
-import {FlatList, Image, TouchableOpacity, Animated, TouchableWithoutFeedback, Dimensions} from "react-native";
+import {
+    FlatList,
+    Image,
+    ImageBackground,
+    TouchableOpacity,
+    Animated,
+    TouchableWithoutFeedback,
+    Dimensions
+} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 
 import {signStackStyle} from "../../../routers/SignStack";
@@ -101,7 +109,8 @@ export default class CategoryList extends React.Component {
 
 
         return (
-            <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+            <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                             style={signStackStyle}>
                 <TouchableOpacity onPress={() => this.reset()} activeOpacity={1}>
 
 
@@ -120,7 +129,7 @@ export default class CategoryList extends React.Component {
 
 
                 </TouchableOpacity>
-            </Image>
+            </ImageBackground>
         );
     }
 

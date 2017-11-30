@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, View, StatusBar} from 'react-native';
+import {Image, StyleSheet, View, StatusBar, ImageBackground, Keyboard} from 'react-native';
 import SignStack, {signStackStyle} from "./routers/SignStack";
 import {connect} from "react-redux";
 import NavigationDrawer from "./routers/NavigationDrawer";
@@ -7,7 +7,8 @@ import {getRestaurants} from "./actions/restaurant";
 import {Text, variables} from "native-base";
 import Api from "./actions/api/api"
 import TutorialPage from "./components/Tutorial/index";
-import {Platform} from 'react-native';
+import {Platform, Text as ReactText, Dimensions} from 'react-native';
+import DeviceInfo from 'react-native-device-info'
 
 import FCM, {
     FCMEvent,
@@ -15,8 +16,9 @@ import FCM, {
     WillPresentNotificationResult,
     NotificationType
 } from 'react-native-fcm';
-import {sendPushToken} from "./actions/user";
-
+import {attachDevice, createDevice, sendPushToken, setUID} from "./actions/user";
+import {NavigationActions} from "react-navigation";
+import UUIDGenerator from 'react-native-uuid-generator';
 // this shall be called regardless of app state: running, background or not running. Won't be called when app is killed by user in iOS
 FCM.on(FCMEvent.Notification, async (notif) => {
     // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
@@ -36,13 +38,6 @@ FCM.on(FCMEvent.Notification, async (notif) => {
 
 
         console.log(notif);
-        FCM.presentLocalNotification({
-            vibrate: 500,
-            title: notif.fcm.title,
-            body: notif.fcm.body,
-            priority: "high",
-            show_in_foreground: true
-        })
         switch (notif._notificationType) {
             case NotificationType.Remote:
                 notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
@@ -66,69 +61,71 @@ class App extends React.Component {
 
     token = null;
 
+    state = {
+        lockMode: 'locked-closed'
+    };
+
     constructor(props) {
         super(props);
-
+        ReactText.defaultProps.allowFontScaling = false;
+        Text.defaultProps.allowFontScaling = false;
         variables.androidRipple = false;
     }
 
     componentWillMount() {
 
+
     }
 
 
     componentDidMount() {
-        FCM.requestPermissions().then(() => console.log('granted')).catch(() => console.log('notification permission rejected'));
 
-        FCM.getFCMToken().then(token => {
-            console.log(token);
-            if (this.props.user.token) {
-                this.props.sendPushToken(token);
-            }
-            this.token = token;
-        });
-
-        this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
-            console.log(notif)
-            if (notif && notif.local_notification) {
-                return
-            }
-            FCM.presentLocalNotification({
-                vibrate: 500,
-                title: notif.fcm.title,
-                body: notif.fcm.body,
-                priority: "high",
-                show_in_foreground: true
-            })
-            if (Platform.OS === 'ios') {
-                switch (notif._notificationType) {
-                    case NotificationType.Remote:
-                        notif.finish(RemoteNotificationResult.NewData); //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
-                        break;
-                    case NotificationType.NotificationResponse:
-                        notif.finish();
-                        break;
-                    case NotificationType.WillPresent:
-                        notif.finish(WillPresentNotificationResult.All); //other types available: WillPresentNotificationResult.None
-                        break;
-                }
-            }
-        });
-        FCM.on(FCMEvent.RefreshToken, (token) => {
-            if (this.props.user.token) {
-                this.props.sendPushToken(token);
-            }
-            this.token = token;
-        });
-
-        // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
-        // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
-        FCM.getInitialNotification().then(notif => console.log(notif));
     }
 
-    componentWillUnmount() {
-        // stop listening for events
-        this.notificationListener.remove();
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.isLoading !== nextProps.isLoading) {
+            this.loadPrefetch();
+            this._checkUID();
+        }
+
+        if (nextProps.user.token) {
+            if (nextProps.user.token !== this.props.user.token) {
+                Api.jwt(nextProps.user.token);
+                if (this.token) {
+                    this.props.sendPushToken(this.token);
+                }
+            }
+
+        }
+        else {
+            Api.jwt(null);
+        }
+    }
+
+    async _checkUID() {
+        if (this.props.user && this.props.user.uid === null) {
+            try {
+                let uid = DeviceInfo.getUniqueID();
+                this.props.setUID(uid);
+                let device = {
+                    screen_width: Dimensions.get('window').width,
+                    screen_height: Dimensions.get('window').height,
+                    vendor: DeviceInfo.getBrand(),
+                    model: DeviceInfo.getModel(),
+                    os: DeviceInfo.getSystemName(),
+                    os_version: DeviceInfo.getSystemVersion(),
+                    timezone: DeviceInfo.getTimezone()
+                };
+                let result = await this.props.createDevice(uid, device);
+                if (this.props.user.logged) {
+                    this.props.attachDevice(uid);
+                }
+            }
+            catch (ex) {
+
+            }
+        }
     }
 
     async loadPrefetch() {
@@ -141,32 +138,7 @@ class App extends React.Component {
             });
         }
 
-    }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.isLoading !== nextProps.isLoading) {
-            this.loadPrefetch();
-        }
-
-        if (nextProps.user.token) {
-            if(nextProps.user.token!==this.props.user.token)
-            {
-                Api.jwt(nextProps.user.token);
-                if(this.token)
-                {
-                    this.props.sendPushToken(this.token);
-                }
-            }
-
-        }
-        else {
-            Api.jwt(null);
-        }
-    }
-
-
-    state = {
-        lockMode: 'locked-closed'
     }
 
     render() {
@@ -178,39 +150,36 @@ class App extends React.Component {
 
         if (this.props.showTutorial) {
             return (
-                <Image source={require('../assets/images/login&registration/login-bg.png')} style={signStackStyle}>
+                <ImageBackground source={require('../assets/images/login&registration/login-bg.png')}
+                                 style={signStackStyle}>
+
                     <TutorialPage/>
-                </Image>
+                </ImageBackground>
             )
         }
 
         if (this.props.showSign) {
             return (
-                <Image source={require('../assets/images/login&registration/login-bg.png')} style={signStackStyle}>
+                <ImageBackground source={require('../assets/images/login&registration/login-bg.png')}
+                                 style={signStackStyle}>
 
                     <SignStack/>
 
 
-                </Image>
+                </ImageBackground>
 
             )
         }
         return (
-            <Image source={require('../assets/images/background/background.png')} style={signStackStyle}>
+            <ImageBackground source={require('../assets/images/background/background.png')} style={signStackStyle}>
                 <NavigationDrawer style={{backgroundColor: '#000'}}
                                   onNavigationStateChange={(prevState, newState, action) => {
 
-                                      /*let drawerEnable = newState.routes[0].routes.find((ele) => {
-                                          return ele.index !== 0;
-                                      });
-                                      if (drawerEnable.index && drawerEnable.index >= 1) {
-                                          this.setState({lockMode: 'locked-closed'});
-                                      } else {
-                                          this.setState({lockMode: 'unlocked'});
-                                      }*/
+                                      Keyboard.dismiss()
 
                                   }}/>
-            </Image>
+
+            </ImageBackground>
         );
     }
 }
@@ -221,10 +190,16 @@ function bindAction(dispatch) {
         getRestaurants: () => {
             return dispatch(getRestaurants());
         },
-        sendPushToken: (token) => {
-            return dispatch(sendPushToken(token));
+        setUID: (uid) => {
+            dispatch(setUID(uid));
+        },
+        createDevice: (uid, device) => {
+            return dispatch(createDevice(uid, device));
+        },
+        attachDevice: (uid) => {
+            return dispatch(attachDevice(uid));
         }
-    };
+    }
 }
 
 const mapStateToProps = state => ({

@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {signStackStyle} from "../../../routers/SignStack";
-import {FlatList, Image, ScrollView, Alert} from "react-native";
+import {FlatList, Image, ImageBackground, ScrollView, Alert} from "react-native";
 
 import {Text, View, Icon, Button} from "native-base";
 
@@ -11,6 +11,7 @@ import FieldValue from "../common/FieldValue/index";
 import historyStyles from "../common/historyStyle";
 import {getReserve} from "../../../actions/user";
 import Spinner from "react-native-loading-spinner-overlay";
+import {cancelReserve} from "../../../actions/restaurant";
 
 class BookTablePageC extends React.Component {
 
@@ -43,13 +44,14 @@ class BookTablePageC extends React.Component {
         let restaurant = this.props.restaurants[this.history.restaurant_id];
         let restaurantName = restaurant.title_short;
 
-        return (<Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                 style={signStackStyle}>
 
             <ScrollView>
                 <View style={historyStyles.scrollContainer}>
 
 
-                    <Spinner visible={this.props.isReservePending} textStyle={{color: '#FFF'}}/>
+                    <Spinner visible={this.props.isReservePending || this.state.loading} textStyle={{color: '#FFF'}}/>
                     <HistoryShortInfo info={history} result={history.result_data} restaurantName={restaurantName}/>
 
 
@@ -58,10 +60,10 @@ class BookTablePageC extends React.Component {
                     </View>
 
 
-                    <View style={styles.buttonBlock}>
+                    {this.history.status!==6 && <View style={styles.buttonBlock}>
 
                         <View style={{
-                            width: '50%', paddingRight: 7,
+                            width: '100%', paddingHorizontal: 7,
                         }}>
                             <Button danger full rounded
                                     style={{
@@ -69,6 +71,7 @@ class BookTablePageC extends React.Component {
                                     }}
                                     onPress={() => {
 
+                                        this._cancelReserve()
                                     }}
 
                             >
@@ -76,29 +79,13 @@ class BookTablePageC extends React.Component {
                             </Button>
                         </View>
 
-                        <View style={{
-                            width: '50%', paddingLeft: 7,
-                        }}>
-                            <Button warning full rounded style={{
-                                flex: 1,
-                                marginLeft: 7,
-                                justifyContent: 'center',
-                                paddingLeft: 10,
-                                paddingRight: 10,
-                                overflow: 'hidden'
-                            }}
-                                    onPress={() => {
 
-                                    }}>
-                                <Text uppercase={false}>Сохранить чек</Text>
-                            </Button>
-                        </View>
-                    </View>
+                    </View>}
                 </View>
 
 
             </ScrollView>
-        </Image>)
+        </ImageBackground>)
     }
 
 
@@ -126,13 +113,48 @@ class BookTablePageC extends React.Component {
         }
 
     }
+
+    async _cancelReserve() {
+        this.setState({loading: true});
+        try {
+            await this.props.cancelReserve(this.history.restaurant_id, this.history.result_id);
+            this.history.status = 6;
+            this.setState({loading: false});
+
+
+        }
+        catch
+            (ex) {
+            this.setState({loading: false});
+            setTimeout(() => {
+                Alert.alert(
+                    'Ошибка',
+                    'Не удалось выполнить операцию',
+                    [
+
+                        {
+                            text: 'Ок', onPress: () => {
+
+
+                        }
+                        }
+                    ]
+                )
+            }, 10);
+        }
+
+    }
+
 }
 
 function bindAction(dispatch) {
     return {
         getReserve: (restaurantId, reserveId) => {
             dispatch(getReserve(restaurantId, reserveId));
-        }
+        },
+        cancelReserve: (restaurantId, reserveId) => {
+            dispatch(cancelReserve(restaurantId, reserveId));
+        },
     };
 }
 

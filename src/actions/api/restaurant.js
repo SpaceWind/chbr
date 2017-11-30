@@ -44,6 +44,16 @@ class RestaurantServiceImpl {
         return res.body;
     }
 
+    async cancelReserve(restaurantId, reserveId) {
+
+        let res = await this.Api.del(`/restaurant/` + restaurantId + '/reserve/' + reserveId, {
+            body: {}
+        });
+        if (res.err) throw res.err;
+
+        return res.body;
+    }
+
 
     async buyByBonus(restaurantId,
                      dishId) {
@@ -56,7 +66,42 @@ class RestaurantServiceImpl {
         return res.body;
     }
 
+    async likeDish(restaurantId, categoryId,
+                   dishId, like) {
 
+
+        let url = `/restaurant/${restaurantId}/menu/categories/${categoryId}/food/${dishId}/like`;
+        let res = null;
+        if (like) {
+            res = await this.Api.put(url, {
+                body: {}
+            });
+        }
+        else {
+
+            res = await this.Api.del(url, {
+                body: {}
+            });
+        }
+
+        if (res.err) throw res;
+
+        res.body.dishId = dishId;
+        res.body.restaurantId = restaurantId;
+        res.body.categoryId = categoryId;
+        res.body.like = like;
+        return res.body;
+    }
+
+    async getDish(restaurantId,
+                  categoryId,
+                  dishId) {
+        let res = await this.Api.get(`/restaurant/${restaurantId}/menu/categories/${categoryId}/food/${dishId}`, {
+            body: {}
+        });
+        if (res.err) throw res.err;
+        return res.body;
+    }
 }
 
 export const RestaurantService = new RestaurantServiceImpl();

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Icon, Left, List, ListItem, Picker, Right, Switch, Text, View} from 'native-base';
-import {Image, TouchableOpacity, ScrollView, Alert} from "react-native";
+import {Image, ImageBackground, TouchableOpacity, ScrollView, Alert} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 
 import UserInfo from "../../../routers/components/UserInfo/index";
@@ -13,7 +13,7 @@ import Swipeout from "react-native-swipeout";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import MyModal from "../../Common/MyModal/index";
 import {Platform} from "react-native";
-import {getUserData, updateUserData} from "../../../actions/user";
+import {getUserData, setSignState, signOut, updateUserData} from "../../../actions/user";
 import * as _ from "lodash";
 
 
@@ -56,7 +56,8 @@ class Profile extends React.Component {
 
     render() {
 
-        return <Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return <ImageBackground source={require('../../../../assets/images/background/background.png')}
+                                style={signStackStyle}>
             <KeyboardAwareScrollView
                 resetScrollToCoords={{x: 0, y: 0}}
                 contentContainerStyle={styles.container}
@@ -129,7 +130,7 @@ class Profile extends React.Component {
                                     }}
                                     onBlur={() => {
 
-                                        if (!this.validateEmail(this.email)) {
+                                        if (!this.validateEmail(this.state.userData.email)) {
                                             this.setState({
                                                 userData: {
                                                     ...this.state.userData,
@@ -189,21 +190,25 @@ class Profile extends React.Component {
 
                             <View style={{paddingVertical: 16}}>
                                 <Switch value={this.state.userData.notifications === 1} onValueChange={(push) => {
-                                    this.setState({
+
+                                    let userData = {
                                         userData: {
                                             ...this.state.userData,
-                                            notifications:  push ? 1 : 0
+                                            notifications: push ? 1 : 0
                                         }
-                                    });
-                                    this.props.updateUserData(_.pick(this.state.userData, ['first_name', 'last_name', 'notifications', 'email']));
-                                }} onTintColor={platform.brandWarning} {...(currentPlatform !== 'ios' ? {thumbTintColor: '#f4f5f5'} : {})}/>
+                                    };
+
+                                    this.setState(userData);
+                                    this.props.updateUserData(_.pick(userData.userData, ['first_name', 'last_name', 'notifications', 'email']));
+                                }}
+                                        onTintColor={platform.brandWarning} {...(currentPlatform !== 'ios' ? {thumbTintColor: '#f4f5f5'} : {})}/>
                             </View>
 
                         </View>
 
                     </View>
 
-                    <View>
+                    {/*release <View>
                         <Text style={styles.cardsHeader}>Методы оплаты</Text>
                     </View>
                     <View style={{
@@ -214,6 +219,44 @@ class Profile extends React.Component {
                         {
                             this._renderList()
                         }
+                    </View>*/}
+
+
+                    <View style={{
+                        borderTopWidth: 1,
+                        borderColor: platform.brandDivider,
+                        marginTop: 15
+                    }
+                    }>
+                        <View style={InputBlockStyles.inputBlock}>
+                            <Text style={InputBlockStyles.inputLabel}> Версия приложения</Text>
+
+                            <View style={{paddingVertical: 16}}>
+                                <Text style={{fontSize: 18}}>1.00</Text>
+                            </View>
+
+                        </View>
+
+                    </View>
+
+
+                    <View style={{
+                        marginTop: 30,
+                        marginBottom: 30,
+                        paddingHorizontal: 16
+                    }}>
+                        <Button
+                            danger
+                            full
+                            rounded
+                            onPress={() => {
+
+
+                                this.props.signIn();
+                                this.props.logOut();
+                            }}>
+                            <Text>Выйти</Text>
+                        </Button>
                     </View>
 
 
@@ -253,7 +296,7 @@ class Profile extends React.Component {
 
             </MyModal>
 
-        </Image>
+        </ImageBackground>
     }
 
 
@@ -355,6 +398,8 @@ class Profile extends React.Component {
 
                 <Text style={styles.cardListItemText}>Добавить метод оплаты</Text>
             </TouchableOpacity>
+
+
         </View>
     }
 
@@ -368,8 +413,10 @@ class Profile extends React.Component {
 
 function bindAction(dispatch) {
     return {
+        logOut: () => dispatch(signOut()),
         getUserData: () => dispatch(getUserData()),
         updateUserData: (data) => dispatch(updateUserData(data)),
+        signIn: () => dispatch(setSignState(true))
     };
 }
 
