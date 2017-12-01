@@ -25,11 +25,29 @@ class BookTable extends React.Component {
 
     scrollTo: false;
 
-    init = true;
+
 
     constructor(props) {
         super(props);
-        this.state.date = moment();
+        let date = null;
+        let currentHour = parseInt(moment().format('H'));
+        let currentMinute = parseInt(moment().format('m'));
+        if (currentHour < 12) {
+            date = moment().floor(24, 'hours').add(12, 'hours');
+        }
+        else if (currentHour < 23 || (currentHour === 23 && currentMinute <= 30)) {
+
+            if (currentHour + 2 < 23) {
+                date = moment().add(2, 'hours').ceil(30, 'minutes');
+            }
+            else {
+                date = moment().ceil(30, 'minutes');
+            }
+        }
+        else {
+            date = moment().ceil(24, 'hours').add(12, 'hours');
+        }
+        this.state.date = date;
         this.restaurant = props.restaurants[this.props.navigation.state.params.key];
         this.state.count = 2;
 
@@ -159,34 +177,6 @@ class BookTable extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.timeSheet) {
-
-            if (this.init) {
-
-                let date = null;
-                let currentHour = parseInt(moment().format('H'));
-                let currentMinute = parseInt(moment().format('m'));
-                if (currentHour < 12) {
-                    date = moment().floor(24, 'hours').add(12, 'hours');
-                }
-                else if (currentHour < 23 || (currentHour === 23 && currentMinute <= 30)) {
-
-                    if (currentHour + 2 < 23) {
-                        date = moment().add(2, 'hours').ceil(30, 'minutes');
-                    }
-                    else {
-                        date = moment().ceil(30, 'minutes');
-                    }
-                }
-                else {
-                    date = moment().ceil(24, 'hours').add(12, 'hours');
-                }
-                this.init = false;
-                this.setState({
-                    date: date
-                })
-
-            }
-
 
             setTimeout(() => {
                 this.scrollToDate(this.state.date)

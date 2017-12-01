@@ -55,7 +55,6 @@ export default class CategoryListItem extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View>
-
                     {this.renderButton(this.props.item)}
                 </View>
             </Animated.View>
@@ -150,7 +149,7 @@ const styles = {
         flexDirection: "row",
         alignItems: 'center',
         paddingHorizontal: 16,
-        height: 100,
+        paddingVertical:12
     },
     info: {
         flexDirection: "row",
@@ -171,6 +170,7 @@ const styles = {
         fontSize: 16,
         lineHeight: 18,
         maxWidth: '100%',
+        paddingRight:6
 
     },
     weight: {

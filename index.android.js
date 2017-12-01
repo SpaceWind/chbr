@@ -20,16 +20,11 @@ export default class App extends React.Component {
     };
 
     render() {
-        if (this.state.appIsReady) {
+
             return (
                 <ChesterWithRedux/>
             );
-        }
-        else {
-            return <View>
 
-            </View>
-        }
 
     }
 

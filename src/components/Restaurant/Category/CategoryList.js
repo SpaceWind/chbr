@@ -111,7 +111,7 @@ export default class CategoryList extends React.Component {
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
                              style={signStackStyle}>
-                <TouchableOpacity onPress={() => this.reset()} activeOpacity={1}>
+                <TouchableOpacity onPress={() => this.reset()} activeOpacity={1} style={signStackStyle}>
 
 
                     <FlatList

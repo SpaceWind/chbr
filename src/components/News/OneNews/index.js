@@ -12,11 +12,23 @@ export default class OneNews extends React.Component {
 
     render() {
 
+        let image = this.props.data.photos && this.props.data.photos.find((image)=>image.sort ===-1);
+
+        if(image)
+        {
+            image = {uri:image.s3_url}
+        }
+        else
+        {
+            image = require('../../../../assets/images/cafe-1.png');
+        }
+
+
         return (
             <View style={styles.container}>
 
 
-                <Image source={require('../../../../assets/images/cafe-1.png')} style={styles.image}>
+                <Image source={image} style={styles.image}>
                 </Image>
                 <View style={{marginHorizontal: 16}}>
                     <View style={styles.infoBlock}>

@@ -35,7 +35,7 @@ class NewsC extends React.Component {
 
         if (this.state.restaurant !== 'all') {
             newsData = newsData.filter((news, pos) => {
-                return news.restaurants.length === 0 || news.restaurants.find(rest => rest === this.state.restaurant)
+                return news.restaurants.length === 0 && news.event_place_all || news.restaurants.find(rest => rest.id === this.state.restaurant)
             });
         }
 
@@ -71,16 +71,21 @@ class NewsC extends React.Component {
                         data={newsData}
                         renderItem={(rowData) => {
                             let restaurants = null;
-                            if (rowData.item.restaurants.length > 0 && this.props.restaurants.length !== rowData.item.restaurants.length) {
-                                restaurants = this.props.restaurants.filter(rest => rowData.item.restaurants.find(restId => rest.id === restId));
+
+                            if (rowData.item.event_place_all || this.props.restaurants.length === rowData.item.restaurants.length) {
+                                restaurants = [{id: 1, title_short: 'Все рестораны'}]
+                            } else if (rowData.item.restaurants.length > 0 ) {
+                                restaurants = this.props.restaurants.filter(rest => rowData.item.restaurants.find(restNews => rest.id === restNews.id));
                             }
                             else {
-                                restaurants = [{id: 1, title_short: 'Все рестораны'}]
+                                restaurants = [];
                             }
 
-                            if(this.state.restaurant !== 'all')
-                            {
-                                restaurants = [{id: 1, title_short: this.props.restaurants.find(rest => rest.id === this.state.restaurant).title_short}]
+                            if (this.state.restaurant !== 'all') {
+                                restaurants = [{
+                                    id: 1,
+                                    title_short: this.props.restaurants.find(rest => rest.id === this.state.restaurant).title_short
+                                }]
                             }
 
 

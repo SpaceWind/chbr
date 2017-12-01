@@ -16,13 +16,26 @@ export default class OneNewsPage extends React.Component {
 
         let news = this.props.navigation.state.params.news;
         let restaurants = this.props.navigation.state.params.restaurants;
+
+
+        let image = news.photos &&news.photos.find((image)=>image.sort !==-1);
+
+        if(image)
+        {
+            image = {uri:image.s3_url}
+        }
+        else
+        {
+            image = require('../../../../assets/images/cafe-1.png');
+        }
+
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
                              style={signStackStyle}>
                 <ScrollView>
 
 
-                    <Image source={require('../../../../assets/images/cafe-1.png')} style={styles.image}>
+                    <Image source={image} style={styles.image}>
                     </Image>
                     <View style={{marginHorizontal: 16}}>
                         <View style={styles.infoBlock}>

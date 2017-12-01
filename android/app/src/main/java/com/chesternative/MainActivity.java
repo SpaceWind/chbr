@@ -1,8 +1,9 @@
 package com.chesternative;
 
 import com.facebook.react.ReactActivity;
-
+import org.devio.rn.splashscreen.SplashScreen;
 import android.content.Intent;
+import android.os.Bundle;
 
 public class MainActivity extends ReactActivity {
 
@@ -13,6 +14,12 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "ChesterNative";
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.show(this);  // here
+        super.onCreate(savedInstanceState);
     }
 
     @Override

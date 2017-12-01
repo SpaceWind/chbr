@@ -144,6 +144,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-splash-screen')
     compile project(':react-native-device-info')
     compile project(':react-native-uuid-generator')
     compile project(':react-native-camera')

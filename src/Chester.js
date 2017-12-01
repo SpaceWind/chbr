@@ -19,6 +19,7 @@ import FCM, {
 import {attachDevice, createDevice, sendPushToken, setUID} from "./actions/user";
 import {NavigationActions} from "react-navigation";
 import UUIDGenerator from 'react-native-uuid-generator';
+import SplashScreen from 'react-native-splash-screen'
 // this shall be called regardless of app state: running, background or not running. Won't be called when app is killed by user in iOS
 FCM.on(FCMEvent.Notification, async (notif) => {
     // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
@@ -85,6 +86,9 @@ class App extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.isLoading !== nextProps.isLoading) {
+            setTimeout(() => {
+                SplashScreen.hide();
+            }, 100);
             this.loadPrefetch();
             this._checkUID();
         }
@@ -145,7 +149,9 @@ class App extends React.Component {
 
         StatusBar.setBarStyle('light-content', true);
         if (this.props.isLoading) {
-            return <View></View>
+            return <View>
+
+            </View>
         }
 
         if (this.props.showTutorial) {

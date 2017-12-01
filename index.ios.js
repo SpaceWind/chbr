@@ -24,7 +24,6 @@ export default class App extends React.Component {
         return (
 
             <View style={{flex:1,width:null,height:null}}>
-                <Spinner visible={!this.state.appIsReady} textStyle={{color: '#FFF'}}/>
                 <ChesterWithRedux/>
             </View>
 

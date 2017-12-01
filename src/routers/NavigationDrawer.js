@@ -5,7 +5,7 @@ import {Button, Text, View} from "native-base";
 import {sendPushToken, setSignState, signOut} from "../actions/user";
 import {connect} from "react-redux";
 //import {Constants} from 'expo';
-import {Image, ScrollView, Platform, Dimensions, ImageBackground} from "react-native";
+import {Image, ScrollView, Platform, Dimensions, ImageBackground, Alert} from "react-native";
 import UserInfo from "./components/UserInfo/index";
 import platform from "../../native-base-theme/variables/platform";
 import ChesterIcon from "../components/Common/ChesterIcon/index";
@@ -14,7 +14,7 @@ import HistoryStack from "./HistoryStack";
 import NewsStack from "./NewsStack";
 import FeedBackStack from "./FeedBackStack";
 import MyCardStack from "./MyCardStack";
-
+import Permissions from 'react-native-permissions'
 import base64 from 'base-64'
 
 import Constants from "../../utilities/Constants";
@@ -200,10 +200,33 @@ class CustomNavigationDrawer extends React.Component {
     }
 
 
-    _scanCheck()
-    {
+    async _scanCheck() {
         if (this.props.logged) {
-            this.props.navigation.navigate('ScanBill');
+            let permission = await Permissions.check('camera');
+            if (permission === 'undetermined') {
+                permission = await Permissions.request('camera');
+            }
+
+            if (permission === 'authorized') {
+                this.props.navigation.navigate('ScanBill');
+            }
+            else {
+                Alert.alert(
+                    'У ChesterApp нет доступа к камере. Чтобы предоставить доступ перейдите в Настройки и включите Камеру.',
+                    '',
+                    [
+                        {
+                            text: 'Отменить',
+                            onPress: () => {
+                            },
+                            style: 'cancel',
+                        },
+                        {text: 'Настройка', onPress: Permissions.openSettings}
+                    ],
+                )
+            }
+
+
         }
         else {
             this.props.signIn();

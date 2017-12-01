@@ -52,7 +52,7 @@ class News extends React.Component {
                                 style={{marginBottom: 25}}
                                 onPress={
                                     () => {
-                                        this.props.navigation.navigate('OneNewsPage', {
+                                        this.props.navigation.navigate('OneRestaurantNewsPage', {
                                             news: rowData.item,
                                             restaurants: [restaurant]
                                         })

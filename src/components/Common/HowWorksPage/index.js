@@ -12,7 +12,7 @@ export default class HowWorksPage extends React.Component {
 
     render() {
 
-        return (<Image source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
+        return (<ImageBackground source={require('../../../../assets/images/background/background.png')} style={signStackStyle}>
 
             <ScrollView>
                 <View style={styles.headerBlock}>
@@ -83,7 +83,7 @@ export default class HowWorksPage extends React.Component {
                 </View>
                 <Image style={styles.image} source={require('../../../../assets/images/howworks/spend-pic.png')}/>
 
-            </ScrollView></Image>)
+            </ScrollView></ImageBackground>)
     }
 
 

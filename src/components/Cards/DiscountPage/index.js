@@ -24,8 +24,8 @@ export class DiscountPageC extends React.Component {
     }
 
     bonusAmount = 100000;
-
     interval;
+    expiredCode = null;
 
     componentWillMount() {
         this._loadData();
@@ -118,7 +118,7 @@ export class DiscountPageC extends React.Component {
         let discount = spend >= this.bonusAmount || this.props.user.discount > 0;
         if (discount) {
             try {
-                this.props.getDiscountCode();
+                await this.props.getDiscountCode();
                 this._tick();
                 this.interval = setInterval(() => {
                     this._tick()
@@ -132,15 +132,22 @@ export class DiscountPageC extends React.Component {
 
 
     _tick() {
-        if (this.props.discountCode) {
+        if (this.props.discountCode && this.props.discountCode !== this.expiredCode) {
             let now = moment.utc();
             let then = moment.utc(this.props.discountCode.expired_at);
             if (now > then) {
+                this.expiredCode = this.props.discountCode;
                 this.props.getDiscountCode();
-                this.setState({duration: null});
+                this.setState({
+                    duration: null,
+                    left: null
+                });
             }
             else {
-                this.setState({duration: moment.utc(moment(then).diff(moment(now))).format("mm:ss")});
+                this.setState({
+                    duration: moment.utc(moment(then).diff(moment(now))),
+                    left: null
+                });
 
             }
 

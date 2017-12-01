@@ -150,7 +150,7 @@ export class DishC extends React.Component {
                         </View>
 
 
-                        <View style={styles.hang}>
+                        {(hot || newDish) && <View style={styles.hang}>
                             {newDish && <View style={{flexDirection: 'row', alignItems: 'center', paddingRight: 12}}>
                                 <ChesterIcon name="star-16" size={16} color={platform.brandWarning}/>
                                 <Text style={styles.hangText}>Новое блюдо</Text>
@@ -160,7 +160,7 @@ export class DishC extends React.Component {
                                 <Text style={styles.hangText}>Острое блюдо</Text>
 
                             </View>}
-                        </View>
+                        </View>}
 
 
                         <View style={styles.contentBlock}>

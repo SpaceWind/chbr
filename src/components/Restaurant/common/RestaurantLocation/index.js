@@ -6,7 +6,8 @@ import ChesterIcon from "../../../Common/ChesterIcon/index";
 //import {Permissions, Location} from "expo";
 //import {Constants} from "expo";
 let geoLib = require('geolib');
-const Permissions = require('react-native-permissions');
+
+import Permissions from 'react-native-permissions'
 
 export default class RestaurantLocation extends React.Component {
 
