@@ -9,9 +9,10 @@ import platform from "../../../../native-base-theme/variables/platform";
 import HistoryShortInfo from "../common/HistoryShortInfo/index";
 import FieldValue from "../common/FieldValue/index";
 import historyStyles from "../common/historyStyle";
-import {getReserve} from "../../../actions/user";
+import {deleteOperation, getOperation, getReserve, getTableReserves} from "../../../actions/user";
 import Spinner from "react-native-loading-spinner-overlay";
 import {cancelReserve} from "../../../actions/restaurant";
+import {NavigationActions} from "react-navigation";
 
 class BookTablePageC extends React.Component {
 
@@ -20,15 +21,16 @@ class BookTablePageC extends React.Component {
     });
 
     state = {};
-
+    getReserve: true;
 
     constructor(props) {
         super(props);
-        this.history = this.props.navigation.state.params.history;
+        this.reserveId = this.props.navigation.state.params.reserveId;
     }
 
     componentWillMount() {
-        this._getReserve();
+        this.props.getOperation(this.reserveId);
+
     }
 
     componentWillUnmount() {
@@ -37,22 +39,23 @@ class BookTablePageC extends React.Component {
 
 
     render() {
-
-        let history = this.history;
+        let operation = this.props.operation;
         let reserve = this.props.reserve || {};
-
-        let restaurant = this.props.restaurants[this.history.restaurant_id];
-        let restaurantName = restaurant.title_short;
-
+        let restaurantName = '';
+        if (operation) {
+            let restaurant = this.props.restaurants[operation.restaurant_id];
+            restaurantName = restaurant.title_short;
+        }
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
 
             <ScrollView>
-                <View style={historyStyles.scrollContainer}>
+                <Spinner visible={this.props.isOperationPending || this.state.loading}
+                         textStyle={{color: '#FFF'}}/>
+                {operation && <View style={historyStyles.scrollContainer}>
 
 
-                    <Spinner visible={this.props.isReservePending || this.state.loading} textStyle={{color: '#FFF'}}/>
-                    <HistoryShortInfo info={history} result={history.result_data} restaurantName={restaurantName}/>
+                    <HistoryShortInfo info={operation} result={operation.result_data} restaurantName={restaurantName}/>
 
 
                     <View style={styles.body}>
@@ -60,7 +63,7 @@ class BookTablePageC extends React.Component {
                     </View>
 
 
-                    {this.history.status!==6 && <View style={styles.buttonBlock}>
+                    {operation.status !== 6 && <View style={styles.buttonBlock}>
 
                         <View style={{
                             width: '100%', paddingHorizontal: 7,
@@ -70,8 +73,7 @@ class BookTablePageC extends React.Component {
                                         justifyContent: 'center'
                                     }}
                                     onPress={() => {
-
-                                        this._cancelReserve()
+                                        this._requestCancel()
                                     }}
 
                             >
@@ -81,7 +83,7 @@ class BookTablePageC extends React.Component {
 
 
                     </View>}
-                </View>
+                </View>}
 
 
             </ScrollView>
@@ -89,9 +91,18 @@ class BookTablePageC extends React.Component {
     }
 
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.operation && this.getReserve) {
+            this._getReserve();
+            this.getReserve = false;
+        }
+
+    }
+
+
     async _getReserve() {
         try {
-            await this.props.getReserve(this.history.restaurant_id, this.history.result_id);
+            await this.props.getReserve(this.props.operation.restaurant_id, this.props.operation.result_id);
         }
         catch
             (ex) {
@@ -114,14 +125,32 @@ class BookTablePageC extends React.Component {
 
     }
 
+
+    _requestCancel() {
+        Alert.alert(
+            'Вы уверены?',
+            'Заказ на бронирование будет удален.',
+            [
+
+                {
+                    text: 'Ок', onPress: () => {
+                    this._cancelReserve()
+                }
+                }
+            ]
+        );
+    }
+
+
     async _cancelReserve() {
         this.setState({loading: true});
         try {
-            await this.props.cancelReserve(this.history.restaurant_id, this.history.result_id);
-            this.history.status = 6;
+            await this.props.cancelReserve(this.props.operation.restaurant_id, this.props.operation.result_id);
+            let result = await this.props.deleteOperation(this.props.operation.id);
+            this.props.getTableReserves();
             this.setState({loading: false});
-
-
+            const backAction = NavigationActions.back();
+            this.props.navigation.dispatch(backAction)
         }
         catch
             (ex) {
@@ -152,16 +181,27 @@ function bindAction(dispatch) {
         getReserve: (restaurantId, reserveId) => {
             dispatch(getReserve(restaurantId, reserveId));
         },
+        getOperation: (operationId) => {
+            dispatch(getOperation(operationId));
+        },
+        getTableReserves: () => {
+            return dispatch(getTableReserves());
+        },
         cancelReserve: (restaurantId, reserveId) => {
             dispatch(cancelReserve(restaurantId, reserveId));
         },
+        deleteOperation: (id) => {
+            return dispatch(deleteOperation(id));
+        }
     };
 }
 
 const mapStateToProps = state => ({
     reserve: state.user.reserve,
     restaurants: state.restaurant.restaurants,
-    isReservePending: state.user.isReservePending
+    isReservePending: state.user.isReservePending,
+    isOperationPending: state.user.isOperationPending,
+    operation: state.user.operation,
 });
 const BookTablePage = connect(mapStateToProps, bindAction)(BookTablePageC);
 export default BookTablePage;

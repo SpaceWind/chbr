@@ -62,7 +62,7 @@ class UserInfoC extends React.Component {
                         style={styles.avatarProgress}
                     />
                     <View style={styles.avatarOuterProgress}>
-                        <TouchableOpacity
+                        {this.props.userData && <TouchableOpacity
                             disabled={this.props.userData.avatar && !this.props.showName}
                             onPress={() => {
                                 this.props.userData.avatar && this.props.showName ? this.props.navigation.navigate('Profile') : this._pickImage();
@@ -76,7 +76,7 @@ class UserInfoC extends React.Component {
                                     : <Image source={require('../../../../assets/images/navigation/user_icon.png')}
                                              style={{width: 48, resizeMode: 'contain', marginLeft: 5}}/>}
                             </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
 
 
                         {!this.props.showName &&
@@ -107,8 +107,11 @@ class UserInfoC extends React.Component {
                         this.props.navigation.navigate('MyCard');
                     }}>
 
-                        <Text style={styles.buttonText}
-                              uppercase={false}>{(this.props.userData.bonus_balance + ' ' + this.declOfNum(this.props.userData.bonus_balance, ['балл', 'балла', 'баллов']) + ' >')}</Text>
+                        {this.props.userData && <Text
+                            style={styles.buttonText}
+                              uppercase={false}>
+                            {(this.props.userData.bonus_balance + ' ' + this.declOfNum(this.props.userData.bonus_balance, ['балл', 'балла', 'баллов']) + ' >')}
+                            </Text>}
                     </Button>
 
                 </View>

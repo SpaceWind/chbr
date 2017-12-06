@@ -8,6 +8,7 @@ import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import {signStackStyle} from "../../../routers/SignStack";
 import {connect} from "react-redux";
+import {params} from "../Restaurant/index";
 
 
 class Team extends React.Component {
@@ -31,6 +32,12 @@ class Team extends React.Component {
 
 
     render() {
+        if (!this.props.navigation.state.params || !this.props.navigation.state.params.key) {
+            this.restaurantId = params.restaurantId;
+        }
+        else {
+            this.restaurantId = this.props.navigation.state.params.key;
+        }
 
 
         return (
@@ -57,7 +64,7 @@ class Team extends React.Component {
 
 
                             {
-                                this.props.restaurants[[this.props.navigation.state.params.key]].employees.map((item) => {
+                                this.props.restaurants[this.restaurantId].employees.map((item) => {
                                     return this.renderMember(item);
                                 })
                             }

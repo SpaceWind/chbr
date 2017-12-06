@@ -12,13 +12,13 @@ class AuthServiceImpl {
                 code: code
             }
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res;
     }
 
     async sendCode(phone) {
         let res = await this.Api.get(`/token/client/%2B${phone}`);
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         //Api.jwt(res.body.token);
         res.body.phone = phone;
         return res.body;
@@ -26,7 +26,7 @@ class AuthServiceImpl {
 
     async getUserData() {
         let res = await this.Api.get(`/client/current`);
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -34,7 +34,7 @@ class AuthServiceImpl {
         let res = await this.Api.put(`/client/current`, {
             body: data
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -42,7 +42,7 @@ class AuthServiceImpl {
         let res = await this.Api.post(`/ticket`, {
             body: data
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -51,7 +51,7 @@ class AuthServiceImpl {
         let res = await this.Api.post(`/device/${uid}`, {
             body: data
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -59,7 +59,7 @@ class AuthServiceImpl {
         let res = await this.Api.put(`/device/${uid}/client`, {
             body: {}
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -68,15 +68,33 @@ class AuthServiceImpl {
         let res = await this.Api.get(`/client/current/operations`, {
             body: {timestamp: moment().add(-3, 'years').unix()}
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
+
+    async getOperation(operationId) {
+        let res = await this.Api.get(`/client/current/operations`, {
+            body: {timestamp: moment().add(-3, 'years').unix()}
+        });
+        if (res.err) throw res;
+
+        let operation = res.body.list.find((item) => {
+            return item.result_id === operationId
+        });
+
+        if (!operation) throw res;
+
+        return operation;
+
+
+    }
+
 
     async deleteOperation(id) {
         let res = await this.Api.del(`/client/current/operations`, {
             body: {id}
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -84,7 +102,7 @@ class AuthServiceImpl {
         let res = await this.Api.get(`/restaurant/` + restaurantId + '/reserve/' + reserveId, {
             body: {}
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -94,7 +112,7 @@ class AuthServiceImpl {
                 device_token: token
             }
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -108,7 +126,7 @@ class AuthServiceImpl {
             },
             body: form
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -116,7 +134,7 @@ class AuthServiceImpl {
         let res = await this.Api.get(`/client/current/likes/food`, {
             body: {}
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -126,7 +144,7 @@ class AuthServiceImpl {
                 cipher: code
             }
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 
@@ -134,7 +152,7 @@ class AuthServiceImpl {
         let res = await this.Api.get(`/client/current/discount-code`, {
             body: {}
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 

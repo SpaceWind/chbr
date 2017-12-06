@@ -11,6 +11,7 @@ import Collapsible from 'react-native-collapsible';
 import SearchInput from "../common/SearchInput/index";
 import CategoryList from "../Category/CategoryList";
 import {connect} from "react-redux";
+import {params} from "../Restaurant/index";
 
 class Menu extends React.Component {
 
@@ -21,8 +22,18 @@ class Menu extends React.Component {
         hour: 30
     };
 
+    restaurantId = null;
 
     render() {
+
+        if (!this.props.navigation.state.params || !this.props.navigation.state.params.key) {
+            this.restaurantId = params.restaurantId;
+        }
+        else {
+            this.restaurantId = this.props.navigation.state.params.key;
+        }
+
+
         return (
             <View style={styles.container}>
                 <Container style={{flex: 1}}>
@@ -41,7 +52,7 @@ class Menu extends React.Component {
 
     _renderList() {
 
-        let categories = this.props.restaurants[this.props.navigation.state.params.key].menu.categories.filter(item => item.status ===1);
+        let categories = this.props.restaurants[this.restaurantId].menu.categories.filter(item => item.status === 1);
 
         if (!this.state.results) {
             return categories.map((item, i) => {
@@ -121,7 +132,7 @@ class Menu extends React.Component {
                             this.props.navigation.navigate('Category', {
                                 id: section.id,
                                 name: section.title,
-                                restaurant: this.props.restaurants[this.props.navigation.state.params.key]
+                                restaurant: this.props.restaurants[this.restaurantId]
                             })
                         }
                     }}>
@@ -151,7 +162,7 @@ class Menu extends React.Component {
                                   this.props.navigation.navigate('Category', {
                                       id: item.id,
                                       name: item.title,
-                                      restaurant: this.props.restaurants[this.props.navigation.state.params.key]
+                                      restaurant: this.props.restaurants[this.restaurantId]
                                   })
 
                               }}>
@@ -172,8 +183,8 @@ class Menu extends React.Component {
 
 
     getAllDish() {
-        return this.props.restaurants[this.props.navigation.state.params.key].menu.categories
-            .filter(item => item.status ===1)
+        return this.props.restaurants[this.restaurantId].menu.categories
+            .filter(item => item.status === 1)
             .reduce((a, b) => {
                 let items = [];
                 if (b.categories) {
@@ -183,7 +194,7 @@ class Menu extends React.Component {
                 } else {
                     items = b.items;
                 }
-                return a.concat(items.filter(item => item.status ===1));
+                return a.concat(items.filter(item => item.status === 1));
             }, []);
     }
 
@@ -210,10 +221,6 @@ class Menu extends React.Component {
         }
 
     }
-
-
-
-
 
 
 }

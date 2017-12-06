@@ -17,7 +17,7 @@ export default class FieldValue extends React.Component {
 
         return <View style={styles.field}>
             <Text style={styles.name}>{this.props.name}</Text>
-            <Text style={styles.value}>{this.props.name}</Text>
+            <Text style={styles.value}>{this.props.value}</Text>
         </View>
 
     }

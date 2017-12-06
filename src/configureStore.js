@@ -6,10 +6,11 @@ import reducer from './reducers';
 import promise from './promise';
 import promiseMiddleware from 'redux-promise-middleware';
 import {autoRehydrate} from "redux-persist";
+import authMiddleware from "./AuthMiddleware";
 
 export default function configureStore(onCompletion: () => void): any {
     const enhancer = compose(
-        applyMiddleware(thunk, promiseMiddleware()),
+        applyMiddleware(thunk, promiseMiddleware(),authMiddleware),
        autoRehydrate(),
         /*devTools({
             name: 'nativestarterkit', realtime: true,

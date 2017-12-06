@@ -41,7 +41,7 @@ class Restaurants extends React.Component {
     _renderItem = ({item}) => {
         return <TouchableOpacity onPress={() => {
 
-            this.props.navigation.navigate('Restaurant', {key: item.id})
+            this.props.navigation.navigate('OneRestaurant', {key: item.id})
         }}>
 
 

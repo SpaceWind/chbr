@@ -11,15 +11,21 @@ import ImageSlider from "react-native-image-slider";
 import Swiper from 'react-native-swiper';
 
 
-class Restaurant extends React.Component {
-    static navigationOptions = ({navigation, screenProps}) => ({
+export const params = {
+    restaurantId: null
+};
+
+export class Restaurant extends React.Component {
+    /*static navigationOptions = ({navigation, screenProps}) => ({
         title: navigation.state.params.title
-    });
+    });*/
 
     state = {
         position: 0,
         interval: null
     };
+
+    restaurantId = null;
 
     componentWillMount() {
         /*this.setState({
@@ -33,18 +39,15 @@ class Restaurant extends React.Component {
         /*clearInterval(this.state.interval);*/
     }
 
-    static restaurantKey = null;
-
     render() {
-
-
         if (!this.props.navigation.state.params || !this.props.navigation.state.params.key) {
-
-            this.props.navigation.state.params = {key: Restaurant.restaurantKey}
+            this.restaurantId = params.restaurantId;
         }
-
-        Restaurant.restaurantKey = this.props.navigation.state.params.key;
-        let restaurant = this.props.restaurants[this.props.navigation.state.params.key];
+        else {
+            this.restaurantId = this.props.navigation.state.params.key;
+        }
+        params.restaurantId =this.restaurantId;
+        let restaurant = this.props.restaurants[this.restaurantId];
         return (
 
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
@@ -74,7 +77,6 @@ class Restaurant extends React.Component {
                                 setTimeout(() => {
                                     this.refs.scroll.scrollToEnd();
                                 }, 60)
-
                             }}/>
                         </View>
                     </View>

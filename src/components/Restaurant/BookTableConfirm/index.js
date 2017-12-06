@@ -275,7 +275,7 @@ class BookTableConfirmC extends React.Component {
                             }
                         ]
                     );
-                    this.backToRestaurant();
+                   this.goToHistory(result.reserve_id)
 
                 }, 1);
             }
@@ -313,15 +313,35 @@ class BookTableConfirmC extends React.Component {
                 number: phone,
                 first_name: this.state.userData.first_name,
                 last_name: this.state.userData.last_name
-
             })
         }
 
     }
 
 
-    backToRestaurant() {
+    goToHistory(reserveId) {
+        const resetAction = NavigationActions.reset({
+            index: 2,
+            actions: [
+                NavigationActions.navigate({
+                    routeName: 'Restaurants',
+                    params: {key: this.params.restaurant.id},
+                }),
+                NavigationActions.navigate({
+                    routeName: 'OneRestaurant',
+                    params: {key: this.params.restaurant.id},
+                }),
+                NavigationActions.navigate({
+                    routeName: 'RestaurantBookTableHistory',
+                    params: {reserveId: reserveId},
+                }),
+            ]
+        });
+        this.props.navigation.dispatch(resetAction)
+    }
 
+
+    backToRestaurant() {
         const resetAction = NavigationActions.reset({
             index: 1,
             actions: [
@@ -329,14 +349,12 @@ class BookTableConfirmC extends React.Component {
                     routeName: 'Restaurants',
                     params: {key: this.params.restaurant.id},
                 }),
-                NavigationActions.init({
-                    routeName: 'Restaurant',
+                NavigationActions.navigate({
+                    routeName: 'OneRestaurant',
                     params: {key: this.params.restaurant.id},
-                })
-
+                }),
             ]
         });
-
         this.props.navigation.dispatch(resetAction)
     }
 }

@@ -7,7 +7,7 @@ import platform from "../../../native-base-theme/variables/platform";
 import {closeTutorial} from "../../actions/user";
 import {connect} from "react-redux";
 import Constants from "../../../utilities/Constants";
-
+import Permissions from 'react-native-permissions';
 import Swiper from 'react-native-swiper';
 
 class TutorialPageC extends React.Component {
@@ -16,6 +16,9 @@ class TutorialPageC extends React.Component {
         position: 0
     }
     index = 0;
+
+
+
 
     render() {
 

@@ -6,8 +6,7 @@ export const BaseNavigationBarStyle = {
     headerStyle: {
 
         backgroundColor: "rgb(44, 47, 51)",
-        height: Platform.OS === "ios" ? 64 : (56),
-        paddingTop: Platform.OS === "ios" ? 20 : 0,
+        minHeight: Platform.OS === "ios" ? 44 : (56),
 
 
         shadowColor: 'rgba(0, 0, 0, 0.5)',

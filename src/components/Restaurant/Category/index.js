@@ -33,6 +33,11 @@ class Category extends React.Component {
             return item.id === id;
         });
 
+        if(!currentCategory.items)
+        {
+            currentCategory = currentCategory.categories.find((category) => category.id === id);
+        }
+
 
         let items = currentCategory.items.filter(item => item.status === 1 && item.available === 1)
         this.restaurantId = restaurant.id;

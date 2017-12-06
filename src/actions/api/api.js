@@ -8,4 +8,16 @@ const Api = new Frisbee({
         'Content-Type': 'application/json'
     }
 });
+
+Api.interceptor.register({
+    response: function (response) {
+        if(response.status === 401 || response.status === 403)
+        {
+
+        }
+        return response;
+    }
+})
+
+
 export default Api;

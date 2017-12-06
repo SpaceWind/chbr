@@ -23,7 +23,7 @@ class NewsServiceImpl {
 
 
 
-        if (res.err) throw res.err;
+        if (res.err) throw res;
 
         return res.body;
 

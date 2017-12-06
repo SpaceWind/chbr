@@ -2,7 +2,7 @@ import React from 'react';
 import {DrawerItems, DrawerNavigator} from 'react-navigation';
 import RestaurantsStack from "./RestaurantsStack";
 import {Button, Text, View} from "native-base";
-import {sendPushToken, setSignState, signOut} from "../actions/user";
+import {getOperation, sendPushToken, setSignState, signOut} from "../actions/user";
 import {connect} from "react-redux";
 //import {Constants} from 'expo';
 import {Image, ScrollView, Platform, Dimensions, ImageBackground, Alert} from "react-native";
@@ -78,8 +78,6 @@ class CustomNavigationDrawer extends React.Component {
 
     componentWillMount() {
 
-
-        let c = base64.encode('fdfd');
         FCM.requestPermissions().then(() => console.log('granted')).catch(() => console.log('notification permission rejected'));
 
         FCM.getFCMToken().then(token => {
@@ -90,16 +88,23 @@ class CustomNavigationDrawer extends React.Component {
             this.token = token;
         });
 
+
         this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
-            console.log(notif)
+            console.log(notif);
             if (notif && notif.local_notification) {
                 return
             }
+
             if (notif.opened_from_tray) {
-
-                //this.props.navigation.navigate('BookTableHistory');
-
+                if (notif.info) {
+                    let data = JSON.parse(base64.decode(notif.info));
+                    if (data.reserve_id) {
+                        this.props.getOperation(data.reserve_id);
+                        this.props.navigation.navigate('BookTableHistory', {reserveId: data.reserve_id});
+                    }
+                }
             }
+
 
             if (Platform.OS === 'ios') {
                 switch (notif._notificationType) {
@@ -121,10 +126,6 @@ class CustomNavigationDrawer extends React.Component {
             }
             this.token = token;
         });
-
-        // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
-        // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
-        FCM.getInitialNotification().then(notif => console.log(notif));
     }
 
     componentWillUnmount() {
@@ -239,7 +240,10 @@ function bindAction(dispatch) {
         signIn: () => dispatch(setSignState(true)),
         sendPushToken: (token) => {
             return dispatch(sendPushToken(token));
-        }
+        },
+        getOperation: (operationId) => {
+            dispatch(getOperation(operationId));
+        },
     };
 }
 
@@ -279,3 +283,4 @@ const styles = {
 };
 
 export const CustomNavigationDrawerSwag = connect(mapStateToProps, bindAction)(CustomNavigationDrawer);
+

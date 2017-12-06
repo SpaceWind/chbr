@@ -2,7 +2,8 @@ import {
     CLOSE_TUTORIAL,
     CONFIRM_CODE_FULFILLED,
     CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, GET_DISCOUNT_CODE, GET_DISCOUNT_CODE_FULFILLED, GET_LIKES,
-    GET_LIKES_FULFILLED, GET_RESERVE,
+    GET_LIKES_FULFILLED, GET_OPERATION, GET_OPERATION_FULFILLED, GET_OPERATION_PENDING, GET_OPERATION_REJECTED,
+    GET_RESERVE,
     GET_RESERVE_FULFILLED,
     GET_RESERVE_PENDING,
     GET_RESERVE_REJECTED,
@@ -204,6 +205,30 @@ export default function (state: State = initialState, action) {
             ...state,
             history: null,
             getHistoryPending: false,
+        };
+    }
+
+
+    if (action.type === GET_OPERATION_PENDING) {
+        return {
+            ...state,
+            isOperationPending: true,
+        };
+    }
+
+    if (action.type === GET_OPERATION_FULFILLED) {
+        return {
+            ...state,
+            operation: action.payload,
+            isOperationPending: false,
+        };
+    }
+
+    if (action.type === GET_OPERATION_REJECTED) {
+        return {
+            ...state,
+            history: null,
+            isOperationPending: false
         };
     }
 

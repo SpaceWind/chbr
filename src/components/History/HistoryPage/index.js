@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 
-import {FlatList, Image, ImageBackground, RefreshControl, ScrollView, TouchableOpacity} from "react-native";
+import {FlatList, Image, ImageBackground, RefreshControl, ScrollView, TouchableOpacity, Alert} from "react-native";
 import moment from "moment";
 import {Text, View, Icon, Button} from "native-base";
 import Swipeout from "react-native-swipeout";
@@ -18,7 +18,6 @@ class HistoryPage extends React.Component {
     };
 
     componentWillMount() {
-
         this.props.getTableReserves()
     }
 
@@ -34,7 +33,11 @@ class HistoryPage extends React.Component {
                 break;
             }
             case 3: {
-                this.props.navigation.navigate('BookTableHistory', {name: title, history: item});
+                this.props.navigation.navigate('BookTableHistory', {
+                    name: title,
+                    history: item,
+                    reserveId: item.result_id
+                });
                 break;
             }
             case 4: {
@@ -223,6 +226,8 @@ class HistoryPage extends React.Component {
     }
 
     async _deleteOperation(id) {
+
+
         this.setState({loading: true});
         try {
             let result = await this.props.deleteOperation(id);

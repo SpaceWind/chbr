@@ -127,10 +127,13 @@ export default class HistoryShortInfo extends React.Component {
         let bonus = this.props.info.type === 4 ? -this.props.info.bonus : this.props.info.bonus;
         let bonusText = bonus + ' ' + 'бал.';
 
-        let date = this.props.info.created_at;
+
+
+
+        let date =  moment.utc(this.props.info.created_at).local();
         if (this.props.info.type === 3) {
             bonusText = this.props.result.people_quantity + ' чел.';
-            date = this.props.result.timestamp;
+            date = moment.utc(this.props.result.timestamp);
         }
         return <View>
             <View style={styles.order}>
@@ -153,7 +156,7 @@ export default class HistoryShortInfo extends React.Component {
                 <Text style={styles.headerText}>{title}</Text>
                 <Text style={styles.restaurantText}>{this.props.restaurantName}</Text>
                 <View style={styles.pointBlock}>
-                    <Text style={styles.pointText}>{moment.utc(date).local().format('D MMM, HH:mm')}</Text>
+                    <Text style={styles.pointText}>{date.format('D MMM, HH:mm')}</Text>
                     {this.props.info.type !== 5 && this.props.info.type !== 3 && <View style={styles.priceBlock}>
                         <View style={styles.infoPoint}/>
                         <Text style={styles.pointText}>{this.props.info.price + ' ₽'}</Text>

@@ -47,6 +47,12 @@ export const GET_TABLE_RESERVES_PENDING = 'GET_TABLE_RESERVES_PENDING';
 export const GET_TABLE_RESERVES_FULFILLED = 'GET_TABLE_RESERVES_FULFILLED';
 export const GET_TABLE_RESERVES_REJECTED = 'GET_TABLE_RESERVES_REJECTED';
 
+export const GET_OPERATION = 'GET_OPERATION';
+export const GET_OPERATION_PENDING = 'GET_OPERATION_PENDING';
+export const GET_OPERATION_FULFILLED = 'GET_OPERATION_FULFILLED';
+export const GET_OPERATION_REJECTED = 'GET_OPERATION_REJECTED';
+
+
 export const DELETE_OPERATION = 'DELETE_OPERATION';
 export const DELETE_OPERATION_PENDING = 'DELETE_OPERATION_PENDING';
 export const DELETE_OPERATION_FULFILLED = 'DELETE_OPERATION_FULFILLED';
@@ -239,6 +245,22 @@ export const getTableReserves = () => {
     }
 };
 
+
+export function getOperationAction(promise) {
+    return {
+        type: GET_OPERATION,
+        payload: promise
+    }
+}
+
+export const getOperation = (operationId) => {
+    return dispatch => {
+        let promise = AuthService.getOperation(operationId);
+        dispatch(getOperationAction(promise));
+        return promise;
+    }
+};
+
 export function deleteOperationAction(promise) {
     return {
         type: DELETE_OPERATION,
@@ -268,6 +290,9 @@ export const getReserve = (restaurantId, reserveId) => {
         return promise;
     }
 };
+
+
+
 
 export function closeTutorial(promise) {
     return {

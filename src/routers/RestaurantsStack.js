@@ -15,6 +15,7 @@ import {View} from "native-base";
 import SignSecondStepSwag from "../components/SignIn/SignSecondStep/index";
 import OneNewsPage from "../components/News/OneNewsPage/index";
 import ScanBillPage from "../components/Cards/ScanBillPage/index";
+import BookTablePage from "../components/History/BookTablePage/index";
 
 
 export default RestaurantsStack = StackNavigator({
@@ -25,7 +26,7 @@ export default RestaurantsStack = StackNavigator({
             headerLeft: <DrawerIcon {...props} />
         })
     },
-    Restaurant: {
+    OneRestaurant: {
         screen: RestaurantTabs,
         navigationOptions: {
             title: 'Ресторан',
@@ -152,6 +153,22 @@ export default RestaurantsStack = StackNavigator({
             title: 'Сканирование чека',
             headerBackTitleStyle: {
                 color: "transparent"
+            },
+            drawerLockMode:'locked-closed'
+        }
+    },
+    RestaurantBookTableHistory: {
+        screen: BookTablePage,
+        navigationOptions: {
+            title: 'Бронирование стола',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            headerStyle: {
+                ...BaseNavigationBarStyle.headerStyle,
+            },
+            headerTitleStyle: {
+                ...BaseNavigationBarStyle.headerTitleStyle
             },
             drawerLockMode:'locked-closed'
         }

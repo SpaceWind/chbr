@@ -13,7 +13,7 @@ class RestaurantServiceImpl {
                 _hash
             }
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
 
         return res.body;
     }
@@ -23,7 +23,7 @@ class RestaurantServiceImpl {
         let res = await this.Api.get(`/restaurant/` + restaurantId + '/reserve/check', {
             body: data
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
 
         return res.body;
     }
@@ -39,7 +39,7 @@ class RestaurantServiceImpl {
         let res = await this.Api.put(`/restaurant/` + restaurantId + '/reserve', {
             body: data
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
 
         return res.body;
     }
@@ -49,7 +49,7 @@ class RestaurantServiceImpl {
         let res = await this.Api.del(`/restaurant/` + restaurantId + '/reserve/' + reserveId, {
             body: {}
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
 
         return res.body;
     }
@@ -99,7 +99,7 @@ class RestaurantServiceImpl {
         let res = await this.Api.get(`/restaurant/${restaurantId}/menu/categories/${categoryId}/food/${dishId}`, {
             body: {}
         });
-        if (res.err) throw res.err;
+        if (res.err) throw res;
         return res.body;
     }
 }

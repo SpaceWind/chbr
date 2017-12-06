@@ -1,5 +1,4 @@
 import React from 'react';
-import PhoneInput from "react-native-phone-input";
 import {Input, Text, View} from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import {TextInputMask} from 'react-native-masked-text';

@@ -117,7 +117,7 @@ class SignSecondStep extends React.Component {
                 await this.confirmBookTable();
             }
             else {
-                this.props.getUserData();
+                await this.props.getUserData();
                 this.setState({loading: false});
                 this.props.signInAfter();
             }
@@ -230,25 +230,13 @@ class SignSecondStep extends React.Component {
 
                         {
                             text: 'Ок', onPress: () => {
-                            const resetAction = NavigationActions.reset({
-                                index: 1,
-                                actions: [
-                                    NavigationActions.navigate({
-                                        routeName: 'Restaurants',
-                                    }),
-                                    NavigationActions.init({
-                                        routeName: 'Restaurant',
-                                        params: {key: this.props.navigation.state.params.restaurantId},
-                                    })
 
-                                ]
-                            });
 
-                            this.props.navigation.dispatch(resetAction);
                         }
                         }
                     ]
-                )
+                );
+                this.goToHistory(result.reserve_id)
             }, 10);
         }
         catch
@@ -262,13 +250,54 @@ class SignSecondStep extends React.Component {
 
                         {
                             text: 'Ок', onPress: () => {
-                            this.props.navigation.navigate('Restaurant', {key: this.props.navigation.state.params.restaurantId})
+
                         }
                         }
                     ]
-                )
+                );
+                this.backToRestaurant();
             }, 10);
         }
+    }
+
+    goToHistory(reserveId) {
+        const resetAction = NavigationActions.reset({
+            index: 2,
+            actions: [
+                NavigationActions.navigate({
+                    routeName: 'Restaurants',
+                    params: {key: this.params.restaurant.id},
+                }),
+                NavigationActions.navigate({
+                    routeName: 'OneRestaurant',
+                    params: {key: this.params.restaurant.id},
+                }),
+                NavigationActions.navigate({
+                    routeName: 'RestaurantBookTableHistory',
+                    params: {reserveId: reserveId},
+                }),
+            ]
+        });
+
+        this.props.navigation.dispatch(resetAction)
+    }
+
+    backToRestaurant() {
+        const resetAction = NavigationActions.reset({
+            index: 1,
+            actions: [
+                NavigationActions.navigate({
+                    routeName: 'Restaurants',
+                }),
+                NavigationActions.navigate({
+                    routeName: 'OneRestaurant',
+                    params: {key: this.props.navigation.state.params.restaurantId},
+                })
+
+            ]
+        });
+
+        this.props.navigation.dispatch(resetAction);
     }
 }
 

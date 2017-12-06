@@ -37,9 +37,6 @@ export class DishC extends React.Component {
         current_client_like_it: false
     };
 
-    componentWillMount() {
-        this.props.getDish(this.restaurantId, this.dish.category_id, this.dish.id);
-    }
 
     constructor(props) {
         super(props);
@@ -48,6 +45,12 @@ export class DishC extends React.Component {
         this.state.likes = this.dish.likes;
         this.state.current_client_like_it = this.dish.current_client_like_it;
     }
+
+    componentWillMount() {
+        this.props.getDish(this.restaurantId, this.dish.category_id, this.dish.id);
+    }
+
+
 
     render() {
         let dish = this.dish;

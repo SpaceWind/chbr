@@ -10,23 +10,37 @@ import {signStackStyle} from "../../../routers/SignStack";
 import OneNews from "../OneNews/index";
 import {getNews} from "../../../actions/news";
 import {connect} from "react-redux";
+import {params} from "../../Restaurant/Restaurant/index";
 
 class News extends React.Component {
 
     state = {};
+    restaurantId = null;
+
+
+    constructor(props) {
+        super(props);
+        if (!props.navigation.state.params || !props.navigation.state.params.key) {
+            this.restaurantId = params.restaurantId;
+        }
+        else {
+            this.restaurantId = props.navigation.state.params.key;
+        }
+    }
+
 
     componentWillMount() {
-        let key = this.props.navigation.state.params && this.props.navigation.state.params.key;
-        this.props.getNews(key);
+        this.props.getNews(this.restaurantId);
     }
 
     _onRefresh = () => {
-        let key = this.props.navigation.state.params && this.props.navigation.state.params.key;
-        this.props.getNews(key);
+        this.props.getNews(this.restaurantId);
     };
 
     render() {
-        let restaurant = this.props.restaurants[this.props.navigation.state.params.key];
+
+
+        let restaurant = this.props.restaurants[this.restaurantId];
 
         let newsData = this.props.news;
         newsData = newsData.filter((news, pos) => {

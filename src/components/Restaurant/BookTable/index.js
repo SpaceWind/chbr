@@ -12,6 +12,7 @@ import SelectDate from "./SelectDate";
 import moment from "moment";
 import 'moment-round'
 import {getTime} from "../../../actions/restaurant";
+import {params} from "../Restaurant/index";
 
 
 class BookTable extends React.Component {
@@ -48,13 +49,22 @@ class BookTable extends React.Component {
             date = moment().ceil(24, 'hours').add(12, 'hours');
         }
         this.state.date = date;
-        this.restaurant = props.restaurants[this.props.navigation.state.params.key];
+        if (!props.navigation.state.params || !props.navigation.state.params.key) {
+            this.restaurant =  props.restaurants[params.restaurantId] ;
+        }
+        else {
+            this.restaurant = props.restaurants[props.navigation.state.params.key] ;
+        }
         this.state.count = 2;
-
 
         this.state.maxCount = Math.max.apply(null, this.restaurant.halls.reduce((all, hall) => {
             return all.concat(hall.tables.map(table => table.capacity))
-        }, []))
+        }, []));
+
+        if(!isFinite(this.state.maxCount))
+        {
+            this.state.maxCount=2;
+        }
     }
 
 
@@ -209,8 +219,11 @@ class BookTable extends React.Component {
             let offset = Dimensions.get('window').width / 2 - 43;
             if (currentPosition - offset > 0) {
                 setTimeout(() => {
-                    this.refs.scroll.scrollTo({x: currentPosition - offset, y: 0});
-                }, 10)
+                    if( this.refs.scroll)
+                    {
+                        this.refs.scroll.scrollTo({x: currentPosition - offset, y: 0});
+                    }
+                }, 100)
             }
 
         }
@@ -220,9 +233,7 @@ class BookTable extends React.Component {
 
 
     getTimeSheet() {
-        return this.props.timeSheet.filter(time => {
-            return time.timestamp > moment().unix();
-        });
+        return this.props.timeSheet
     }
 
     navigateToBook(time) {

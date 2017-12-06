@@ -88,7 +88,7 @@ class App extends React.Component {
         if (this.props.isLoading !== nextProps.isLoading) {
             setTimeout(() => {
                 SplashScreen.hide();
-            }, 100);
+            }, 50);
             this.loadPrefetch();
             this._checkUID();
         }
@@ -150,7 +150,7 @@ class App extends React.Component {
         StatusBar.setBarStyle('light-content', true);
         if (this.props.isLoading) {
             return <View>
-
+                <Text>.</Text>
             </View>
         }
 

@@ -10,7 +10,7 @@ import TakeAwayOrderPage from "../components/History/TakeAwayOrderPage/index";
 import BuyByBonusPage from "../components/History/BuyByBonusPage/index";
 
 export default ProfileStack = StackNavigator({
-    History: {
+    Historys: {
         screen: HistoryPage,
         navigationOptions: props => ({
             title: 'История заказов',
