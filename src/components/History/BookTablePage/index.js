@@ -21,7 +21,7 @@ class BookTablePageC extends React.Component {
     });
 
     state = {};
-    getReserve: true;
+    getReserve= true;
 
     constructor(props) {
         super(props);
@@ -93,16 +93,16 @@ class BookTablePageC extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.operation && this.getReserve) {
-            this._getReserve();
+            this._getReserve(nextProps.operation);
             this.getReserve = false;
         }
 
     }
 
 
-    async _getReserve() {
+    async _getReserve(operation) {
         try {
-            await this.props.getReserve(this.props.operation.restaurant_id, this.props.operation.result_id);
+            await this.props.getReserve(operation.restaurant_id, operation.result_id);
         }
         catch
             (ex) {
@@ -131,7 +131,7 @@ class BookTablePageC extends React.Component {
             'Вы уверены?',
             'Заказ на бронирование будет удален.',
             [
-
+                {text: 'Нет', onPress: () =>{}, style: 'cancel'},
                 {
                     text: 'Ок', onPress: () => {
                     this._cancelReserve()

@@ -232,7 +232,7 @@ class Profile extends React.Component {
                             <Text style={InputBlockStyles.inputLabel}> Версия приложения</Text>
 
                             <View style={{paddingVertical: 16}}>
-                                <Text style={{fontSize: 18}}>1.05</Text>
+                                <Text style={{fontSize: 18}}>1.07</Text>
                             </View>
 
                         </View>

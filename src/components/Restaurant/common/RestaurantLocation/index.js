@@ -23,11 +23,17 @@ export default class RestaurantLocation extends React.Component {
 
     componentDidMount() {
         this._checkLocationAsync();
+    }
 
 
+    componentWillUnmount() {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
     }
 
     _checkLocationAsync = async () => {
+
 
         let response = await Permissions.check('location');
         if (response === 'authorized') {
@@ -39,13 +45,29 @@ export default class RestaurantLocation extends React.Component {
                 this._getLocationAsync();
             }
             else {
+                this.start = true;
+                this.timer = setInterval(
+                    () => this._checkLocation(),
+                    1000
+                );
                 let response = await Permissions.request('location');
+
                 if (response === 'authorized') {
                     this._getLocationAsync();
                 }
             }
         }
 
+    };
+
+    _checkLocation = async () => {
+        let response = await Permissions.check('location');
+        if (response !== 'undetermined') {
+            clearInterval(this.timer);
+            if (response === 'authorized') {
+                this._getLocationAsync();
+            }
+        }
     };
 
 

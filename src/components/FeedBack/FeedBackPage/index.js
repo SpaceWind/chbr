@@ -1,6 +1,9 @@
 import React from 'react';
 import {Button, Icon, List, ListItem, Switch, Text, View} from 'native-base';
-import {Image, ImageBackground, TouchableOpacity, ScrollView, Alert, TextInput, LayoutAnimation} from "react-native";
+import {
+    Image, ImageBackground, TouchableOpacity, ScrollView, Alert, TextInput, LayoutAnimation,
+    TouchableWithoutFeedback
+} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 
 import {connect} from "react-redux";
@@ -145,8 +148,11 @@ class FeedBackPageC extends React.Component {
 
                         />
                         <View style={InputBlockStyles.inputBlock}>
-                            <Text style={InputBlockStyles.inputLabel}>Телефон</Text>
-
+                            <TouchableWithoutFeedback onPress={() => {
+                                this.refs.phone.getElement().focus();
+                            }}>
+                                <Text style={InputBlockStyles.inputLabel}>Телефон</Text>
+                            </TouchableWithoutFeedback>
                             <TextInputMask
                                 style={InputBlockStyles.input}
                                 keyboardType="phone-pad"

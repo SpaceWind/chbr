@@ -27,7 +27,6 @@ class BookTable extends React.Component {
     scrollTo: false;
 
 
-
     constructor(props) {
         super(props);
         let date = null;
@@ -50,10 +49,10 @@ class BookTable extends React.Component {
         }
         this.state.date = date;
         if (!props.navigation.state.params || !props.navigation.state.params.key) {
-            this.restaurant =  props.restaurants[params.restaurantId] ;
+            this.restaurant = props.restaurants[params.restaurantId];
         }
         else {
-            this.restaurant = props.restaurants[props.navigation.state.params.key] ;
+            this.restaurant = props.restaurants[props.navigation.state.params.key];
         }
         this.state.count = 2;
 
@@ -61,9 +60,8 @@ class BookTable extends React.Component {
             return all.concat(hall.tables.map(table => table.capacity))
         }, []));
 
-        if(!isFinite(this.state.maxCount))
-        {
-            this.state.maxCount=2;
+        if (!isFinite(this.state.maxCount)) {
+            this.state.maxCount = 2;
         }
     }
 
@@ -200,27 +198,12 @@ class BookTable extends React.Component {
     scrollToDate(date) {
         let index = this.getTimeSheet().indexOf(this.props.timeSheet.find(time => moment.unix(time.timestamp).format('HH:mm') === date.format('HH:mm')));
 
-        if (index >= 0 && this.props.timeSheet[index].state !== 'enabled') {
-            let next = -1;
-            for (let i = index; i < this.props.timeSheet.length; i++) {
-                if (this.props.timeSheet[i].state === 'enabled') {
-                    next = i;
-                }
-            }
-
-            if (next !== -1) {
-                index = next;
-            }
-        }
-
-
         if (index > 0) {
             let currentPosition = index * 85;
             let offset = Dimensions.get('window').width / 2 - 43;
             if (currentPosition - offset > 0) {
                 setTimeout(() => {
-                    if( this.refs.scroll)
-                    {
+                    if (this.refs.scroll) {
                         this.refs.scroll.scrollTo({x: currentPosition - offset, y: 0});
                     }
                 }, 100)

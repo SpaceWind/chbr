@@ -165,6 +165,7 @@ export default function (state: State = initialState, action) {
     if (action.type === GET_RESERVE_PENDING) {
         return {
             ...state,
+            reserve: null,
             isReservePending: true,
         };
     }
@@ -212,6 +213,7 @@ export default function (state: State = initialState, action) {
     if (action.type === GET_OPERATION_PENDING) {
         return {
             ...state,
+            operation:null,
             isOperationPending: true,
         };
     }

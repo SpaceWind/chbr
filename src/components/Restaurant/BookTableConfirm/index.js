@@ -3,7 +3,10 @@ import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
     View
 } from 'native-base';
-import {Image, ImageBackground, ScrollView, TextInput, TouchableOpacity, Dimensions, Alert} from "react-native";
+import {
+    Image, ImageBackground, ScrollView, TextInput, TouchableOpacity, Dimensions, Alert,
+    TouchableWithoutFeedback
+} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import {signStackStyle} from "../../../routers/SignStack";
@@ -42,7 +45,9 @@ class BookTableConfirmC extends React.Component {
 
 
     componentWillMount() {
-        this.props.getUserData();
+        if (this.props.logged) {
+            this.props.getUserData();
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -98,7 +103,12 @@ class BookTableConfirmC extends React.Component {
                                 }
                                 }>
                                     <View style={InputBlockStyles.inputBlock}>
-                                        <Text style={InputBlockStyles.inputLabel}>Телефон</Text>
+                                        <TouchableWithoutFeedback onPress={() => {
+                                            if(!this.props.logged) {
+                                                this.refs.phone.getElement().focus();
+                                            }
+                                        }}><Text style={InputBlockStyles.inputLabel}>Телефон</Text></TouchableWithoutFeedback>
+
 
                                         <TextInputMask
                                             style={InputBlockStyles.input}
@@ -111,7 +121,15 @@ class BookTableConfirmC extends React.Component {
                                             value={this.state.phone}
                                             underlineColorAndroid="transparent"
                                             onChangeText={(text) => {
-                                                this.changeNumber(text)
+                                                if(!this.props.logged)
+                                                {
+                                                    this.changeNumber(text)
+                                                }
+                                                else
+                                                {
+                                                    this.changeNumber(this.state.phone)
+                                                }
+
                                             }}
                                         />
                                     </View>
@@ -167,12 +185,16 @@ class BookTableConfirmC extends React.Component {
                                         ...InputBlockStyles.inputBlockV,
                                         flex: 1
                                     }}>
-                                        <Text style={InputBlockStyles.inputLabelV}>Комментарий к заказу</Text>
+                                        <TouchableWithoutFeedback onPress={() => {
+                                            this.refs.comment.focus();
+                                        }}>
+                                            <Text style={InputBlockStyles.inputLabelV}>Комментарий к заказу</Text>
+                                        </TouchableWithoutFeedback>
                                         <View style={{
                                             paddingBottom: 15,
                                             flex: 1
                                         }}>
-                                            <TextInput style={{
+                                            <TextInput  ref='comment' style={{
                                                 ...InputBlockStyles.inputV,
                                                 minHeight: 80,
                                                 flex: 1
@@ -275,7 +297,7 @@ class BookTableConfirmC extends React.Component {
                             }
                         ]
                     );
-                   this.goToHistory(result.reserve_id)
+                    this.goToHistory(result.reserve_id)
 
                 }, 1);
             }

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Body, Button, Card, CardItem, Container, Content, Icon, Left, Picker, Right, Text, View} from 'native-base';
-import {Image, TouchableOpacity, Dimensions, ScrollView, TextInput} from "react-native";
+import {Text, View} from 'native-base';
+import {Image, TouchableWithoutFeedback, TextInput} from "react-native";
 import platform from "../../../../../native-base-theme/variables/platform";
 
 
@@ -17,8 +17,13 @@ export default class InputBlock extends React.Component {
 
     render() {
         return <View style={InputBlockStyles.inputBlock}>
-            <Text style={InputBlockStyles.inputLabel}>{this.props.name}</Text>
-            <TextInput style={InputBlockStyles.input} underlineColorAndroid="transparent" {...this.props}/>
+            <TouchableWithoutFeedback onPress={() => {
+                this.refs.input.focus();
+            }}>
+                <Text
+                    style={InputBlockStyles.inputLabel}>{this.props.name}</Text>
+            </TouchableWithoutFeedback>
+            <TextInput ref='input' style={InputBlockStyles.input} underlineColorAndroid="transparent" {...this.props}/>
         </View>
     }
 }
@@ -54,14 +59,14 @@ export const InputBlockStyles = {
         borderColor: platform.brandDivider
     },
     inputLabelV: {
-        paddingTop:15,
+        paddingTop: 15,
         color: '#B3BBC1',
         fontFamily: platform.fontFamily,
         fontSize: 18,
         lineHeight: 20,
     },
     inputV: {
-        width:'100%',
+        width: '100%',
         fontFamily: platform.fontFamily,
         fontSize: 20,
         paddingVertical: 16,
