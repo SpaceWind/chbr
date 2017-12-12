@@ -4,16 +4,15 @@ import {signStackStyle} from "../../../routers/SignStack";
 import {FlatList, Image, ImageBackground, ScrollView} from "react-native";
 
 import {Text, View, Icon, Button} from "native-base";
-
-import platform from "../../../../native-base-theme/variables/platform";
 import HistoryShortInfo from "../common/HistoryShortInfo/index";
 import FieldValue from "../common/FieldValue/index";
 import historyStyles from "../common/historyStyle";
 import Amount from "../common/Amount/index";
 import CategoryList, {fakeCategoryListArray} from "../../Restaurant/Category/CategoryList";
+import {getOperation, getReserve} from "../../../actions/user";
 
 
-export default class LunchPage extends React.Component {
+class LunchPageC extends React.Component {
 
     static navigationOptions = ({navigation, screenProps}) => ({
         title: navigation.state.params.name
@@ -21,8 +20,14 @@ export default class LunchPage extends React.Component {
 
     state = {};
 
-    componentWillMount() {
 
+    constructor(props) {
+        super(props);
+        this.resultId = this.props.navigation.state.params.resultId;
+    }
+
+    componentWillMount() {
+        this.props.getOperation(this.resultId);
     }
 
     componentWillUnmount() {
@@ -31,15 +36,19 @@ export default class LunchPage extends React.Component {
 
 
     render() {
-        let history = this.props.navigation.state.params.history;
-
+        let operation = this.props.operation;
+        let restaurantName = '';
+        if (operation) {
+            let restaurant = this.props.restaurants[operation.restaurant_id];
+            restaurantName = restaurant.title_short;
+        }
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
 
             <ScrollView>
-                <View style={historyStyles.scrollContainer}>
+                {operation &&   <View style={historyStyles.scrollContainer}>
 
-                    <HistoryShortInfo info={history}/>
+                    <HistoryShortInfo info={operation}/>
 
                     <Amount info={history}/>
 
@@ -50,7 +59,7 @@ export default class LunchPage extends React.Component {
                     </View>
 
                     <CategoryList data={fakeCategoryListArray} basket={true}/>
-                </View>
+                </View>}
 
 
             </ScrollView>
@@ -58,6 +67,26 @@ export default class LunchPage extends React.Component {
     }
 }
 
+function bindAction(dispatch) {
+    return {
+        getReserve: (restaurantId, reserveId) => {
+            dispatch(getReserve(restaurantId, reserveId));
+        },
+        getOperation: (operationId) => {
+            dispatch(getOperation(operationId));
+        }
+    };
+}
+
+const mapStateToProps = state => ({
+    reserve: state.user.reserve,
+    restaurants: state.restaurant.restaurants,
+    isReservePending: state.user.isReservePending,
+    isOperationPending: state.user.isOperationPending,
+    operation: state.user.operation,
+});
+const LunchPage = connect(mapStateToProps, bindAction)(LunchPageC);
+export default LunchPage;
 
 const styles = {
     container: {

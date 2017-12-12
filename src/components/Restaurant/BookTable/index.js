@@ -216,7 +216,9 @@ class BookTable extends React.Component {
 
 
     getTimeSheet() {
-        return this.props.timeSheet
+        return this.props.timeSheet.filter(time => {
+            return time.timestamp > moment().unix();
+        });
     }
 
     navigateToBook(time) {

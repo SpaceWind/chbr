@@ -7,6 +7,7 @@ import {TouchableOpacity, Animated, Image} from "react-native";
 import {Button, Text, View, Icon} from 'native-base';
 import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
+
 export default class CategoryListItem extends React.Component {
 
 
@@ -22,15 +23,20 @@ export default class CategoryListItem extends React.Component {
         active: string,
         addItem: () => void,
         minusItem: () => void;
-        basket?:boolean
+        basket?: boolean
 
+    }
+
+
+    constructor(props) {
+        super(props);
     }
 
 
     shouldComponentUpdate(nextProps, nextState) {
         return nextProps.item.count !== this.props.item.count
             || nextProps.item.fadeAnim !== this.props.item.fadeAnim
-            || nextProps.active !== this.props.active  && this.props.item.id === this.props.active
+            || nextProps.active !== this.props.active && this.props.item.id === this.props.active
     }
 
     render() {
@@ -41,7 +47,16 @@ export default class CategoryListItem extends React.Component {
                         this.props.navigation.navigate('Dish', {name: this.props.item.title, dish: this.props.item})
                     }}>
                         <View style={styles.infoImageBlock}>
-                            <Image source={{uri: this.props.item.photos.thumb}} style={styles.image}/>
+
+                            {this.props.item.photos.thumb ?
+                                <Image source={{uri: this.props.item.photos.thumb}} style={styles.image}/>
+                                :
+                                <View style={styles.defaultImageBlock}><Image
+                                    source={require('../../../../assets/images/menu/dish-icon.png')}
+                                    style={styles.defaultImage}/></View>
+                            }
+
+
                             {this.props.item.available_for_bonus === 1 && <View style={styles.infoBonusBlock}>
 
                                 <Text style={styles.infoBonusText}>За баллы</Text>
@@ -74,7 +89,8 @@ export default class CategoryListItem extends React.Component {
         return (  <Button bordered warning rounded style={styles.addItemButton} onPress={() => {
             this.props.navigation.navigate('Dish', {name: item.title, dish: item})
         }}>
-            <Text style={styles.addItemButtonText} uppercase={false}>{item.count + ' ' + 'X' + ' ' + item.price + " ₽"}</Text>
+            <Text style={styles.addItemButtonText}
+                  uppercase={false}>{item.count + ' ' + 'X' + ' ' + item.price + " ₽"}</Text>
         </Button>        )
     }
 
@@ -149,7 +165,7 @@ const styles = {
         flexDirection: "row",
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingVertical:12
+        paddingVertical: 12
     },
     info: {
         flexDirection: "row",
@@ -170,7 +186,7 @@ const styles = {
         fontSize: 16,
         lineHeight: 18,
         maxWidth: '100%',
-        paddingRight:6
+        paddingRight: 6
 
     },
     weight: {
@@ -180,7 +196,23 @@ const styles = {
         color: platform.brandWarning
 
     },
+
+    defaultImageBlock: {
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+        backgroundColor: '#7A8187',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    defaultImage: {
+        width: 18,
+        height: 38
+    },
+
     infoImageBlock: {},
+
+
     image: {
         width: 70,
         height: 70,

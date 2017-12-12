@@ -21,6 +21,7 @@ export default ProfileStack = StackNavigator({
     BookTableHistory: {
         screen: BookTablePage,
         navigationOptions: {
+            title: 'Бронирование стола',
             headerBackTitleStyle: {
                 color: "transparent"
             },
@@ -80,6 +81,7 @@ export default ProfileStack = StackNavigator({
     BuyByBonusHistory: {
         screen: BuyByBonusPage,
         navigationOptions: {
+            title: 'Покупка за баллы',
             headerBackTitleStyle: {
                 color: "transparent"
             },

@@ -16,9 +16,6 @@ import {NavigationActions} from "react-navigation";
 
 class BookTablePageC extends React.Component {
 
-    static navigationOptions = ({navigation, screenProps}) => ({
-        title: navigation.state.params.name
-    });
 
     state = {};
     getReserve= true;
@@ -30,7 +27,6 @@ class BookTablePageC extends React.Component {
 
     componentWillMount() {
         this.props.getOperation(this.reserveId);
-
     }
 
     componentWillUnmount() {

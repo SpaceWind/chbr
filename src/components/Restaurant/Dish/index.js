@@ -51,7 +51,6 @@ export class DishC extends React.Component {
     }
 
 
-
     render() {
         let dish = this.dish;
         this.restaurantId = dish.restaurant_id;
@@ -80,8 +79,16 @@ export class DishC extends React.Component {
                     <View style={styles.container}>
                         <View>
 
-                            <Image source={{uri: dish.photos.main}} style={styles.image}>
-                            </Image>
+
+                            {dish.photos.main ?
+                                <Image source={{uri: dish.photos.main}} style={styles.image}/>
+                                :
+                                <View style={styles.defaultImageBlock}><Image
+                                    source={require('../../../../assets/images/menu/dish-icon.png')}
+                                    style={styles.defaultImage}/></View>
+                            }
+
+
                             <LinearGradient
                                 colors={['#000', 'transparent']}
                                 start={{x: 0.5, y: 1}}
@@ -300,10 +307,12 @@ export class DishC extends React.Component {
         try {
             let res = await this.props.buyByBonus(this.restaurantId, this.dish.id);
             this.setState({loading: false});
+
+            console.log(res)
             setTimeout(() => {
                 Alert.alert(
                     'Успешно',
-                    'Вы приобрели блюдо за баллы. Обратитесь к ****.',
+                    'Вы приобрели блюдо за баллы. Обратитесь к официанту.',
                     [
 
                         {
@@ -313,6 +322,9 @@ export class DishC extends React.Component {
                     ]
                 )
             }, 10);
+           /* this.props.navigation.navigate('RestaurantBuyByBonusHistory', {
+                resultId: res.result_id
+            })*/
         }
         catch (err) {
 
@@ -404,6 +416,17 @@ const styles = {
         flex: 1,
         minHeight: Dimensions.get('window').height -
         (Platform.OS === "ios" ? 64 : (56 /*+ 30/*Constants.statusBarHeight*/)),
+    },
+    defaultImageBlock: {
+        height: 260,
+        width: null,
+        backgroundColor: '#7A8187',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    defaultImage: {
+        width: 36,
+        height: 75
     },
     image: {
         height: 260,

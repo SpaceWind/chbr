@@ -16,6 +16,7 @@ import SignSecondStepSwag from "../components/SignIn/SignSecondStep/index";
 import OneNewsPage from "../components/News/OneNewsPage/index";
 import ScanBillPage from "../components/Cards/ScanBillPage/index";
 import BookTablePage from "../components/History/BookTablePage/index";
+import BuyByBonusPage from "../components/History/BuyByBonusPage/index";
 
 
 export default RestaurantsStack = StackNavigator({
@@ -173,6 +174,22 @@ export default RestaurantsStack = StackNavigator({
             drawerLockMode:'locked-closed'
         }
     },
+    RestaurantBuyByBonusHistory: {
+        screen: BuyByBonusPage,
+        navigationOptions: {
+            title: 'Покупка за баллы',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            headerStyle: {
+                ...BaseNavigationBarStyle.headerStyle,
+            },
+            headerTitleStyle: {
+                ...BaseNavigationBarStyle.headerTitleStyle
+            },
+            drawerLockMode:'locked-closed'
+        }
+    }
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle,

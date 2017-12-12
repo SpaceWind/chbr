@@ -297,6 +297,7 @@ class BookTableConfirmC extends React.Component {
                             }
                         ]
                     );
+
                     this.goToHistory(result.reserve_id)
 
                 }, 1);

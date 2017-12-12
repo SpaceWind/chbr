@@ -45,7 +45,7 @@ class HistoryPage extends React.Component {
                 break;
             }
             case 5: {
-                this.props.navigation.navigate('BuyByBonusHistory', {name: title, history: item});
+                this.props.navigation.navigate('BuyByBonusHistory', {name: title, resultId: item.result_id});
                 break;
             }
             case 7: {
