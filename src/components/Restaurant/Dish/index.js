@@ -22,7 +22,7 @@ import LinearGradient from "react-native-linear-gradient";
 import {Alert} from "react-native";
 import {buyByBonus, getDish, getRestaurants, likeDish} from "../../../actions/restaurant";
 import Spinner from "react-native-loading-spinner-overlay";
-import {getLikes} from "../../../actions/user";
+
 
 
 export class DishC extends React.Component {
@@ -55,13 +55,21 @@ export class DishC extends React.Component {
         let dish = this.dish;
         this.restaurantId = dish.restaurant_id;
 
-        let enabled = Object.keys(dish.badges).map((key) => {
-            return dish.badges[key]
-        }).filter(item => item.status).map(item => item.title.toLowerCase());
 
-        let hot = enabled.find(item => item === 'острое');
-        let newDish = enabled.find(item => item === 'новое блюдо');
 
+        let hot = false;
+        let newDish = false;
+
+
+        if(dish.badges)
+        {
+            let badges = Object.keys(dish.badges).map((key) => {
+                return dish.badges[key]
+            }).filter(item => item.status).map(item => item.title.toLowerCase());
+            hot = badges.find(item => item === 'острое');
+            newDish =badges.find(item => item === 'новое блюдо');
+
+        }
         let savedDish = this.props.billing.dishes.find(item => item.id === dish.id);
         let countDish = 0;
         if (savedDish) {
@@ -80,16 +88,16 @@ export class DishC extends React.Component {
                         <View>
 
 
-                            {dish.photos.main ?
+                            {dish.photos && dish.photos.main ?
                                 <Image source={{uri: dish.photos.main}} style={styles.image}/>
                                 :
                                 <View style={styles.defaultImageBlock}><Image
-                                    source={require('../../../../assets/images/menu/dish-icon.png')}
+                                    source={require('../../../../assets/images/menu/dish-big-icon.png')}
                                     style={styles.defaultImage}/></View>
                             }
 
 
-                            <LinearGradient
+                            {dish.photos && dish.photos.main &&<LinearGradient
                                 colors={['#000', 'transparent']}
                                 start={{x: 0.5, y: 1}}
                                 end={{x: 0.5, y: 0}}
@@ -103,7 +111,7 @@ export class DishC extends React.Component {
                             >
 
 
-                            </LinearGradient>
+                            </LinearGradient>}
 
                             <View
                                 style={styles.subInfo}
@@ -115,7 +123,7 @@ export class DishC extends React.Component {
 
                                 {
 
-                                    this.props.currentDishPending || this.props.likePending ?
+                                    (this.props.currentDishPending || this.props.likePending ?
                                         <ActivityIndicator
 
                                         /> :
@@ -149,7 +157,7 @@ export class DishC extends React.Component {
 
                                             </TouchableOpacity>
 
-                                        </View>
+                                        </View>)
 
 
                                 }
@@ -351,8 +359,8 @@ export class DishC extends React.Component {
                 case 422: {
                     setTimeout(() => {
                         Alert.alert(
-                            'Ошибка',
-                            'Вам не хватает баллов для покупки.',
+                            'Вам не хватает баллов для покупки',
+                            '',
                             [
 
                                 {

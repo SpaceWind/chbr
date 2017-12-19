@@ -304,10 +304,18 @@ class BookTableConfirmC extends React.Component {
             }
             catch
                 (ex) {
+
+                let text = 'Попробуйте забронировать позже.';
+                if(ex && ex.body && ex.body.error==='user has unconfirmed reserves')
+                {
+                    text = "Вы уже оставляли заявку на бронь"
+                }
+
+
                 setTimeout(() => {
                     Alert.alert(
-                        'Ошибка',
-                        'Попробуйте забронировать позже.',
+                        'Бронирование невозможно',
+                        text,
                         [
 
                             {

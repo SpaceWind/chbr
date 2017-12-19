@@ -49,7 +49,10 @@ class Profile extends React.Component {
             'Изменение привяжет профиль вместе с платежной информацией, историей заказов и списком адресов к новому номеру телефона.',
             [
                 {text: 'Отменить', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
+                {text: 'OK', onPress: () => {
+                    this.props.signIn();
+                    this.props.logOut();
+                }},
             ]
         )
     }
@@ -232,7 +235,7 @@ class Profile extends React.Component {
                             <Text style={InputBlockStyles.inputLabel}> Версия приложения</Text>
 
                             <View style={{paddingVertical: 16}}>
-                                <Text style={{fontSize: 18}}>1.08</Text>
+                                <Text style={{fontSize: 18}}>1.10</Text>
                             </View>
 
                         </View>

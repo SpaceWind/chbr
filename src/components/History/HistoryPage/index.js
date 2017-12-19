@@ -186,7 +186,7 @@ class HistoryPage extends React.Component {
                                 style={signStackStyle}>
 
             <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
-            {!empty
+            {!empty || this.props.isPending
                 ? <FlatList
                     style={styles.list}
                     data={list}

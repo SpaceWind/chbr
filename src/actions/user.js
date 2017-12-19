@@ -91,6 +91,10 @@ export const GET_DISCOUNT_CODE_PENDING = 'GET_DISCOUNT_CODE_PENDING';
 export const GET_DISCOUNT_CODE_FULFILLED = 'GET_DISCOUNT_CODE_FULFILLED';
 export const GET_DISCOUNT_CODE_REJECTED = 'GET_DISCOUNT_CODE_REJECTED';
 
+export const SHOW_ALERT = 'SHOW_ALERT';
+export const HIDE_ALERT = 'HIDE_ALERT';
+
+
 const delay = (ms) => new Promise(resolve =>
     setTimeout(resolve, ms)
 );
@@ -173,7 +177,6 @@ export const updateUserData = (data) => {
         return promise;
     }
 };
-
 
 
 export function setUID(uid) {
@@ -292,8 +295,6 @@ export const getReserve = (restaurantId, reserveId) => {
 };
 
 
-
-
 export function closeTutorial(promise) {
     return {
         type: CLOSE_TUTORIAL
@@ -375,3 +376,17 @@ export const getDiscountCode = () => {
         return promise;
     }
 };
+
+
+export function showAlert(message) {
+    return {
+        type: SHOW_ALERT,
+        payload: message
+    }
+}
+
+export function hideAlert() {
+    return {
+        type: HIDE_ALERT,
+    }
+}

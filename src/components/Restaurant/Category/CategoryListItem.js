@@ -48,7 +48,7 @@ export default class CategoryListItem extends React.Component {
                     }}>
                         <View style={styles.infoImageBlock}>
 
-                            {this.props.item.photos.thumb ?
+                            {this.props.item.photos && this.props.item.photos.thumb ?
                                 <Image source={{uri: this.props.item.photos.thumb}} style={styles.image}/>
                                 :
                                 <View style={styles.defaultImageBlock}><Image

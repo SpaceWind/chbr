@@ -44,24 +44,31 @@ class SignFirstStep extends React.Component {
         try {
             let result = await this.props.sendCode(this.number);
 
+            console.log(result);
             this.props.navigation.navigate('SignSecond', {number: this.number})
         }
 
         catch (ex) {
-            setTimeout(() => {
-                Alert.alert(
-                    'Ошибка подключения к серверу',
-                    '',
-                    [
-                        {
-                            text: 'Ок'
-                            , onPress: () => {
-                            this.setState({loading: false});
-                        }
-                        }
-                    ]
-                )
-            }, 100);
+
+            if(!ex || !ex.notShowAlert)
+            {
+
+                setTimeout(() => {
+                    Alert.alert(
+                        'Ошибка подключения к серверу',
+                        '',
+                        [
+                            {
+                                text: 'Ок'
+                                , onPress: () => {
+
+                            }
+                            }
+                        ]
+                    )
+                }, 100);
+            }
+
         }
         this.setState({loading: false});
     }

@@ -73,9 +73,6 @@ export default RestaurantsStack = StackNavigator({
             },
             headerStyle: {
                 ...BaseNavigationBarStyle.headerStyle,
-                shadowOffset: {width: 0, height: 0},
-                shadowOpacity: 0,
-                shadowRadius: 0
             },
             headerTitleStyle: {
                 ...BaseNavigationBarStyle.headerTitleStyle,

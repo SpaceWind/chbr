@@ -4,6 +4,11 @@ export const GET_NEWS_PENDING = 'GET_NEWS_PENDING';
 export const GET_NEWS_FULFILLED = 'GET_NEWS_FULFILLED';
 export const GET_NEWS_REJECTED = 'GET_NEWS_REJECTED';
 
+export const GET_ONE_NEWS = 'GET_ONE_NEWS';
+export const GET_ONE_NEWS_PENDING = 'GET_ONE_NEWS_PENDING';
+export const GET_ONE_NEWS_FULFILLED = 'GET_ONE_NEWS_FULFILLED';
+export const GET_ONE_NEWS_REJECTED = 'GET_ONE_NEWS_REJECTED';
+
 
 
 const delay = (ms) => new Promise(resolve =>
@@ -25,3 +30,18 @@ export const getNews = (restaurantId) => {
     }
 };
 
+
+export function getOneNewsAction(promise) {
+    return {
+        type: GET_ONE_NEWS,
+        payload: promise
+    }
+}
+
+export const getOneNews = (newsId) => {
+    return dispatch => {
+        let promise = NewsService.getOneNews(newsId);
+        dispatch(getOneNewsAction(promise));
+        return promise;
+    }
+};

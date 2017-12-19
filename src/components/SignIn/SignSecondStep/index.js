@@ -85,23 +85,27 @@ class SignSecondStep extends React.Component {
             }
             catch
                 (ex) {
+
+
                 this.setState({loading: false});
-                setTimeout(() => {
-                    Alert.alert(
-                        'Ошибка',
-                        'Неправильный код.',
-                        [
+                if (!ex || !ex.notShowAlert) {
 
-                            {
-                                text: 'Ок', onPress: () => {
+                    setTimeout(() => {
+                        Alert.alert(
+                            'Ошибка',
+                            'Неправильный код.',
+                            [
+
+                                {
+                                    text: 'Ок', onPress: () => {
 
 
-                            }
-                            }
-                        ]
-                    )
-                }, 10);
-                return;
+                                }
+                                }
+                            ]
+                        )
+                    }, 10);
+                }
             }
             Api.jwt(this.props.token);
 
@@ -184,7 +188,7 @@ class SignSecondStep extends React.Component {
 
                             </View>
 
-                            <View style={styles.button}>
+                            {!this.isConfirmBookTable && <View style={styles.button}>
 
                                 <View>
                                     <Button transparent warning onPress={() => {
@@ -194,7 +198,7 @@ class SignSecondStep extends React.Component {
                                     </Button>
                                 </View>
 
-                            </View>
+                            </View>}
 
                         </View>
                     </ImageBackground>
@@ -241,11 +245,15 @@ class SignSecondStep extends React.Component {
         }
         catch
             (ex) {
-            this.setState({loading: false});
+            let text = 'Попробуйте забронировать позже.';
+            if (ex && ex.body && ex.body.error === 'user has unconfirmed reserves') {
+                text = "Вы уже оставляли заявку на бронь"
+            }
+
             setTimeout(() => {
                 Alert.alert(
-                    'Ошибка',
-                    'Попробуйте забронировать позже.',
+                    'Бронирование невозможно',
+                    text,
                     [
 
                         {
@@ -256,7 +264,7 @@ class SignSecondStep extends React.Component {
                     ]
                 );
                 this.backToRestaurant();
-            }, 10);
+            }, 100);
         }
     }
 
@@ -266,11 +274,11 @@ class SignSecondStep extends React.Component {
             actions: [
                 NavigationActions.navigate({
                     routeName: 'Restaurants',
-                    params: {key: this.params.restaurant.id},
+                    params: {key: this.params.restaurantId},
                 }),
                 NavigationActions.navigate({
                     routeName: 'OneRestaurant',
-                    params: {key: this.params.restaurant.id},
+                    params: {key: this.params.restaurantId},
                 }),
                 NavigationActions.navigate({
                     routeName: 'RestaurantBookTableHistory',

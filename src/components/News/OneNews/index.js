@@ -13,23 +13,23 @@ export default class OneNews extends React.Component {
     render() {
 
         let image = this.props.data.photos && this.props.data.photos.find((image)=>image.sort ===-1);
-
+        let containerStyle = styles.container;
         if(image)
         {
             image = {uri:image.s3_url}
         }
         else
         {
-            image = require('../../../../assets/images/cafe-1.png');
+            containerStyle = {...containerStyle,...styles.containerBordered};
         }
-
+        console.log(containerStyle);
 
         return (
-            <View style={styles.container}>
+            <View style={containerStyle}>
 
 
-                <Image source={image} style={styles.image}>
-                </Image>
+                {image && <Image source={image} style={styles.image}>
+                </Image>}
                 <View style={{marginHorizontal: 16}}>
                     <View style={styles.infoBlock}>
 
@@ -61,7 +61,14 @@ export default class OneNews extends React.Component {
 
 const styles = {
     container: {
+
         flex: 1,
+    },
+    containerBordered: {
+        borderTopWidth:1,
+        borderBottomWidth:1,
+        paddingVertical:25,
+        borderColor:platform.brandDivider
     },
     image: {
         height: 150,

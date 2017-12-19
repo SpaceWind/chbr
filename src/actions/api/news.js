@@ -7,20 +7,18 @@ class NewsServiceImpl {
 
 
     async getNews(restaurantId) {
-        let res =null;
+        let res = null;
 
         if (restaurantId) {
-            res = await this.Api.get('/news/combined',{
-                body:{
+            res = await this.Api.get('/news/combined', {
+                body: {
                     restaurantId
                 }
             });
         }
-        else
-        {
+        else {
             res = await this.Api.get('/news/combined');
         }
-
 
 
         if (res.err) throw res;
@@ -63,6 +61,44 @@ class NewsServiceImpl {
             }
         });*/
     }
+
+
+    async getNew(restaurantId) {
+        let res = null;
+
+        if (restaurantId) {
+            res = await this.Api.get('/news/combined', {
+                body: {
+                    restaurantId
+                }
+            });
+        }
+        else {
+            res = await this.Api.get('/news/combined');
+        }
+
+        if (res.err) throw res;
+
+        return res.body;
+
+    }
+
+    async getOneNews(id) {
+        let res = await this.Api.get(`/news/${id}`, {});
+
+
+        let photos = await this.Api.get(`/news/${id}/photo`, {});
+
+        let restaurants = await this.Api.get(`/news/${id}/restaurants`, {});
+
+        if (res.err || photos.err || restaurants.err) throw res;
+
+
+        res.body.photos = photos.body;
+        res.body.restaurants = restaurants.body;
+        return res.body;
+    }
+
 
 }
 

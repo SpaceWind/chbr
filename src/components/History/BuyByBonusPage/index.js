@@ -42,14 +42,12 @@ export class BuyByBonusPageC extends React.Component {
             if (restaurant) {
                 dish = this.getDish(restaurant, operation);
             }
-
-
             if (dish) {
                 dish.count = 1;
             }
         }
 
-        console.log(operation)
+        console.log(operation);
 
 
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}

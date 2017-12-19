@@ -7,46 +7,79 @@ import {Image, ImageBackground, ScrollView, TouchableOpacity} from "react-native
 import platform from "../../../../native-base-theme/variables/platform";
 import moment from "moment";
 import {signStackStyle} from "../../../routers/SignStack";
+import {connect} from "react-redux";
+import {getOneNews} from "../../../actions/news";
+import Spinner from "react-native-loading-spinner-overlay";
 
-export default class OneNewsPage extends React.Component {
+class OneNewsPageС extends React.Component {
+
+
+    componentWillMount() {
+
+    }
 
 
     render() {
 
+        let news = null;
+        let image = null;
+        if (this.props.navigation.state.params && this.props.navigation.state.params.news) {
+            news = this.props.navigation.state.params.news;
+            image = news.photos && news.photos.find((image) => image.sort !== -1);
+            if (image) {
+                image = {uri: image.s3_url}
+            }
 
-        let news = this.props.navigation.state.params.news;
-        let restaurants = this.props.navigation.state.params.restaurants;
 
-
-        let image = news.photos &&news.photos.find((image)=>image.sort !==-1);
-
-        if(image)
-        {
-            image = {uri:image.s3_url}
         }
-        else
-        {
-            image = require('../../../../assets/images/cafe-1.png');
+        else {
+
+            news = this.props.oneNews;
+            if(news)
+            {
+                image = news.photos && news.photos.main;
+                if (image) {
+                    image = {uri: image}
+                }
+            }
+
+
         }
+
+        console.log(news);
+
+        if (news) {
+            if(!news.restaurants)
+            {
+                news.restaurants =[]
+            }
+            if (news.event_place_all || this.props.restaurants.length === news.restaurants.length) {
+                news.restaurants = [{id: 1, title: 'Все рестораны'}]
+            }
+        }
+
 
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
                              style={signStackStyle}>
-                <ScrollView>
 
-
-                    <Image source={image} style={styles.image}>
-                    </Image>
+                <Spinner visible={this.props.isPending}
+                         textStyle={{color: '#FFF'}}/>
+                {news && <ScrollView>
+                    {image ? <Image source={image} style={styles.image}>
+                    </Image>:
+                        <View style={{height:20}}></View>
+                    }
                     <View style={{marginHorizontal: 16}}>
                         <View style={styles.infoBlock}>
 
                             <Text style={styles.infoDate}>{moment(news.event_date).format('D MMM')}</Text>
                             {
-                                restaurants.map((rest) => {
+                                news.restaurants.map((rest) => {
                                     return (
                                         <View style={{flexDirection: 'row', alignItems: 'center'}} key={rest.id}>
                                             <View style={styles.infoPoint}/>
-                                            <Text style={styles.infoName}>{rest.title_short}</Text>
+                                            <Text style={styles.infoName}>{rest.title}</Text>
                                         </View>
                                     )
                                 })
@@ -62,13 +95,26 @@ export default class OneNewsPage extends React.Component {
                     </View>
 
 
-                </ScrollView>
+                </ScrollView>}
             </ImageBackground>
 
         );
     }
 }
 
+function bindAction(dispatch) {
+    return {
+    };
+}
+
+const mapStateToProps = state => ({
+    restaurants: state.restaurant.restaurantsArray,
+    news: state.news.news,
+    oneNews: state.news.oneNews,
+    isPending: state.news.getOneNewsPending
+});
+const OneNewsPage = connect(mapStateToProps, bindAction)(OneNewsPageС);
+export default OneNewsPage;
 
 const styles = {
     container: {

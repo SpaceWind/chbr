@@ -15,16 +15,16 @@ export default class FieldValue extends React.Component {
 
     render() {
 
-        return <View style={styles.field}>
-            <Text style={styles.name}>{this.props.name}</Text>
-            <Text style={styles.value}>{this.props.value}</Text>
+        return <View style={FiledValueStyles.field}>
+            <Text style={FiledValueStyles.name}>{this.props.name}</Text>
+            <Text style={FiledValueStyles.value}>{this.props.value}</Text>
         </View>
 
     }
 }
 
 
-const styles = {
+export const FiledValueStyles = {
     field: {
         paddingTop: 8
     },

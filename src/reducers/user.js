@@ -11,10 +11,10 @@ import {
     GET_TABLE_RESERVES_FULFILLED,
     GET_TABLE_RESERVES_PENDING,
     GET_TABLE_RESERVES_REJECTED, GET_USER_DATA,
-    GET_USER_DATA_FULFILLED,
+    GET_USER_DATA_FULFILLED, HIDE_ALERT,
     SEND_CODE_FULFILLED, SEND_CODE_PENDING, SEND_CODE_REJECTED, SEND_TICKET, SEND_TICKET_FULFILLED, SEND_TICKET_PENDING,
     SEND_TICKET_REJECTED,
-    SET_SIGN_STATE, SET_UID,
+    SET_SIGN_STATE, SET_UID, SHOW_ALERT,
     SHOW_SIGN, SIGN_IN,
     SIGN_OUT, UPDATE_USER_DATA, UPDATE_USER_DATA_FULFILLED
 } from '../actions/user';
@@ -34,7 +34,8 @@ const initialState = {
     showTutorial: true,
     history: null,
     likes: [],
-    uid: null
+    uid: null,
+    disabledPush: false
 };
 
 export default function (state: State = initialState, action) {
@@ -83,24 +84,27 @@ export default function (state: State = initialState, action) {
             sendCodePending: false
         };
     }
+
+    if (action.type === CONFIRM_CODE_PENDING) {
+        return {
+            ...state,
+            isCodeConfirmed: false,
+            confirmCodePending: true
+        };
+    }
     if (action.type === CONFIRM_CODE_FULFILLED) {
         return {
             ...state,
-            sent: moment(),
+            isCodeConfirmed: true,
             confirmCodePending: false,
             logged: true,
             showSign: false
         };
     }
-    if (action.type === CONFIRM_CODE_PENDING) {
-        return {
-            ...state,
-            confirmCodePending: true
-        };
-    }
     if (action.type === CONFIRM_CODE_REJECTED) {
         return {
             ...state,
+            isCodeConfirmed: false,
             confirmCodePending: false
         };
     }
@@ -136,7 +140,8 @@ export default function (state: State = initialState, action) {
         action.payload.avatar = state.userData.avatar;
         return {
             ...state,
-            userData: action.payload
+            userData: action.payload,
+            disabledPush: action.payload.notifications === 0
         };
     }
 
@@ -213,7 +218,7 @@ export default function (state: State = initialState, action) {
     if (action.type === GET_OPERATION_PENDING) {
         return {
             ...state,
-            operation:null,
+            operation: null,
             isOperationPending: true,
         };
     }
@@ -253,6 +258,19 @@ export default function (state: State = initialState, action) {
         return {
             ...state,
             showTutorial: false,
+        };
+    }
+
+    if (action.type === SHOW_ALERT) {
+        return {
+            ...state,
+            alert: action.payload
+        };
+    }
+    if (action.type === HIDE_ALERT) {
+        return {
+            ...state,
+            alert: null
         };
     }
 

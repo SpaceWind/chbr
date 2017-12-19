@@ -99,7 +99,8 @@ class BookTable extends React.Component {
 
                             </View>
 
-                            <SelectDate
+                            { this.restaurant.reserving_available===1 ? <View>
+                                <SelectDate
                                 date={this.state.date}
                                 count={this.state.count}
                                 maxCount={this.state.maxCount}
@@ -116,55 +117,60 @@ class BookTable extends React.Component {
 
                                 }}/>
 
-                            <View style={styles.timeSheet}>
-                                <Text style={styles.timeSheetHint}>Забронируйте столик на удобное вам время:</Text>
+                                <View style={styles.timeSheet}>
+                                    <Text style={styles.timeSheetHint}>Забронируйте столик на удобное вам время:</Text>
 
 
-                                <ScrollView horizontal style={{paddingBottom: 22, paddingTop: 14}} ref='scroll'>
-                                    <View style={{flexDirection: 'row'}}>
+                                    <ScrollView horizontal style={{paddingBottom: 22, paddingTop: 14}} ref='scroll'>
+                                        <View style={{flexDirection: 'row'}}>
 
 
-                                        {
-                                            this.props.getTimePending ?
+                                            {
+                                                this.props.getTimePending ?
 
-                                                <View style={styles.activityIndicator}>
+                                                    <View style={styles.activityIndicator}>
 
-                                                    <ActivityIndicator
-
-
-                                                    />
-                                                </View>
-
-                                                :
-                                                this.getTimeSheet().map(time => {
-
-                                                    if (time.state === 'enabled') {
-                                                        return <TouchableOpacity style={styles.timeButton}
-                                                                                 key={time.timestamp}
-                                                                                 onPress={() => {
-                                                                                     this.navigateToBook(time)
-                                                                                 }}>
-                                                            <Text style={styles.timeButtonText}>
-                                                                {moment.unix(time.timestamp).format('HH:mm')}
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    }
-                                                    else {
-                                                        return <View style={styles.timeButtonFill} key={time.timestamp}
-                                                        >
-                                                            <Text style={styles.timeButtonFillText}>
-                                                                {moment.unix(time.timestamp).format('HH:mm')}
-                                                            </Text>
-                                                        </View>
-                                                    }
-                                                })
-                                        }
-
-                                    </View>
-                                </ScrollView>
-                            </View>
+                                                        <ActivityIndicator
 
 
+                                                        />
+                                                    </View>
+
+                                                    :
+                                                    this.getTimeSheet().map(time => {
+
+                                                        if (time.state === 'enabled') {
+                                                            return <TouchableOpacity style={styles.timeButton}
+                                                                                     key={time.timestamp}
+                                                                                     onPress={() => {
+                                                                                         this.navigateToBook(time)
+                                                                                     }}>
+                                                                <Text style={styles.timeButtonText}>
+                                                                    {moment.unix(time.timestamp).format('HH:mm')}
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        }
+                                                        else {
+                                                            return <View style={styles.timeButtonFill}
+                                                                         key={time.timestamp}
+                                                            >
+                                                                <Text style={styles.timeButtonFillText}>
+                                                                    {moment.unix(time.timestamp).format('HH:mm')}
+                                                                </Text>
+                                                            </View>
+                                                        }
+                                                    })
+                                            }
+
+                                        </View>
+                                    </ScrollView>
+                                </View>
+
+                            </View>:
+                            <View style={{paddingHorizontal: 16}}>
+                                <Text >Бронирование через мобильное приложение недоступно</Text>
+
+                            </View>}
                         </Content>
                     </Container>
 

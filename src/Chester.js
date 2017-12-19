@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, View, StatusBar, ImageBackground, Keyboard} from 'react-native';
+import {Image, StyleSheet, View, StatusBar, ImageBackground, Keyboard, Alert} from 'react-native';
 import SignStack, {signStackStyle} from "./routers/SignStack";
 import {connect} from "react-redux";
 import NavigationDrawer from "./routers/NavigationDrawer";
@@ -16,7 +16,7 @@ import FCM, {
     WillPresentNotificationResult,
     NotificationType
 } from 'react-native-fcm';
-import {attachDevice, createDevice, sendPushToken, setUID} from "./actions/user";
+import {attachDevice, createDevice, hideAlert, sendPushToken, setUID} from "./actions/user";
 import {NavigationActions} from "react-navigation";
 import UUIDGenerator from 'react-native-uuid-generator';
 import SplashScreen from 'react-native-splash-screen'
@@ -105,45 +105,12 @@ class App extends React.Component {
         else {
             Api.jwt(null);
         }
-    }
+        if (nextProps.alert && (nextProps.alert !== this.props.alert || this.props.alert && nextProps.alert.title !== this.props.alert.title)) {
+            this._showAlert(nextProps.alert);
 
-    async _checkUID() {
-        if (this.props.user && this.props.user.uid === null) {
-            try {
-                let uid = DeviceInfo.getUniqueID();
-                this.props.setUID(uid);
-                let device = {
-                    screen_width: Dimensions.get('window').width,
-                    screen_height: Dimensions.get('window').height,
-                    vendor: DeviceInfo.getBrand(),
-                    model: DeviceInfo.getModel(),
-                    os: DeviceInfo.getSystemName(),
-                    os_version: DeviceInfo.getSystemVersion(),
-                    timezone: DeviceInfo.getTimezone()
-                };
-                let result = await this.props.createDevice(uid, device);
-                if (this.props.user.logged) {
-                    this.props.attachDevice(uid);
-                }
-            }
-            catch (ex) {
-
-            }
         }
     }
 
-    async loadPrefetch() {
-
-
-        let restaurants = await this.props.getRestaurants();
-        if (restaurants.restaurants) {
-            Object.keys(restaurants.restaurants).forEach((item, i) => {
-                //Image.prefetch(restaurants.restaurants[item].photos[0].url);
-            });
-        }
-
-
-    }
 
     render() {
 
@@ -188,6 +155,64 @@ class App extends React.Component {
             </ImageBackground>
         );
     }
+
+    _showAlert(alert) {
+        setTimeout(() => {
+            Alert.alert(
+                alert.title,
+                alert.message,
+                [
+                    {
+                        text: 'Ок'
+                        , onPress: () => {
+                    }
+                    }
+                ]
+            );
+        }, 100);
+        this.props.hideAlert();
+
+    }
+
+    async _checkUID() {
+        if (this.props.user && this.props.user.uid === null) {
+            try {
+                let uid = DeviceInfo.getUniqueID();
+                this.props.setUID(uid);
+                let device = {
+                    screen_width: Dimensions.get('window').width,
+                    screen_height: Dimensions.get('window').height,
+                    vendor: DeviceInfo.getBrand(),
+                    model: DeviceInfo.getModel(),
+                    os: DeviceInfo.getSystemName(),
+                    os_version: DeviceInfo.getSystemVersion(),
+                    timezone: DeviceInfo.getTimezone()
+                };
+                let result = await this.props.createDevice(uid, device);
+                if (this.props.user.logged) {
+                    this.props.attachDevice(uid);
+                }
+            }
+            catch (ex) {
+
+            }
+        }
+    }
+
+    async loadPrefetch() {
+
+
+        let restaurants = await this.props.getRestaurants();
+        if (restaurants.restaurants) {
+            Object.keys(restaurants.restaurants).forEach((item, i) => {
+                //Image.prefetch(restaurants.restaurants[item].photos[0].url);
+            });
+        }
+
+
+    }
+
+
 }
 
 
@@ -204,6 +229,9 @@ function bindAction(dispatch) {
         },
         attachDevice: (uid) => {
             return dispatch(attachDevice(uid));
+        },
+        hideAlert: () => {
+            return dispatch(hideAlert());
         }
     }
 }
@@ -212,6 +240,7 @@ const mapStateToProps = state => ({
     logged: state.user.logged,
     restaurants: state.restaurant.restaurants,
     user: state.user,
+    alert: state.user.alert,
     showSign: state.user.showSign,
     showTutorial: state.user.showTutorial
 });

@@ -7,18 +7,19 @@ import {Text, View, Icon, Button} from "native-base";
 
 import platform from "../../../../native-base-theme/variables/platform";
 import HistoryShortInfo from "../common/HistoryShortInfo/index";
-import FieldValue from "../common/FieldValue/index";
+import FieldValue, {FiledValueStyles} from "../common/FieldValue/index";
 import historyStyles from "../common/historyStyle";
 import {deleteOperation, getOperation, getReserve, getTableReserves} from "../../../actions/user";
 import Spinner from "react-native-loading-spinner-overlay";
 import {cancelReserve} from "../../../actions/restaurant";
 import {NavigationActions} from "react-navigation";
+import {MaskService} from 'react-native-masked-text'
 
 class BookTablePageC extends React.Component {
 
 
     state = {};
-    getReserve= true;
+    getReserve = true;
 
     constructor(props) {
         super(props);
@@ -36,12 +37,17 @@ class BookTablePageC extends React.Component {
 
     render() {
         let operation = this.props.operation;
-        let reserve = this.props.reserve || {};
+        let reserve = this.props.reserve;
+        if (reserve) {
+
+        }
         let restaurantName = '';
         if (operation) {
             let restaurant = this.props.restaurants[operation.restaurant_id];
             restaurantName = restaurant.title_short;
         }
+        console.log(reserve);
+
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
 
@@ -54,12 +60,19 @@ class BookTablePageC extends React.Component {
                     <HistoryShortInfo info={operation} result={operation.result_data} restaurantName={restaurantName}/>
 
 
-                    <View style={styles.body}>
-                        <FieldValue name="Комментарий к заказу" value={reserve.comment}/>
-                    </View>
+                    {reserve && <View style={styles.body}>
 
 
-                    {operation.status !== 6 && <View style={styles.buttonBlock}>
+                        <FieldValue name="Телефон" value={this._getMaskedPhone(reserve.client_phone)}/>
+
+                        <FieldValue name="Имя и фамилия" value={reserve.client_name}/>
+
+                        {reserve.comment && <FieldValue name="Комментарий к заказу" value={reserve.comment}/>}
+                    </View>}
+
+
+
+                    {operation.status !== 5 &&operation.status !== 6 && <View style={styles.buttonBlock}>
 
                         <View style={{
                             width: '100%', paddingHorizontal: 7,
@@ -95,6 +108,12 @@ class BookTablePageC extends React.Component {
 
     }
 
+    _getMaskedPhone(phone)
+    {
+        return MaskService.toMask('custom', phone, {
+            mask: "+7 999 999 99 99"
+        });
+    }
 
     async _getReserve(operation) {
         try {
@@ -127,7 +146,10 @@ class BookTablePageC extends React.Component {
             'Вы уверены?',
             'Заказ на бронирование будет удален.',
             [
-                {text: 'Нет', onPress: () =>{}, style: 'cancel'},
+                {
+                    text: 'Нет', onPress: () => {
+                }, style: 'cancel'
+                },
                 {
                     text: 'Ок', onPress: () => {
                     this._cancelReserve()

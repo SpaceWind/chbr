@@ -25,6 +25,7 @@ import FCM, {
     NotificationType
 } from 'react-native-fcm';
 import {NavigationActions} from "react-navigation";
+import {getNews, getOneNews} from "../actions/news";
 
 export default NavigationDrawer = DrawerNavigator({
         Restaurant: {
@@ -88,6 +89,11 @@ class CustomNavigationDrawer extends React.Component {
             this.token = token;
         });
 
+        if(!this.props.user.disabledPush)
+        {
+            FCM.subscribeToTopic('common_notifications');
+        }
+
 
         this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
             console.log(notif);
@@ -101,6 +107,12 @@ class CustomNavigationDrawer extends React.Component {
                     if (data.reserve_id) {
                         this.props.getOperation(data.reserve_id);
                         this.props.navigation.navigate('BookTableHistory', {reserveId: data.reserve_id});
+                    }
+                    if(data.news_id)
+                    {
+                        this.props.getOneNews(data.news_id);
+                        this.props.getNews();
+                        this.props.navigation.navigate('OneNewsPage');
                     }
                 }
             }
@@ -134,11 +146,20 @@ class CustomNavigationDrawer extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
-
-        if (nextProps.user.token && nextProps.user.token !== this.props.user.token) {
+        if (nextProps.user.token && nextProps.user.token !== this.props.user.token && nextProps.user.isCodeConfirmed) {
             if (this.token) {
                 this.props.sendPushToken(this.token);
+            }
+        }
+        if (nextProps.user.disabledPush !== this.props.user.disabledPush) {
+
+            if(!nextProps.user.disabledPush)
+            {
+                FCM.subscribeToTopic('common_notifications');
+            }
+            else
+            {
+                FCM.unsubscribeFromTopic('common_notifications');
             }
         }
     }
@@ -244,6 +265,12 @@ function bindAction(dispatch) {
         getOperation: (operationId) => {
             dispatch(getOperation(operationId));
         },
+        getNews: () => {
+            return dispatch(getNews());
+        },
+        getOneNews: (id) => {
+            return dispatch(getOneNews(id));
+        }
     };
 }
 
