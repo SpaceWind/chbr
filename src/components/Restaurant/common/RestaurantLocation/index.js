@@ -6,7 +6,9 @@ import ChesterIcon from "../../../Common/ChesterIcon/index";
 //import {Permissions, Location} from "expo";
 //import {Constants} from "expo";
 let geoLib = require('geolib');
+import {Dimensions} from "react-native";
 
+const {width} = Dimensions.get('window');
 import Permissions from 'react-native-permissions'
 
 export default class RestaurantLocation extends React.Component {
@@ -106,8 +108,15 @@ export default class RestaurantLocation extends React.Component {
         return <View style={styles.infoLine}>
             <ChesterIcon name="location-16" size={16} color={platform.brandWarning}/>
             <Text
-                style={styles.infoAddress}>{this.props.restaurant.address_title + (this.state.distance ? ',' : '')}</Text>
-            <Text style={styles.infoDistance}>{this.state.distance ? this.state.distance : ""}</Text>
+                style={{
+                    ...styles.infoAddress,
+                    fontSize: (this.props.restaurant.address_title.length > 30) ? (styles.infoAddress.fontSize - 2) : styles.infoAddress.fontSize
+                }}>{this.props.restaurant.address_title + (this.state.distance ? ',' : '')}</Text>
+            <Text style={{...styles.infoDistance,
+                fontSize: (this.props.restaurant.address_title.length > 30) ? (styles.infoDistance.fontSize - 2) : styles.infoDistance.fontSize
+
+
+            }}>{this.state.distance ? this.state.distance : ""}</Text>
         </View>
 
 
@@ -118,15 +127,15 @@ export default class RestaurantLocation extends React.Component {
 const styles = {
     infoLine: {
         flexDirection: 'row',
-        alignItems: "center"
+        alignItems: "center",
     },
     infoDistance: {
         color: platform.brandWarning,
-        fontSize: 18,
+        fontSize: width < 340 ? 16 : 18,
         lineHeight: 26,
     },
     infoAddress: {
-        fontSize: 18,
+        fontSize: width < 340 ? 16 : 18,
         paddingLeft: 6,
         paddingRight: 4,
         lineHeight: 26

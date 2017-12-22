@@ -2,7 +2,7 @@ import React from 'react';
 import {Button, Icon, List, ListItem, Switch, Text, View} from 'native-base';
 import {
     Image, ImageBackground, TouchableOpacity, ScrollView, Alert, TextInput, LayoutAnimation,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback, Dimensions
 } from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 
@@ -16,6 +16,8 @@ import {Platform} from "react-native";
 import * as _ from "lodash";
 import {getUserData, sendTicket} from "../../../actions/user";
 import Spinner from "react-native-loading-spinner-overlay";
+import AutoSizeTextInput from "../../Common/AutosizeTextInput/AutoSizeTextInput";
+import Constants from "../../../../utilities/Constants";
 
 
 const currentPlatform = Platform.OS;
@@ -34,7 +36,10 @@ class FeedBackPageC extends React.Component {
 
 
     componentWillMount() {
-        this.props.getUserData();
+        if (this.props.logged) {
+            this.props.getUserData();
+        }
+
     }
 
 
@@ -78,171 +83,181 @@ class FeedBackPageC extends React.Component {
                     <Spinner visible={this.props.sendTicketPending}
                              textStyle={{color: '#FFF'}}/>
 
-                    <View style={{
-                        borderTopWidth: 1,
-                        borderColor: platform.brandDivider,
-                        marginTop: 15
-                    }
-                    }>
-                        <View style={InputBlockStyles.inputBlock}>
-                            <Text style={InputBlockStyles.inputLabel}>Отправить анонимно</Text>
+                    <View style={styles.scrollBody}>
+                        <View style={{
+                            borderTopWidth: 1,
+                            borderColor: platform.brandDivider,
+                            marginTop: 15
+                        }
+                        }>
+                            <View style={InputBlockStyles.inputBlock}>
+                                <Text style={InputBlockStyles.inputLabel}>Отправить анонимно</Text>
 
-                            <View style={{paddingVertical: 16}}>
-                                <Switch value={this.state.anonymous === 1} onValueChange={(push) => {
+                                <View style={{paddingVertical: 16}}>
+                                    <Switch value={this.state.anonymous === 1} onValueChange={(push) => {
 
-                                    if (push) {
-                                        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                                    }
+                                        if (push) {
+                                            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                                        }
 
-                                    this.setState({
-                                        anonymous: push ? 1 : 0
-                                    });
-                                }}
-                                        onTintColor={platform.brandWarning} {...(currentPlatform !== 'ios' ? {thumbTintColor: '#f4f5f5'} : {})}/>
+                                        this.setState({
+                                            anonymous: push ? 1 : 0
+                                        });
+                                    }}
+                                            onTintColor={platform.brandWarning} {...(currentPlatform !== 'ios' ? {thumbTintColor: '#f4f5f5'} : {})}/>
+                                </View>
+
                             </View>
 
                         </View>
 
-                    </View>
+                        {!this.state.anonymous && !this.props.logged && <View style={{
+                            borderTopWidth: 1,
+                            borderColor: platform.brandDivider,
+                            marginTop: 15
+                        }
+                        }>
 
-                    {!this.state.anonymous && <View style={{
-                        borderTopWidth: 1,
-                        borderColor: platform.brandDivider,
-                        marginTop: 15
-                    }
-                    }>
-
-                        <InputBlock name="Имя"
-                                    keyboardAppearance="dark"
-                                    autoCorrect={false}
-                                    value={this.state.userData.first_name}
-                                    onChangeText={(text) => {
-                                        this.setState({
-                                            userData: {
-                                                ...this.state.userData,
-                                                first_name: text
-                                            }
-                                        })
-                                    }}
-                                    onBlur={() => {
-
-                                    }}
-
-                        />
-                        <InputBlock name="Фамилия"
-                                    keyboardAppearance="dark"
-                                    autoCorrect={false}
-                                    value={this.state.userData.last_name}
-                                    onChangeText={(text) => {
-                                        this.setState({
-                                            userData: {
-                                                ...this.state.userData,
-                                                last_name: text
-                                            }
-                                        })
-                                    }}
-                                    onBlur={() => {
-
-                                    }}
-
-
-                        />
-                        <View style={InputBlockStyles.inputBlock}>
-                            <TouchableWithoutFeedback onPress={() => {
-                                this.refs.phone.getElement().focus();
-                            }}>
-                                <Text style={InputBlockStyles.inputLabel}>Телефон</Text>
-                            </TouchableWithoutFeedback>
-                            <TextInputMask
-                                style={InputBlockStyles.input}
-                                keyboardType="phone-pad"
-                                type={'custom'}
-                                ref={'phone'}
-                                options={{mask: '+7 (999) 999-99-99'}}
-                                keyboardAppearance="dark"
-                                autoCorrect={false}
-                                value={this.state.phone}
-                                underlineColorAndroid="transparent"
-                                onChangeText={(text) => {
-                                    this.changeNumber(text)
-                                }}
-                            />
-                        </View>
-
-                        <InputBlock name="Email"
-                                    keyboardType="email-address"
-                                    keyboardAppearance="dark"
-                                    autoCorrect={false}
-                                    value={this.state.userData.email}
-                                    onChangeText={(text) => {
-                                        this.setState({
-                                            userData: {
-                                                ...this.state.userData,
-                                                email: text
-                                            }
-                                        })
-                                    }}
-                                    onFocus={() => {
-                                        this.backupEmail = this.state.userData.email;
-                                    }}
-                                    onBlur={() => {
-                                        if (!this.validateEmail(this.email)) {
+                            <InputBlock name="Имя"
+                                        keyboardAppearance="dark"
+                                        autoCorrect={false}
+                                        value={this.state.userData.first_name}
+                                        onChangeText={(text) => {
                                             this.setState({
                                                 userData: {
                                                     ...this.state.userData,
-                                                    email: this.backupEmail
+                                                    first_name: text
                                                 }
                                             })
-                                        }
+                                        }}
+                                        onBlur={() => {
+
+                                        }}
+
+                            />
+                            <InputBlock name="Фамилия"
+                                        keyboardAppearance="dark"
+                                        autoCorrect={false}
+                                        value={this.state.userData.last_name}
+                                        onChangeText={(text) => {
+                                            this.setState({
+                                                userData: {
+                                                    ...this.state.userData,
+                                                    last_name: text
+                                                }
+                                            })
+                                        }}
+                                        onBlur={() => {
+
+                                        }}
+
+
+                            />
+                            <View style={InputBlockStyles.inputBlock}>
+                                <TouchableWithoutFeedback onPress={() => {
+                                    this.refs.phone.getElement().focus();
+                                }}>
+                                    <Text style={InputBlockStyles.inputLabel}>Телефон</Text>
+                                </TouchableWithoutFeedback>
+                                <TextInputMask
+                                    style={InputBlockStyles.input}
+                                    keyboardType="phone-pad"
+                                    type={'custom'}
+                                    ref={'phone'}
+                                    options={{mask: '+7 (999) 999-99-99'}}
+                                    keyboardAppearance="dark"
+                                    autoCorrect={false}
+                                    value={this.state.phone}
+                                    underlineColorAndroid="transparent"
+                                    onChangeText={(text) => {
+                                        this.changeNumber(text)
                                     }}
-
-                        />
-
-
-                    </View>}
-
-                    <View style={{
-                        borderTopWidth: 1,
-                        borderColor: platform.brandDivider,
-                        marginTop: 15
-                    }}>
-
-                        <View style={{
-                            ...InputBlockStyles.inputBlockV
-                        }}>
-                            <Text style={InputBlockStyles.inputLabelV}>Отзыв или предложение</Text>
-                            <View style={{
-                                height: this.state.anonymous ? 389 : 145,
-                                paddingBottom: 15
-                            }}>
-                                <TextInput style={{
-                                    ...InputBlockStyles.inputV,
-                                    minHeight: 80
-                                }}
-                                           multiline={true}
-                                           underlineColorAndroid="transparent"
-                                           onChangeText={(text) => {
-                                               this.setState({
-                                                   text
-                                               })
-                                           }}
                                 />
                             </View>
 
+                            <InputBlock name="Email"
+                                        keyboardType="email-address"
+                                        keyboardAppearance="dark"
+                                        autoCorrect={false}
+                                        value={this.state.userData.email}
+                                        onChangeText={(text) => {
+                                            this.setState({
+                                                userData: {
+                                                    ...this.state.userData,
+                                                    email: text
+                                                }
+                                            })
+                                        }}
+                                        onFocus={() => {
+                                            this.backupEmail = this.state.userData.email;
+                                        }}
+                                        onBlur={() => {
+                                            if (!this.validateEmail(this.email)) {
+                                                this.setState({
+                                                    userData: {
+                                                        ...this.state.userData,
+                                                        email: this.backupEmail
+                                                    }
+                                                })
+                                            }
+                                        }}
+
+                            />
+
+
+                        </View>}
+
+                        <View style={{
+                            borderTopWidth: 1,
+                            borderColor: platform.brandDivider,
+                            marginTop: 15
+                        }}>
+                            <TouchableWithoutFeedback onPress={() => {
+                                this.refs.comment.focus();
+                            }}>
+                                <View style={{
+                                    ...InputBlockStyles.inputBlockV
+                                }}>
+
+
+                                    <Text style={InputBlockStyles.inputLabelV}>Отзыв или предложение</Text>
+
+
+                                    <View style={{}}>
+
+
+                                        <TextInput ref='comment' style={{
+                                            ...InputBlockStyles.inputV,
+
+                                        }}
+
+                                                   blurOnSubmit={true}
+                                                   multiline={true}
+                                                   keyboardAppearance="dark"
+                                                   underlineColorAndroid="transparent"
+                                                   onChangeText={(text) => {
+                                                       this.setState({
+                                                           text
+                                                       })
+                                                   }}
+                                        />
+                                    </View>
+
+
+                                </View>
+                            </TouchableWithoutFeedback>
 
                         </View>
 
 
-                    </View>
-
-
-                    <View style={styles.buttonBlock}>
-                        <Button warning rounded disabled={!(this.state.text && this.state.text.length > 0)}
-                                style={{width: '100%'}} onPress={() => {
-                            this.sendTicket(this.state);
-                        }}>
-                            <Text style={{textAlign: 'center', flex: 1}} uppercase={false}>Отправить</Text>
-                        </Button>
+                        <View style={styles.buttonBlock}>
+                            <Button warning rounded disabled={!(this.state.text && this.state.text.length > 0)}
+                                    style={{width: '100%'}} onPress={() => {
+                                this.sendTicket(this.state);
+                            }}>
+                                <Text style={{textAlign: 'center', flex: 1}} uppercase={false}>Отправить</Text>
+                            </Button>
+                        </View>
                     </View>
 
 
@@ -313,6 +328,7 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
     phone: state.user.phone,
     user: state.user.userData,
+    logged: state.user.logged,
     sendTicketPending: state.user.sendTicketPending
 });
 const FeedBackPage = connect(mapStateToProps, bindAction)(FeedBackPageC);
@@ -321,6 +337,9 @@ export default FeedBackPage;
 const styles = {
     container: {
         flex: 1,
+    },
+    scrollBody: {
+        minHeight: Constants.BODY_HEIGHT
     },
     buttonBlock: {
         alignSelf: 'center',

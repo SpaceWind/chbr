@@ -79,7 +79,13 @@ class CustomNavigationDrawer extends React.Component {
 
     componentWillMount() {
 
-        FCM.requestPermissions().then(() => console.log('granted')).catch(() => console.log('notification permission rejected'));
+        FCM.requestPermissions().then(() => {
+            if(!this.props.user.disabledPush)
+            {
+                FCM.subscribeToTopic('common_notifications');
+                console.log('subsribes');
+            }
+        });
 
         FCM.getFCMToken().then(token => {
             console.log(token);
@@ -89,10 +95,7 @@ class CustomNavigationDrawer extends React.Component {
             this.token = token;
         });
 
-        if(!this.props.user.disabledPush)
-        {
-            FCM.subscribeToTopic('common_notifications');
-        }
+
 
 
         this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {

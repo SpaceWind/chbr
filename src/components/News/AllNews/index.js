@@ -81,14 +81,6 @@ class NewsC extends React.Component {
                                 restaurants = [];
                             }
 
-                            if (this.state.restaurant !== 'all') {
-                                restaurants = [{
-                                    id: 1,
-                                    title_short: this.props.restaurants.find(rest => rest.id === this.state.restaurant).title_short
-                                }]
-                            }
-
-
                             return (<TouchableOpacity
                                 style={{marginBottom: 25}}
                                 onPress={

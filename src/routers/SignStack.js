@@ -3,12 +3,15 @@ import SignFirstStep from "../components/SignIn/SignFirstStep/index";
 import SignSecondStep from "../components/SignIn/SignSecondStep/index";
 import platform from "../../native-base-theme/variables/platform";
 
+import {Dimensions} from "react-native";
+
+const {width} = Dimensions.get('window');
 
 export default SignStack = StackNavigator({
     SignFirst: {
         screen: SignFirstStep,
         navigationOptions: {
-            header:null
+            header: null
         }
     },
     SignSecond: {
@@ -17,12 +20,12 @@ export default SignStack = StackNavigator({
             title: "Подтверждение"
         }
     },
-},{
-    cardStyle:{
-        backgroundColor:'transparent',
+}, {
+    cardStyle: {
+        backgroundColor: 'transparent',
     },
-    navigationOptions:{
-        headerStyle:{
+    navigationOptions: {
+        headerStyle: {
             position: 'absolute',
             backgroundColor: 'transparent',
             zIndex: 100,
@@ -33,15 +36,16 @@ export default SignStack = StackNavigator({
         },
         headerTitleStyle: {
             fontSize: 24,
-            fontFamily:platform.fontFamily
+            marginHorizontal: width < 340 ? 0 : 16,
+            fontFamily: platform.fontFamily
         },
-        headerTintColor:'#FFF'
+        headerTintColor: '#FFF'
     }
 });
 
 
-export const signStackStyle={
-    flex:1,
+export const signStackStyle = {
+    flex: 1,
     width: null,
     height: null,
 };

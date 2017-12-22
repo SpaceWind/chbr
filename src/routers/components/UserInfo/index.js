@@ -65,7 +65,7 @@ class UserInfoC extends React.Component {
                         {this.props.userData && <TouchableOpacity
                             disabled={this.props.userData.avatar && !this.props.showName}
                             onPress={() => {
-                                this.props.userData.avatar && this.props.showName ? this.props.navigation.navigate('Profile') : this._pickImage();
+                                this.props.userData.avatar && this.props.showName ?  this._goToState('Profile') : this._pickImage();
                             }}>
                             <View style={styles.avatarInner}>
 
@@ -91,7 +91,8 @@ class UserInfoC extends React.Component {
 
 
                 <TouchableOpacity disabled={!this.props.showName} onPress={() => {
-                    this.props.navigation.navigate('Profile')
+                    this._goToState('Profile');
+
                 }
                 }>
                     {this.props.userData && (this.props.userData.first_name || this.props.userData.last_name)
@@ -104,14 +105,14 @@ class UserInfoC extends React.Component {
                 </TouchableOpacity>
                 <View>
                     <Button style={styles.bonusButton} rounded warning onPress={() => {
-                        this.props.navigation.navigate('MyCard');
+                       this._goToState('MyCard');
                     }}>
 
                         {this.props.userData && <Text
                             style={styles.buttonText}
-                              uppercase={false}>
+                            uppercase={false}>
                             {(this.props.userData.bonus_balance + ' ' + this.declOfNum(this.props.userData.bonus_balance, ['балл', 'балла', 'баллов']) + ' >')}
-                            </Text>}
+                        </Text>}
                     </Button>
 
                 </View>
@@ -199,7 +200,21 @@ class UserInfoC extends React.Component {
             }
         });
     };
+
+
+    _goToState(state) {
+        this.props.navigation.navigate('DrawerClose');
+        if (this._getStateKey() !== state) {
+            this.props.navigation.navigate(state)
+        }
+    }
+
+
+    _getStateKey() {
+        return this.props.navigation.state.routes[this.props.navigation.state.index].key;
+    }
 }
+
 
 function bindAction(dispatch) {
     return {

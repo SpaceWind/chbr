@@ -58,10 +58,10 @@ export default class HistoryShortInfo extends React.Component {
                 title = "Заказ на вынос";
                 break;
             }
-            /*case 5: {
+            case 5: {
                 title = "Покупка за баллы";
                 break;
-            }*/
+            }
             case 7: {
                 title = "Ланч в ресторане";
                 break;
@@ -91,13 +91,23 @@ export default class HistoryShortInfo extends React.Component {
                 if (this.props.info.type === 3) {
                     status = "Ожидает подтверждения";
                 }
+                else if(this.props.info.type === 5) {
+                    status = "Ожидает выдачи";
+                }
                 else {
                     status = "В обработке";
                 }
                 break;
             }
             case 2: {
-                status = "В обработке";
+                if(this.props.info.type === 5) {
+                    status = "Ожидает выдачи";
+                }else
+                {
+                    status = "В обработке";
+                }
+
+
                 break;
             }
             case 3:
@@ -106,6 +116,10 @@ export default class HistoryShortInfo extends React.Component {
 
                 if (this.props.info.type === 3) {
                     status = "Подтвержден";
+                }
+                else if( this.props.info.type === 5)
+                {
+                    status = "Выполнена";
                 }
                 else {
                     status = "Готов";
@@ -128,9 +142,7 @@ export default class HistoryShortInfo extends React.Component {
         let bonusText = bonus + ' ' + 'бал.';
 
 
-
-
-        let date =  moment.utc(this.props.info.created_at).local();
+        let date = moment.utc(this.props.info.created_at).local();
         if (this.props.info.type === 3) {
             bonusText = this.props.result.people_quantity + ' чел.';
             date = moment.utc(this.props.result.timestamp);
@@ -198,7 +210,7 @@ const styles = {
         backgroundColor: platform.brandDanger
     },
     orderStatusText: {
-        paddingHorizontal: 10,
+        paddingHorizontal: 14,
         paddingBottom: 1,
         fontSize: 14,
         lineHeight: 20,
@@ -235,15 +247,16 @@ const styles = {
     },
     pointBlock: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 9
     },
     priceBlock: {
         flexDirection: 'row',
         alignItems: 'center'
     },
     pointText: {
-        fontSize: 16,
-        lineHeight: 23,
+        fontSize: 20,
+        lineHeight: 20,
         color: platform.brandWarning
     },
 };

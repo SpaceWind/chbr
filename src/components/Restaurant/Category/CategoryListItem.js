@@ -41,7 +41,11 @@ export default class CategoryListItem extends React.Component {
 
     render() {
         return (
-            <Animated.View style={{...styles.menuItem, marginLeft: this.props.item.fadeAnim}}>
+            <Animated.View style={{
+                ...styles.menuItem,
+                marginLeft: this.props.item.fadeAnim,
+                paddingVertical: this.props.basket ? 6 : 12
+            }}>
                 <View style={styles.info}>
                     <TouchableOpacity style={styles.infoTouch} onPress={() => {
                         this.props.navigation.navigate('Dish', {name: this.props.item.title, dish: this.props.item})
@@ -143,10 +147,11 @@ export default class CategoryListItem extends React.Component {
         }
         else {
             return (  <Button
-                disabled={true}
 
                 bordered warning rounded style={styles.addItemButton} onPress={() => {
-                this.props.addItem(item)
+
+                this.props.navigation.navigate('Dish', {name: item.title, dish: item})
+                //this.props.addItem(item)
             }}>
                 <Text style={styles.addItemButtonText} uppercase={false}>{item.price + " ₽"}</Text>
             </Button>        )
@@ -239,7 +244,9 @@ const styles = {
     },
     addItemButton: {
         height: 28,
-        borderRadius: 8
+        borderRadius: 8,
+        paddingRight: 16.5,
+        paddingLeft: 16.5
     },
     addItemButtonText: {
         fontSize: 14,

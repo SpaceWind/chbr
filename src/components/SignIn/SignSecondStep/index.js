@@ -3,7 +3,7 @@ import {Button, Container, Form, Input, Item, Text, View} from 'native-base';
 import {connect} from "react-redux";
 import {dispatch} from "redux";
 import {
-    attachDevice, confirmCode, getUserData, sendCode, setSignState, signIn,
+    attachDevice, confirmCode, getUserData, resetCode, sendCode, setSignState, signIn,
     updateUserData
 } from "../../../actions/user";
 import moment from "moment";
@@ -14,7 +14,7 @@ import platform from "../../../../native-base-theme/variables/platform";
 import {reserve} from "../../../actions/restaurant";
 import Api from "../../../actions/api/api";
 import {NavigationActions} from "react-navigation";
-
+import {MaskService} from 'react-native-masked-text'
 
 class SignSecondStep extends React.Component {
 
@@ -23,7 +23,7 @@ class SignSecondStep extends React.Component {
         super(props);
 
         this.state = {
-            sec: 30
+            sec: 60
         };
         this.isConfirmBookTable = this.props.navigation.state.params.confirmBookTable;
 
@@ -44,8 +44,8 @@ class SignSecondStep extends React.Component {
         let current = moment();
         let sent = this.props.sent;
         let diff = current.diff(sent, 'seconds');
-        let sec = 30;
-        if (diff > 30) {
+        let sec = 60;
+        if (diff > 60) {
             sec = 0;
         }
         this.setState((prevState, props) => ({
@@ -66,7 +66,7 @@ class SignSecondStep extends React.Component {
     async sendCode() {
         let result = await this.props.sendCode(this.props.navigation.state.params.number);
         this.setState((prevState, props) => ({
-            sec: 30
+            sec: 60
         }));
         this.timerID = setInterval(
             () => this.tick(),
@@ -155,7 +155,9 @@ class SignSecondStep extends React.Component {
 
                             <View style={styles.message}>
                                 <Text style={{...styles.messageText}}>Код подтверждения был отправлен на номер
-                                    {' +' + this.props.navigation.state.params.number}!</Text>
+                                </Text>
+                                <Text
+                                    style={{...styles.messageText}}> {' ' + this._getMaskedPhone('+' + this.props.navigation.state.params.number)}</Text>
                             </View>
 
 
@@ -182,7 +184,8 @@ class SignSecondStep extends React.Component {
                                         }}>
                                             <Text style={styles.resendCodeButton}>Отправить код повторно ></Text>
                                         </TouchableOpacity>
-                                        : <Text>Отправить код повторно 0:{this.state.sec}</Text>
+                                        : <Text>Отправить код повторно
+                                            0:{this.state.sec < 10 ? '0' + this.state.sec : this.state.sec}</Text>
                                 }
 
 
@@ -192,6 +195,7 @@ class SignSecondStep extends React.Component {
 
                                 <View>
                                     <Button transparent warning onPress={() => {
+                                        this.props.resetCode();
                                         this.props.signInAfter()
                                     }}>
                                         <Text uppercase={false}>Вступить в клуб позже ></Text>
@@ -205,6 +209,12 @@ class SignSecondStep extends React.Component {
                 </Container>
             </TouchableWithoutFeedback>
         );
+    }
+
+    _getMaskedPhone(phone) {
+        return MaskService.toMask('custom', phone, {
+            mask: "+7 999 999 99 99"
+        });
     }
 
     async updateUserData(first_name, last_name) {
@@ -321,6 +331,7 @@ bindAction(dispatch) {
         attachDevice: (uid) => {
             return dispatch(attachDevice(uid));
         },
+        resetCode: () => dispatch(resetCode()),
         getUserData: (text) => dispatch(getUserData()),
         updateUserData: (data) => dispatch(updateUserData(data)),
         bookTable: (restaurantId, data) => dispatch(reserve(restaurantId, data))

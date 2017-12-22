@@ -1,11 +1,14 @@
 import React from 'react';
 import {Body, Button, Card, CardItem, Container, Content, Icon, Left, Right, Text, View} from 'native-base';
-import {Image, TouchableOpacity, Linking, Platform} from "react-native";
+import {Image, TouchableOpacity, Linking, Platform, ActionSheetIOS} from "react-native";
 import platform from "../../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../../Common/ChesterIcon/index";
 import Collapsible from 'react-native-collapsible';
 import moment from "moment";
 import TimeService from "../../../../services/TimeService";
+import {Dimensions} from "react-native";
+
+const {width} = Dimensions.get('window');
 
 export default class RestaurantContact extends React.Component {
 
@@ -33,14 +36,86 @@ export default class RestaurantContact extends React.Component {
 
     }
 
-    openDirections() {
+    async openDirections() {
 
+
+        let coords = this.props.restaurant.address_lat + ',' + this.props.restaurant.address_lon;
+
+        let googlePlaceId = '';
+        switch (this.props.restaurant.title_short.toLowerCase()) {
+            case "рестобар chester": {
+                googlePlaceId = "ChIJBWUN9xxYLUERDVPKa4eoG34";
+                break;
+            }
+            case "chester pub": {
+                googlePlaceId = "ChIJBUVO5kJYLUER7PduHt1XBQo";
+                break;
+            }
+            case "chester bar": {
+                googlePlaceId = "ChIJ61bk6DuoMkER9mU1o6AGe9o";
+                break;
+            }
+        }
+        let googleMaps = `https://www.google.com/maps/search/?api=1&query=${coords}&query_place_id=${googlePlaceId}&zoom=20`;
         Platform.select({
-            ios: () => {
-                Linking.openURL('http://maps.apple.com/maps?daddr=' + this.props.restaurant.address_lat + ',' + this.props.restaurant.address_lon);
+            ios: async () => {
+                let place = '';
+                switch (this.props.restaurant.title_short.toLowerCase()) {
+                    case "рестобар chester": {
+                        place = "Рестобар+Честер+" + this.props.restaurant.address_title;
+                        break;
+                    }
+                    case "chester pub": {
+                        place = "Честер+Паб+" + this.props.restaurant.address_title;
+                        break;
+                    }
+                    case "chester bar": {
+                        place = "Честер+" + this.props.restaurant.address_title;
+                        break;
+                    }
+                }
+                let yandexNavi = `yandexnavi://show_point_on_map?lat=${this.props.restaurant.address_lat}&lon=${this.props.restaurant.address_lon}&zoom=18&no-balloon=0&desc=${this.props.restaurant.title_short}`;
+                let yandexMaps = `yandexmaps://maps.yandex.ru/?ll=${this.props.restaurant.address_lon + ',' + this.props.restaurant.address_lat}&z=18&l=map&text=${"Chester " + this.props.restaurant.address_title}`;
+                let hasGoogle = await Linking.canOpenURL("comgooglemaps://");
+                let hasYandexNavi = await Linking.canOpenURL("yandexnavi://");
+                let hasYandexMaps = await Linking.canOpenURL("yandexmaps://");
+                let iosMaps = `http://maps.apple.com/maps?q=${this.props.restaurant.title_short}&ll=${coords}`;
+                if (hasGoogle || hasYandexNavi || hasYandexMaps) {
+                    let apps = [];
+
+                    if (hasGoogle) {
+                        apps.push({name: "Google Maps", url: googleMaps})
+                    }
+                    if (hasYandexNavi) {
+                        apps.push({name: "Yandex.Navigator", url: yandexNavi})
+                    }
+                    if (hasYandexMaps) {
+                        apps.push({name: "Yandex.Maps", url: yandexMaps})
+                    }
+                    apps.push({name: "iOS maps", url: iosMaps});
+                    ActionSheetIOS.showActionSheetWithOptions({
+                            options: apps.concat([{name: "Отмена"}]).map(item => item.name),
+                            cancelButtonIndex: apps.length,
+                        },
+                        (buttonIndex) => {
+                            if (buttonIndex !== apps.length) {
+                                let item = apps[buttonIndex];
+                                Linking.openURL(item.url);
+                            }
+
+                        });
+                }
+                else {
+                    Linking.openURL(iosMaps);
+                }
             },
-            android: () => {
-                Linking.openURL('http://maps.google.com/maps?daddr=' + this.props.restaurant.address_lat + ',' + this.props.restaurant.address_lon);
+            android: async () => {
+                let hasGoogle = await Linking.canOpenURL(googleMaps);
+                if (hasGoogle) {
+                    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${coords}&query_place_id=${googlePlaceId}&zoom=20`);
+                } else {
+                    Linking.openURL(`geo:${coords}`);
+                }
             }
         })();
     }
@@ -219,7 +294,7 @@ const styles = {
         justifyContent: 'space-between'
     },
     oneDay: {
-        padding: 8
+        padding: width < 340 ? 5 : 8
     },
     currentOneDay: {
 

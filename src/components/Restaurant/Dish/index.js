@@ -22,7 +22,7 @@ import LinearGradient from "react-native-linear-gradient";
 import {Alert} from "react-native";
 import {buyByBonus, getDish, getRestaurants, likeDish} from "../../../actions/restaurant";
 import Spinner from "react-native-loading-spinner-overlay";
-
+import ComingSoon from "../common/ComingSoon/index";
 
 
 export class DishC extends React.Component {
@@ -34,6 +34,7 @@ export class DishC extends React.Component {
         like: false,
         loading: false,
         likes: 0,
+        isOpen: false,
         current_client_like_it: false
     };
 
@@ -47,7 +48,7 @@ export class DishC extends React.Component {
     }
 
     componentWillMount() {
-        this.props.getDish(this.restaurantId, this.dish.category_id, this.dish.id);
+        this.props.getDish(this.restaurantId, this.dish.category_id, this.dish.id, !this.props.logged ? this.props.deviceId : null);
     }
 
 
@@ -56,18 +57,16 @@ export class DishC extends React.Component {
         this.restaurantId = dish.restaurant_id;
 
 
-
         let hot = false;
         let newDish = false;
 
 
-        if(dish.badges)
-        {
+        if (dish.badges) {
             let badges = Object.keys(dish.badges).map((key) => {
                 return dish.badges[key]
             }).filter(item => item.status).map(item => item.title.toLowerCase());
             hot = badges.find(item => item === 'острое');
-            newDish =badges.find(item => item === 'новое блюдо');
+            newDish = badges.find(item => item === 'новое блюдо');
 
         }
         let savedDish = this.props.billing.dishes.find(item => item.id === dish.id);
@@ -76,13 +75,12 @@ export class DishC extends React.Component {
             countDish = savedDish.count;
         }
 
-
         return (
 
 
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
                              style={signStackStyle}>
-                <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
+                <Spinner visible={this.props.buyByBonusPending} textStyle={{color: '#FFF'}}/>
                 <ScrollView>
                     <View style={styles.container}>
                         <View>
@@ -97,7 +95,7 @@ export class DishC extends React.Component {
                             }
 
 
-                            {dish.photos && dish.photos.main &&<LinearGradient
+                            {dish.photos && dish.photos.main && <LinearGradient
                                 colors={['#000', 'transparent']}
                                 start={{x: 0.5, y: 1}}
                                 end={{x: 0.5, y: 0}}
@@ -123,7 +121,7 @@ export class DishC extends React.Component {
 
                                 {
 
-                                    (this.props.currentDishPending || this.props.likePending ?
+                                    this.props.currentDish && (this.props.likePending ?
                                         <ActivityIndicator
 
                                         /> :
@@ -206,10 +204,12 @@ export class DishC extends React.Component {
                                         ?
 
                                         <Button
-                                            disabled={true}
                                             warning rounded style={{flex: 1, justifyContent: 'center'}}
                                             onPress={() => {
-                                                this.addItem()
+
+
+                                                this.setState({isOpen: true})
+                                                //this.addItem()
                                             }}>
                                             <Text uppercase={false}>{dish.price + ' ₽'}</Text>
                                         </Button>
@@ -253,6 +253,10 @@ export class DishC extends React.Component {
                         </View>
 
 
+                        <ComingSoon isOpen={this.state.isOpen} onClose={() => {
+                            this.setState({isOpen: false})
+                        }}/>
+
                     </View>
                 </ScrollView>
             </ImageBackground>
@@ -273,11 +277,9 @@ export class DishC extends React.Component {
 
 
     async like() {
-
         let like = !this.props.currentDish.current_client_like_it;
-        await this.props.likeDish(this.restaurantId, this.dish.category_id, this.dish.id, like);
+        this.props.likeDish(this.restaurantId, this.dish.category_id, this.dish.id, like, !this.props.logged ? this.props.deviceId : null);
 
-        this.props.getDish(this.restaurantId, this.dish.category_id, this.dish.id);
     }
 
     buyByBonusCallback() {
@@ -299,8 +301,8 @@ export class DishC extends React.Component {
         }
         else {
             Alert.alert(
-                'Вы не авторизованы',
-                `Выполните вход`,
+                'Выполните вход',
+                `Для покупки необходима авторизация.`,
                 [
                     {text: 'ОК', onPress: () => console.log('Cancel Pressed')}
                 ]
@@ -311,12 +313,10 @@ export class DishC extends React.Component {
     }
 
     async buyByBonus() {
-        this.setState({loading: true});
+
         try {
             let res = await this.props.buyByBonus(this.restaurantId, this.dish.id);
-            this.setState({loading: false});
 
-            console.log(res)
             setTimeout(() => {
                 Alert.alert(
                     'Успешно',
@@ -330,14 +330,15 @@ export class DishC extends React.Component {
                     ]
                 )
             }, 10);
-           /* this.props.navigation.navigate('RestaurantBuyByBonusHistory', {
-                resultId: res.result_id
-            })*/
+            setTimeout(() => {
+                this.props.navigation.navigate('RestaurantBuyByBonusHistory', {
+                    resultId: res.result_id
+                })
+            }, 10);
         }
         catch (err) {
 
             let status = err.status;
-            this.setState({loading: false});
             switch (status) {
                 case 404: {
                     setTimeout(() => {
@@ -394,14 +395,14 @@ function bindAction(dispatch) {
         initBasket: (restaurantId) => {
             dispatch(initBasket(restaurantId));
         },
-        likeDish: (restaurantId, categoryId, dishId, like) => {
-            return dispatch(likeDish(restaurantId, categoryId, dishId, like));
+        likeDish: (restaurantId, categoryId, dishId, like, deviceId) => {
+            return dispatch(likeDish(restaurantId, categoryId, dishId, like, deviceId));
         },
         getRestaurants: () => {
             return dispatch(getRestaurants());
         },
-        getDish: (restaurantId, categoryId, dishId) => {
-            return dispatch(getDish(restaurantId, categoryId, dishId));
+        getDish: (restaurantId, categoryId, dishId, deviceId) => {
+            return dispatch(getDish(restaurantId, categoryId, dishId, deviceId));
         }
     };
 }
@@ -409,11 +410,13 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
     billing: state.billing,
     logged: state.user.logged,
+    deviceId: state.user.uid,
     restaurants: state.restaurant.restaurants,
     likes: state.user.likes,
     currentDishPending: state.restaurant.currentDishPending,
     currentDish: state.restaurant.currentDish,
-    likePending: state.restaurant.likePending
+    likePending: state.restaurant.likePending,
+    buyByBonusPending: state.restaurant.buyByBonusPending
 });
 
 const Dish = connect(mapStateToProps, bindAction)(DishC);

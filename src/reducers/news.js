@@ -3,6 +3,7 @@ import {
     GET_ONE_NEWS_PENDING,
     GET_ONE_NEWS_REJECTED
 } from "../actions/news";
+import {CLEAR_PENDINGS} from "../actions/user";
 
 export type State = {
     news: [],
@@ -55,6 +56,14 @@ export default function (state: State = initialState, action) {
     if (action.type === GET_ONE_NEWS_REJECTED) {
         return {
             ...state,
+            getOneNewsPending: false
+        };
+    }
+
+    if (action.type === CLEAR_PENDINGS) {
+        return {
+            ...state,
+            getNewsPending: false,
             getOneNewsPending: false
         };
     }

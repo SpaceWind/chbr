@@ -62,30 +62,32 @@ class RestaurantServiceImpl {
             body: {}
         });
         if (res.err) throw res;
-
         return res.body;
     }
 
     async likeDish(restaurantId, categoryId,
-                   dishId, like) {
-
-
+                   dishId, like, deviceId) {
         let url = `/restaurant/${restaurantId}/menu/categories/${categoryId}/food/${dishId}/like`;
         let res = null;
+        let body = {};
+        if (deviceId) {
+            body.device_id = deviceId;
+        }
         if (like) {
             res = await this.Api.put(url, {
-                body: {}
+                body: body
             });
         }
         else {
 
             res = await this.Api.del(url, {
-                body: {}
+                body: body
             });
         }
-
         if (res.err) throw res;
-
+        await new Promise(resolve =>
+            setTimeout(resolve, 400)
+        );
         res.body.dishId = dishId;
         res.body.restaurantId = restaurantId;
         res.body.categoryId = categoryId;
@@ -95,10 +97,16 @@ class RestaurantServiceImpl {
 
     async getDish(restaurantId,
                   categoryId,
-                  dishId) {
+                  dishId,
+                  deviceId) {
+        let body = {};
+        if (deviceId) {
+            body.device_id = deviceId;
+        }
         let res = await this.Api.get(`/restaurant/${restaurantId}/menu/categories/${categoryId}/food/${dishId}`, {
-            body: {}
+            body: body
         });
+        console.log(res.body)
         if (res.err) throw res;
         return res.body;
     }

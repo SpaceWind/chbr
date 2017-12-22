@@ -18,17 +18,16 @@ class TutorialPageC extends React.Component {
     index = 0;
 
 
-
-
     render() {
 
 
         return (
-            <ImageBackground source={require('./../../../assets/images/background/background.png')}
+            <View
                              style={{
-                                 height: Dimensions.get('window').height - (Platform.OS === 'ios' ? 0 : Constants.STATUSBAR_HEIGHT),
+                                 height: Dimensions.get('window').height,
                                  width: null,
-                                 paddingTop: 30
+                                 paddingTop: 30,
+                                 backgroundColor:"#2b3034"
                              }}>
 
 
@@ -45,20 +44,27 @@ class TutorialPageC extends React.Component {
                     <View style={{flex: 1}}>
                         {this._renderComponent(
                             'Вас приветствует сеть ресторанов Chester!',
-                            'В приложении вы сможете получить самую актуальную информацию о наших ресторанах, акциях и событиях',
+                            'Получайте самую актуальную информацию о наших ресторанах, акциях и событиях.',
                             require('./../../../assets/images/tutorial/tutorial-1.png'))}
                     </View>
                     <View style={{flex: 1}}>
                         {this._renderComponent(
                             'Бонусная программа',
-                            'Можно копить бонусные баллы и тратить их на десерты и напитки. Есть возможность получить постоянную скидку 10%\n',
+                            'Копите бонусные баллы и тратьте их на любимые блюда и десерты.',
+                            require('./../../../assets/images/tutorial/tutorial-21.png')
+                        )}
+                    </View>
+                    <View style={{flex: 1}}>
+                        {this._renderComponent(
+                            'Накопительная скидка',
+                            'Сканируйте чеки в приложении и получайте скидку 10% во всех ресторанах Chester.',
                             require('./../../../assets/images/tutorial/tutorial-2.png')
                         )}
                     </View>
                     <View style={{flex: 1}}>
                         {this._renderComponent(
-                            'Заказ еды и бронирование столов',
-                            'Заказывайте еду на вынос со скидкой. Также можно заказать еду в ресторан на удобное время. ',
+                            'Бронирование столов',
+                            'Забронируйте удобный вам столик в несколько нажатий.',
                             require('./../../../assets/images/tutorial/tutorial-3.png')
                         )}
                     </View>
@@ -66,12 +72,12 @@ class TutorialPageC extends React.Component {
                         {this._renderComponent(
                             'Не пропустите важное!',
                             'Мы будем рассказывать вам только о самых выгодных акциях и интересных событиях.',
-                            require('./../../../assets/images/tutorial/tutorial-4.png'),
+                            require('./../../../assets/images/tutorial/tutorial-5.png'),
                             true
                         )}
                     </View>
                 </Swiper>
-            </ImageBackground>)
+            </View>)
 
 
     }
@@ -127,8 +133,10 @@ class TutorialPageC extends React.Component {
     _renderComponent(title, text, image, button) {
 
         return <View style={{height: '100%'}}>
-            <View style={styles.fakeImage}/>
-            <Image source={image} style={styles.image}/>
+            <View style={styles.fakeImage}>
+                <Image source={image} style={styles.image}/>
+            </View>
+
             <View style={styles.body}>
 
                 <ImageBackground source={require('./../../../assets/images/background/background.png')}
@@ -180,12 +188,14 @@ const styles = {
     image: {
         zIndex: 2,
         width: '100%',
-
         position: 'absolute',
-        top: 0
+        overflow: 'visible',
+        bottom: 0
     },
     fakeImage: {
-        flex: 1
+        overflow: 'visible',
+        flex: 1,
+        backgroundColor:"#2b3034"
     },
     body: {
         shadowColor: 'rgba(0,0,0,0.5)',

@@ -22,6 +22,7 @@ import {reserve} from "../../../actions/restaurant";
 import {NavigationActions} from "react-navigation";
 import moment from "moment";
 import Spinner from "react-native-loading-spinner-overlay";
+import Constants from "../../../../utilities/Constants";
 
 
 class BookTableConfirmC extends React.Component {
@@ -81,7 +82,7 @@ class BookTableConfirmC extends React.Component {
 
                             <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
 
-                            <View style={{...styles.container}}>
+                            <View style={styles.scrollBody}>
 
                                 <View style={{paddingHorizontal: 16}}>
                                     <Text style={styles.header}>
@@ -104,10 +105,11 @@ class BookTableConfirmC extends React.Component {
                                 }>
                                     <View style={InputBlockStyles.inputBlock}>
                                         <TouchableWithoutFeedback onPress={() => {
-                                            if(!this.props.logged) {
+                                            if (!this.props.logged) {
                                                 this.refs.phone.getElement().focus();
                                             }
-                                        }}><Text style={InputBlockStyles.inputLabel}>Телефон</Text></TouchableWithoutFeedback>
+                                        }}><Text
+                                            style={InputBlockStyles.inputLabel}>Телефон</Text></TouchableWithoutFeedback>
 
 
                                         <TextInputMask
@@ -121,12 +123,10 @@ class BookTableConfirmC extends React.Component {
                                             value={this.state.phone}
                                             underlineColorAndroid="transparent"
                                             onChangeText={(text) => {
-                                                if(!this.props.logged)
-                                                {
+                                                if (!this.props.logged) {
                                                     this.changeNumber(text)
                                                 }
-                                                else
-                                                {
+                                                else {
                                                     this.changeNumber(this.state.phone)
                                                 }
 
@@ -176,43 +176,39 @@ class BookTableConfirmC extends React.Component {
                                 <View style={{
                                     borderTopWidth: 1,
                                     borderColor: platform.brandDivider,
-                                    marginTop: 15,
-                                    minHeight: 185,
-                                    maxHeight: 250
+                                    marginTop: 15
                                 }}>
-
-                                    <View style={{
-                                        ...InputBlockStyles.inputBlockV,
-                                        flex: 1
+                                    <TouchableWithoutFeedback onPress={() => {
+                                        this.refs.comment.focus();
                                     }}>
-                                        <TouchableWithoutFeedback onPress={() => {
-                                            this.refs.comment.focus();
-                                        }}>
-                                            <Text style={InputBlockStyles.inputLabelV}>Комментарий к заказу</Text>
-                                        </TouchableWithoutFeedback>
                                         <View style={{
-                                            paddingBottom: 15,
+                                            ...InputBlockStyles.inputBlockV,
                                             flex: 1
                                         }}>
-                                            <TextInput  ref='comment' style={{
-                                                ...InputBlockStyles.inputV,
-                                                minHeight: 80,
-                                                flex: 1
 
-                                            }}
-                                                       multiline={true}
-                                                       underlineColorAndroid="transparent"
-                                                       onChangeText={(text) => {
-                                                           this.setState({
-                                                               text
-                                                           })
-                                                       }}
-                                            />
+                                            <Text style={InputBlockStyles.inputLabelV}>Комментарий к заказу</Text>
+
+                                            <View>
+                                                <TextInput ref='comment' style={{
+                                                    ...InputBlockStyles.inputV,
+                                                    flex: 1
+                                                }}
+
+                                                           blurOnSubmit={true}
+                                                           multiline={true}
+                                                           keyboardAppearance="dark"
+                                                           underlineColorAndroid="transparent"
+                                                           onChangeText={(text) => {
+                                                               this.setState({
+                                                                   text
+                                                               })
+                                                           }}
+                                                />
+                                            </View>
+
+
                                         </View>
-
-
-                                    </View>
-
+                                    </TouchableWithoutFeedback>
 
                                 </View>
 
@@ -300,14 +296,13 @@ class BookTableConfirmC extends React.Component {
 
                     this.goToHistory(result.reserve_id)
 
-                }, 1);
+                }, 10);
             }
             catch
                 (ex) {
 
                 let text = 'Попробуйте забронировать позже.';
-                if(ex && ex.body && ex.body.error==='user has unconfirmed reserves')
-                {
+                if (ex && ex.body && ex.body.error === 'user has unconfirmed reserves') {
                     text = "Вы уже оставляли заявку на бронь"
                 }
 
@@ -414,9 +409,14 @@ export default BookTableConfirm;
 
 const
     styles = {
+
+
         container: {
             flex: 1,
 
+        },
+        scrollBody: {
+            minHeight: Constants.BODY_HEIGHT
         },
         header: {
             color: platform.brandWarningAccent,

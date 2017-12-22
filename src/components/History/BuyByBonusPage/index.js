@@ -10,8 +10,9 @@ import HistoryShortInfo from "../common/HistoryShortInfo/index";
 import historyStyles from "../common/historyStyle";
 
 import CategoryList, {fakeCategoryListArray} from "../../Restaurant/Category/CategoryList";
-import {getOperation} from "../../../actions/user";
+import {getOperation, getResultOperation} from "../../../actions/user";
 import Spinner from "react-native-loading-spinner-overlay";
+import platform from "../../../../native-base-theme/variables/platform";
 
 export class BuyByBonusPageC extends React.Component {
 
@@ -24,6 +25,7 @@ export class BuyByBonusPageC extends React.Component {
 
     componentWillMount() {
         this.props.getOperation(this.resultId);
+        this.props.getResultOperation(this.resultId);
     }
 
     componentWillUnmount() {
@@ -48,20 +50,33 @@ export class BuyByBonusPageC extends React.Component {
         }
 
         console.log(operation);
-
+        console.log(this.props.resultOperation);
 
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
 
             <ScrollView>
-                <Spinner visible={this.props.isOperationPending}
+                <Spinner visible={this.props.isOperationPending || this.props.getResultOperationPending}
                          textStyle={{color: '#FFF'}}/>
 
                 {operation && <View style={historyStyles.scrollContainer}>
 
                     <HistoryShortInfo info={operation} result={operation.result_data} restaurantName={restaurantName}/>
 
-                    {dish && <CategoryList data={[dish]} basket={true} navigation={this.props.navigation}/>}
+                    {<View style={styles.order}>
+                        <Text style={styles.orderHeader}>Номер заказа:</Text>
+                        <Text style={styles.orderValue}>{operation.result_data.order.serial_number}</Text>
+                        <Text style={styles.orderHint}>
+                            Назовите его администратору или официанту для получения заказа
+                        </Text>
+                    </View>}
+
+
+                    {dish &&
+                    <View style={styles.dish}>
+                        <CategoryList  data={[dish]} basket={true}
+                                      navigation={this.props.navigation}/></View>
+                    }
                 </View>}
 
 
@@ -81,7 +96,7 @@ export class BuyByBonusPageC extends React.Component {
                     items = b.items;
                 }
                 return a.concat(items);
-            }, []).find(dish => dish.id === operation.result_data.id);
+            }, []).find(dish => dish.id === operation.result_data.food.id);
     }
 }
 
@@ -89,6 +104,9 @@ function bindAction(dispatch) {
     return {
         getOperation: (operationId) => {
             dispatch(getOperation(operationId));
+        },
+        getResultOperation: (resultId) => {
+            dispatch(getResultOperation(resultId));
         }
     };
 }
@@ -96,6 +114,8 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
     restaurants: state.restaurant.restaurants,
     isOperationPending: state.user.isOperationPending,
+    getResultOperationPending: state.user.getResultOperationPending,
+    resultOperation: state.user.resultOperation,
     operation: state.user.operation,
 });
 const BuyByBonusPage = connect(mapStateToProps, bindAction)(BuyByBonusPageC);
@@ -109,5 +129,32 @@ const styles = {
     body: {
         paddingHorizontal: 16,
         paddingVertical: 16,
+    },
+    order: {
+        paddingHorizontal: 16,
+        marginTop: 12
+    },
+    orderHeader: {
+        fontSize: 16,
+        lineHeight: 23,
+        color: platform.brandWarningAccent
+    },
+    orderValue: {
+        fontSize: 63,
+        backgroundColor: 'transparent',
+        marginTop: -10,
+        marginBottom: -4
+    },
+    orderHint: {
+        fontSize: 14,
+        lineHeight: 20,
+        color: platform.brandFontAccent
+    },
+    dish: {
+        marginTop:15,
+        height:82,
+        borderColor: platform.brandDivider,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
     }
 };

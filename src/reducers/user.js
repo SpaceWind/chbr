@@ -1,17 +1,20 @@
 import {
+    CLEAR_PENDINGS,
     CLOSE_TUTORIAL,
     CONFIRM_CODE_FULFILLED,
-    CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, GET_DISCOUNT_CODE, GET_DISCOUNT_CODE_FULFILLED, GET_LIKES,
+    CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, CREATE_DEVICE_FULFILLED, GET_DISCOUNT_CODE,
+    GET_DISCOUNT_CODE_FULFILLED, GET_LIKES,
     GET_LIKES_FULFILLED, GET_OPERATION, GET_OPERATION_FULFILLED, GET_OPERATION_PENDING, GET_OPERATION_REJECTED,
     GET_RESERVE,
     GET_RESERVE_FULFILLED,
     GET_RESERVE_PENDING,
-    GET_RESERVE_REJECTED,
+    GET_RESERVE_REJECTED, GET_RESULT_OPERATION, GET_RESULT_OPERATION_FULFILLED, GET_RESULT_OPERATION_PENDING,
+    GET_RESULT_OPERATION_REJECTED,
     GET_TABLE_RESERVES,
     GET_TABLE_RESERVES_FULFILLED,
     GET_TABLE_RESERVES_PENDING,
     GET_TABLE_RESERVES_REJECTED, GET_USER_DATA,
-    GET_USER_DATA_FULFILLED, HIDE_ALERT,
+    GET_USER_DATA_FULFILLED, HIDE_ALERT, RESET_CODE,
     SEND_CODE_FULFILLED, SEND_CODE_PENDING, SEND_CODE_REJECTED, SEND_TICKET, SEND_TICKET_FULFILLED, SEND_TICKET_PENDING,
     SEND_TICKET_REJECTED,
     SET_SIGN_STATE, SET_UID, SHOW_ALERT,
@@ -84,6 +87,15 @@ export default function (state: State = initialState, action) {
             sendCodePending: false
         };
     }
+    if (action.type === RESET_CODE) {
+        return {
+            ...state,
+            sent: null,
+            token: null,
+            phone: null
+        };
+    }
+
 
     if (action.type === CONFIRM_CODE_PENDING) {
         return {
@@ -239,6 +251,29 @@ export default function (state: State = initialState, action) {
         };
     }
 
+    if (action.type === GET_RESULT_OPERATION_PENDING) {
+        return {
+            ...state,
+            resultOperation: null,
+            getResultOperationPending: true,
+        };
+    }
+
+    if (action.type === GET_RESULT_OPERATION_FULFILLED) {
+        return {
+            ...state,
+            resultOperation: action.payload,
+            getResultOperationPending: false,
+        };
+    }
+
+    if (action.type === GET_RESULT_OPERATION_REJECTED) {
+        return {
+            ...state,
+            resultOperation: null,
+            getResultOperationPending: false
+        };
+    }
 
     if (action.type === GET_DISCOUNT_CODE) {
         return {
@@ -246,6 +281,7 @@ export default function (state: State = initialState, action) {
             discountCode: null
         };
     }
+
 
     if (action.type === GET_DISCOUNT_CODE_FULFILLED) {
         return {
@@ -271,6 +307,18 @@ export default function (state: State = initialState, action) {
         return {
             ...state,
             alert: null
+        };
+    }
+
+    if (action.type === CLEAR_PENDINGS) {
+        return {
+            ...state,
+            isOperationPending: false,
+            getHistoryPending: false,
+            isReservePending: false,
+            sendTicketPending: false,
+            confirmCodePending: false,
+            sendCodePending: false
         };
     }
 

@@ -46,6 +46,11 @@
       NSLog(@"  %@", name);
     }
   }
+  
+
+  
+  
+  
   [SplashScreen show];
   return YES;
 }

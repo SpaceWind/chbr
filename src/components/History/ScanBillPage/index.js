@@ -34,22 +34,26 @@ export class ScanBillPageC extends React.Component {
         let history = this.props.navigation.state.params.history;
 
         history.price = history.summ;
+
+        let restaurant = this.props.restaurants[history.restaurant_id];
+        let restaurantName = restaurant.title_short;
+
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
 
             <ScrollView>
                 <View style={historyStyles.scrollContainer}>
 
-                    <HistoryShortInfo info={history}/>
+                    <HistoryShortInfo info={history} result={history.result_data} restaurantName={restaurantName}/>
 
                     <View style={styles.body}>
                         <View style={styles.textBlock}>
                             <View style={{marginRight: 50}}>
-                                <Text style={styles.title}>Ваши баллы</Text>
+                                <Text style={styles.title}>Ваши баллы:</Text>
                                 <Text style={styles.value}>{this.props.user.bonus_balance}</Text>
                             </View>
                             <View>
-                                <Text style={styles.title}>Будет начислено</Text>
+                                <Text style={styles.title}>Будет начислено:</Text>
                                 <Text style={styles.value}>+{history.bonus}</Text>
                             </View>
                         </View>
@@ -70,7 +74,8 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
-    user: state.user.userData
+    user: state.user.userData,
+    restaurants: state.restaurant.restaurants,
 });
 
 const ScanBillPage = connect(mapStateToProps, bindAction)(ScanBillPageC);
@@ -83,7 +88,7 @@ const styles = {
     },
     body: {
         paddingHorizontal: 16,
-        paddingVertical: 8,
+        paddingVertical: 11,
     },
     textBlock: {
         flexDirection: 'row'
@@ -95,8 +100,9 @@ const styles = {
     },
     value: {
         fontSize: 63,
-        lineHeight: 95,
-        color: '#fff'
+        backgroundColor: 'transparent',
+        marginTop: -10,
+        marginBottom: -4
     },
     hint: {
         fontSize: 14,

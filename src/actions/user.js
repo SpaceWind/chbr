@@ -1,5 +1,7 @@
 import {AuthService} from "./api/auth";
 
+export const CLEAR_PENDINGS = 'CLEAR_PENDINGS';
+
 export const SIGN_IN = 'SIGN_IN';
 export const SIGN_OUT = 'SIGN_OUT';
 export const SET_SIGN_STATE = 'SET_SIGN_STATE';
@@ -52,6 +54,10 @@ export const GET_OPERATION_PENDING = 'GET_OPERATION_PENDING';
 export const GET_OPERATION_FULFILLED = 'GET_OPERATION_FULFILLED';
 export const GET_OPERATION_REJECTED = 'GET_OPERATION_REJECTED';
 
+export const GET_RESULT_OPERATION = 'GET_RESULT_OPERATION';
+export const GET_RESULT_OPERATION_PENDING = 'GET_RESULT_OPERATION_PENDING';
+export const GET_RESULT_OPERATION_FULFILLED = 'GET_RESULT_OPERATION_FULFILLED';
+export const GET_RESULT_OPERATION_REJECTED = 'GET_RESULT_OPERATION_REJECTED';
 
 export const DELETE_OPERATION = 'DELETE_OPERATION';
 export const DELETE_OPERATION_PENDING = 'DELETE_OPERATION_PENDING';
@@ -91,8 +97,18 @@ export const GET_DISCOUNT_CODE_PENDING = 'GET_DISCOUNT_CODE_PENDING';
 export const GET_DISCOUNT_CODE_FULFILLED = 'GET_DISCOUNT_CODE_FULFILLED';
 export const GET_DISCOUNT_CODE_REJECTED = 'GET_DISCOUNT_CODE_REJECTED';
 
+
+export const RESET_CODE = 'RESET_CODE';
+
+
 export const SHOW_ALERT = 'SHOW_ALERT';
 export const HIDE_ALERT = 'HIDE_ALERT';
+
+export function clearPendings() {
+    return {
+        type: CLEAR_PENDINGS
+    };
+}
 
 
 const delay = (ms) => new Promise(resolve =>
@@ -232,6 +248,24 @@ export const sendTicket = (data) => {
         return promise;
     }
 };
+
+export function getResultAction(promise) {
+    return {
+        type: GET_RESULT_OPERATION,
+        payload: promise
+    }
+}
+
+export const getResultOperation = (resultId) => {
+    return dispatch => {
+        let promise = AuthService.getResultOperation(resultId);
+        dispatch(getResultAction(promise));
+        return promise;
+    }
+};
+
+
+
 
 export function getTableReservesAction(promise) {
     return {
@@ -388,5 +422,11 @@ export function showAlert(message) {
 export function hideAlert() {
     return {
         type: HIDE_ALERT,
+    }
+}
+
+export function resetCode() {
+    return {
+        type: RESET_CODE,
     }
 }

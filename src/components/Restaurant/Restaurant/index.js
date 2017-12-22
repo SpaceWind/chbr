@@ -1,6 +1,6 @@
 import React from 'react';
 import {Body, Button, Card, CardItem, Container, Content, Icon, Left, Picker, Right, Text, View} from 'native-base';
-import {Image, ImageBackground, TouchableOpacity, Dimensions, ScrollView} from "react-native";
+import {Image, ImageBackground, TouchableOpacity, Dimensions, ScrollView, ActivityIndicator} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import {signStackStyle} from "../../../routers/SignStack";
@@ -14,6 +14,7 @@ import Swiper from 'react-native-swiper';
 export const params = {
     restaurantId: null
 };
+const {width} = Dimensions.get('window')
 
 export class Restaurant extends React.Component {
     /*static navigationOptions = ({navigation, screenProps}) => ({
@@ -46,7 +47,7 @@ export class Restaurant extends React.Component {
         else {
             this.restaurantId = this.props.navigation.state.params.key;
         }
-        params.restaurantId =this.restaurantId;
+        params.restaurantId = this.restaurantId;
         let restaurant = this.props.restaurants[this.restaurantId];
         return (
 
@@ -55,14 +56,34 @@ export class Restaurant extends React.Component {
                 <ScrollView ref='scroll'>
                     <View style={styles.container}>
 
-                        <ImageSlider
-                            images={
-                                restaurant.photos.map((item) => item.url)
-                            }
-                            position={this.state.position}
-                            onPositionChanged={position => this.setState({position})}
-                            style={styles.image}
-                        />
+
+                        <View style={{height: 200}}>
+                            <Swiper style={styles.wrapper}
+                                    loop={false}
+                                    index={0}
+                                    dotColor={'rgba(255,255,255,0.3)'}
+                                    activeDotColor={'#fff'}
+                                    ref='swiper'
+                                    loadMinimal loadMinimalSize={2}
+                                    onIndexChanged={(i) => {
+                                        this.index = i;
+                                    }}
+                            >
+
+
+                                {
+                                    restaurant.photos.map((item) => item.url).map((item, i) => <Slide
+                                        loadHandle={(i) => {
+                                            this._loadHandle(i)
+                                        }}
+                                        loaded={!!this.state['loadQueue' + i]}
+                                        uri={item}
+                                        i={i}
+                                        key={i}/>)
+                                }
+
+
+                            </Swiper></View>
 
 
                         <View style={styles.infoBlock}>
@@ -84,6 +105,28 @@ export class Restaurant extends React.Component {
             </ImageBackground>
         );
     }
+
+    _loadHandle(i) {
+        let state = {};
+        state['loadQueue' + i] = true;
+        this.setState(state)
+    }
+
+}
+
+
+const Slide = props => {
+    return (<View style={styles.slide}>
+        <Image onLoad={props.loadHandle.bind(null, props.i)} style={styles.image} source={{uri: props.uri}}/>
+        {
+            !props.loaded && <View style={styles.loadingView}>
+                <ActivityIndicator
+
+
+                />
+            </View>
+        }
+    </View>)
 }
 
 function bindAction(dispatch) {
@@ -102,15 +145,33 @@ const styles = {
         backgroundColor: 'transparent',
         maxWidth: Dimensions.get('window').width
     },
-    image: {
-        flex: 1,
-        width: "100%"
+    wrapper: {},
+    slide: {
+        width,
+        height:200,
+        justifyContent: 'center',
+        backgroundColor: 'transparent'
     },
+    loadingView: {
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,.3)'
+    },
+    image: {
+        width,
+        backgroundColor: 'transparent',
+        height: 200
+    },
+
     infoBlock: {
         paddingHorizontal: 16,
         paddingBottom: 19,
-        paddingRight: 30,
-        paddingTop: 15
+        paddingRight: 30
     },
     restaurantContact: {
         marginTop: 5,
@@ -120,7 +181,7 @@ const styles = {
         color: platform.brandWarning,
         fontSize: 28,
         lineHeight: 40,
-        marginTop: 14
+        marginTop: 10
     },
     infoText: {
         fontSize: 14,

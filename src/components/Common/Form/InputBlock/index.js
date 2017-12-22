@@ -16,15 +16,19 @@ export default class InputBlock extends React.Component {
     }
 
     render() {
-        return <View style={InputBlockStyles.inputBlock}>
-            <TouchableWithoutFeedback onPress={() => {
-                this.refs.input.focus();
-            }}>
+        return <TouchableWithoutFeedback onPress={() => {
+            this.refs.input.focus();
+        }}>
+
+            <View style={InputBlockStyles.inputBlock}>
+
                 <Text
                     style={InputBlockStyles.inputLabel}>{this.props.name}</Text>
-            </TouchableWithoutFeedback>
-            <TextInput ref='input' style={InputBlockStyles.input} underlineColorAndroid="transparent" {...this.props}/>
-        </View>
+
+                <TextInput ref='input' style={InputBlockStyles.input}
+                           underlineColorAndroid="transparent" {...this.props}/>
+            </View>
+        </TouchableWithoutFeedback>
     }
 }
 

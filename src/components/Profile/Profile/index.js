@@ -235,7 +235,7 @@ class Profile extends React.Component {
                             <Text style={InputBlockStyles.inputLabel}> Версия приложения</Text>
 
                             <View style={{paddingVertical: 16}}>
-                                <Text style={{fontSize: 18}}>1.10</Text>
+                                <Text style={{fontSize: 18}}>1.11</Text>
                             </View>
 
                         </View>
@@ -484,18 +484,23 @@ const styles = {
 
 export const modalCardStyles = {
     modal: {
+
         paddingTop: 16,
         paddingHorizontal: 16,
         paddingBottom: 30
     },
     hintRow: {
+
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 37
     },
-    textRow: {},
+    textRow: {
+        flex:1
+    },
     removeText: {
+
         fontSize: 28,
         lineHeight: 40,
         color: '#ffffff',
@@ -505,7 +510,7 @@ export const modalCardStyles = {
         fontSize: 14,
         lineHeight: 20,
         color: '#ffffff',
-        maxWidth: 211,
+        marginRight:20,
         fontFamily: platform.fontFamily
     },
 

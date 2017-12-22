@@ -111,7 +111,7 @@ export function buyByBonusAction(promise) {
 export const buyByBonus = (restaurantId, dishId) => {
     return dispatch => {
         let promise = RestaurantService.buyByBonus(restaurantId, dishId);
-        dispatch(reserveAction(promise));
+        dispatch(buyByBonusAction(promise));
         return promise;
     }
 };
@@ -123,9 +123,9 @@ export function likeDishAction(promise) {
     }
 }
 
-export const likeDish = (restaurantId, categoryId, dishId, like) => {
+export const likeDish = (restaurantId, categoryId, dishId, like,deviceId) => {
     return dispatch => {
-        let promise = RestaurantService.likeDish(restaurantId, categoryId, dishId, like);
+        let promise = RestaurantService.likeDish(restaurantId, categoryId, dishId, like,deviceId);
         dispatch(likeDishAction(promise));
         return promise;
     }
@@ -138,9 +138,9 @@ export function getDishAction(promise) {
     }
 }
 
-export const getDish = (restaurantId, categoryId, dishId) => {
+export const getDish = (restaurantId, categoryId, dishId,deviceId) => {
     return dispatch => {
-        let promise = RestaurantService.getDish(restaurantId, categoryId, dishId);
+        let promise = RestaurantService.getDish(restaurantId, categoryId, dishId,deviceId);
         dispatch(getDishAction(promise));
         return promise;
     }

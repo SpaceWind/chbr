@@ -191,9 +191,29 @@ class OrderPage extends React.Component {
                         flexDirection: 'column',
                         padding: 16
                     }}>
+                        <TouchableWithoutFeedback onPress={() => {
+                            this.refs.comment.focus();
+                        }}>
+                            <Text style={{...inputBlockStyles.inputLabel, flex: 0, width: '100%'}}>Комментарий к
+                                заказу</Text>
+                        </TouchableWithoutFeedback>
 
-                        <Text style={{...inputBlockStyles.inputLabel, flex: 0, width: '100%'}}>Комментарий к
-                            заказу</Text>
+
+                        <TextInput ref='comment' style={
+                            inputBlockStyles.inputV
+                        }
+
+                                   blurOnSubmit={true}
+                                   multiline={true}
+                                   keyboardAppearance="dark"
+                                   underlineColorAndroid="transparent"
+                                   onChangeText={(text) => {
+                                       this.setState({
+                                           text
+                                       })
+                                   }}
+                        />
+
 
                         <TextInput style={{flex: 1}} multiline={true} underlineColorAndroid="transparent"/>
                     </View>

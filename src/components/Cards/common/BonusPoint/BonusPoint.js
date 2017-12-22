@@ -4,6 +4,9 @@
 import React from 'react';
 import {Button, Text, View} from "native-base";
 import platform from "../../../../../native-base-theme/variables/platform";
+import {Dimensions} from "react-native";
+
+const {width} = Dimensions.get('window');
 
 export default class BonusPoint extends React.Component {
 
@@ -11,7 +14,7 @@ export default class BonusPoint extends React.Component {
         bonus: number;
         waitingBonus: number;
         showHint: number;
-        navigation:any;
+        navigation: any;
     };
 
     render() {
@@ -29,10 +32,11 @@ export default class BonusPoint extends React.Component {
                 </Text>}
             </View>
             <View style={styles.buttonRow}>
-                <Button style={{flex:1,justifyContent:'center'}} warning rounded bordered onPress={()=>{
+                <Button style={{flex: 1, justifyContent: 'center',paddingRight:8,paddingLeft:8}} warning rounded bordered onPress={() => {
                     this.props.navigation.navigate('HowWorksPage')
                 }}>
-                    <Text uppercase={false}>Как накопить и тратить баллы?</Text>
+                    <Text uppercase={false} style={{fontSize: width < 340 ? 20 : 22}}>Как накопить и тратить
+                        баллы?</Text>
                 </Button>
             </View>
         </View>
@@ -65,13 +69,13 @@ const styles = {
         fontSize: 63,
         backgroundColor: 'transparent',
         marginTop: -10,
-        marginBottom: -10
+        marginBottom: -4
     },
     buttonRow: {
-        width:'100%',
+        width: '100%',
         paddingVertical: 15,
-        justifyContent:'center',
-        flexDirection:'row'
+        justifyContent: 'center',
+        flexDirection: 'row'
     },
     text: {
         fontSize: 14,

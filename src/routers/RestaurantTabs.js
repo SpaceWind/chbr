@@ -5,7 +5,8 @@ import Menu from "../components/Restaurant/Menu/index";
 import News from "../components/News/RestaurantNews";
 import Team from "../components/Restaurant/Team/index";
 import BookTable from "../components/Restaurant/BookTable/index";
-
+import {Dimensions} from "react-native";
+const {width} = Dimensions.get('window');
 
 const defaultTobBar = {
     style: {
@@ -19,8 +20,8 @@ const defaultTobBar = {
     tabStyle: {
         paddingLeft: 0,
         paddingRight: 0,
-        marginRight: 3,
-        marginLeft: 5,
+        marginRight: width < 340 ? 0 : 3,
+        marginLeft: width < 340 ? 0 : 5,
         paddingBottom: 16,
         paddingTop: 16,
 

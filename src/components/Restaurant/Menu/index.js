@@ -184,7 +184,7 @@ class Menu extends React.Component {
 
     getAllDish() {
         return this.props.restaurants[this.restaurantId].menu.categories
-            .filter(item => item.status === 1)
+            .filter(item => item.status === 1 && item.title!=='Еда за баллы')
             .reduce((a, b) => {
                 let items = [];
                 if (b.categories) {

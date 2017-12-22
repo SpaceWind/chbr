@@ -21,6 +21,7 @@ class AuthServiceImpl {
         if (res.err) throw res;
         //Api.jwt(res.body.token);
         res.body.phone = phone;
+        console.log(res.body);
         return res.body;
     }
 
@@ -89,6 +90,13 @@ class AuthServiceImpl {
 
     }
 
+    async getResultOperation(resultId) {
+        let res = await this.Api.get(`/client/current/operations/result-data/${resultId}`, {
+            body: {}
+        });
+        if (res.err) throw res;
+        return res.body;
+    }
 
     async deleteOperation(id) {
         let res = await this.Api.del(`/client/current/operations`, {

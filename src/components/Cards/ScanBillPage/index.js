@@ -247,8 +247,8 @@ const styles = {
     bonusValue: {
         fontSize: 63,
         backgroundColor: 'transparent',
-        marginTop: -15,
-        marginBottom: -10
+        marginTop: -10,
+        marginBottom: -4
     },
     bonusFuture: {
         paddingTop: 5,

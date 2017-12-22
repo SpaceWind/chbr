@@ -16,7 +16,7 @@ import FCM, {
     WillPresentNotificationResult,
     NotificationType
 } from 'react-native-fcm';
-import {attachDevice, createDevice, hideAlert, sendPushToken, setUID} from "./actions/user";
+import {attachDevice, clearPendings, createDevice, hideAlert, sendPushToken, setUID} from "./actions/user";
 import {NavigationActions} from "react-navigation";
 import UUIDGenerator from 'react-native-uuid-generator';
 import SplashScreen from 'react-native-splash-screen'
@@ -75,6 +75,7 @@ class App extends React.Component {
 
     componentWillMount() {
 
+        this.props.clearPendings();
 
     }
 
@@ -175,6 +176,7 @@ class App extends React.Component {
     }
 
     async _checkUID() {
+
         if (this.props.user && this.props.user.uid === null) {
             try {
                 let uid = DeviceInfo.getUniqueID();
@@ -232,6 +234,9 @@ function bindAction(dispatch) {
         },
         hideAlert: () => {
             return dispatch(hideAlert());
+        },
+        clearPendings: () => {
+            return dispatch(clearPendings());
         }
     }
 }
