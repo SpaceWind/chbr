@@ -21,11 +21,12 @@ export class BuyByBonusPageC extends React.Component {
     constructor(props) {
         super(props);
         this.resultId = this.props.navigation.state.params.resultId;
+        console.log('constructor')
     }
 
     componentWillMount() {
         this.props.getOperation(this.resultId);
-        this.props.getResultOperation(this.resultId);
+        // this.props.getResultOperation(this.resultId);
     }
 
     componentWillUnmount() {
@@ -36,6 +37,10 @@ export class BuyByBonusPageC extends React.Component {
     render() {
 
         let operation = this.props.operation;
+        if (operation && operation.result_id !== this.resultId) {
+            operation = null;
+        }
+
         let restaurantName = '';
         let dish = null;
         if (operation) {
@@ -49,14 +54,12 @@ export class BuyByBonusPageC extends React.Component {
             }
         }
 
-        console.log(operation);
-        console.log(this.props.resultOperation);
 
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
 
             <ScrollView>
-                <Spinner visible={this.props.isOperationPending || this.props.getResultOperationPending}
+                <Spinner visible={this.props.isOperationPending}
                          textStyle={{color: '#FFF'}}/>
 
                 {operation && <View style={historyStyles.scrollContainer}>
@@ -74,7 +77,7 @@ export class BuyByBonusPageC extends React.Component {
 
                     {dish &&
                     <View style={styles.dish}>
-                        <CategoryList  data={[dish]} basket={true}
+                        <CategoryList data={[dish]} basket={true}
                                       navigation={this.props.navigation}/></View>
                     }
                 </View>}
@@ -120,7 +123,7 @@ const mapStateToProps = state => ({
 });
 const BuyByBonusPage = connect(mapStateToProps, bindAction)(BuyByBonusPageC);
 export default BuyByBonusPage;
-
+console.log('connect')
 
 const styles = {
     container: {
@@ -151,8 +154,8 @@ const styles = {
         color: platform.brandFontAccent
     },
     dish: {
-        marginTop:15,
-        height:82,
+        marginTop: 15,
+        height: 82,
         borderColor: platform.brandDivider,
         borderTopWidth: 1,
         borderBottomWidth: 1,

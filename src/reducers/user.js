@@ -226,7 +226,6 @@ export default function (state: State = initialState, action) {
         };
     }
 
-
     if (action.type === GET_OPERATION_PENDING) {
         return {
             ...state,
@@ -246,7 +245,7 @@ export default function (state: State = initialState, action) {
     if (action.type === GET_OPERATION_REJECTED) {
         return {
             ...state,
-            history: null,
+            operation: null,
             isOperationPending: false
         };
     }

@@ -114,7 +114,7 @@ export default class CategoryList extends React.Component {
                 <TouchableOpacity onPress={() => this.reset()} activeOpacity={1} style={signStackStyle}>
 
 
-                    <FlatList
+                    {(this.props.data && this.props.data.length > 0 || this.props.basket) ? <FlatList
                         data={this.props.data}
                         extraData={this.state}
                         keyExtractor={this._keyExtractor}
@@ -125,7 +125,20 @@ export default class CategoryList extends React.Component {
                             </View>
                         }}
 
-                    />
+                    /> : <View style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flex: 1,
+                        width: null,
+                        height: null,
+                    }}>
+                        <Text style={{
+                            fontSize: 22,
+                            lineHeight: 33,
+                            textAlign: 'center'
+                        }}> В данный момент нет доступных для заказа блюд</Text>
+
+                    </View>}
 
 
                 </TouchableOpacity>

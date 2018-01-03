@@ -61,18 +61,13 @@ class BookTablePageC extends React.Component {
 
 
                     {reserve && <View style={styles.body}>
-
-
                         <FieldValue name="Телефон" value={this._getMaskedPhone(reserve.client_phone)}/>
-
                         <FieldValue name="Имя и фамилия" value={reserve.client_name}/>
-
-                        {reserve.comment && <FieldValue name="Комментарий к заказу" value={reserve.comment}/>}
+                        {reserve.comment !== null || reserve.comment !== '' && <FieldValue name="Комментарий к заказу" value={reserve.comment}/>}
                     </View>}
 
 
-
-                    {operation.status !== 5 &&operation.status !== 6 && <View style={styles.buttonBlock}>
+                    {operation.status !== 5 && operation.status !== 6 && <View style={styles.buttonBlock}>
 
                         <View style={{
                             width: '100%', paddingHorizontal: 7,
@@ -83,10 +78,7 @@ class BookTablePageC extends React.Component {
                                     }}
                                     onPress={() => {
                                         this._requestCancel()
-                                    }}
-
-                            >
-                                <Text uppercase={false}>Отменить</Text>
+                                    }}><Text uppercase={false}>Отменить</Text>
                             </Button>
                         </View>
 
@@ -108,8 +100,7 @@ class BookTablePageC extends React.Component {
 
     }
 
-    _getMaskedPhone(phone)
-    {
+    _getMaskedPhone(phone) {
         return MaskService.toMask('custom', phone, {
             mask: "+7 999 999 99 99"
         });

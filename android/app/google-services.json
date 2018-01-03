@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1061281504246",
+    "firebase_url": "https://chestermobile-app.firebaseio.com",
+    "project_id": "chestermobile-app",
+    "storage_bucket": "chestermobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061281504246:android:8b5d9bd09af62312",
+        "android_client_info": {
+          "package_name": "ru.chesterapp.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1061281504246-ggdaemjj3tdk8plo252868oo3hqjm825.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALneaBpqaeKsQjD-nky2laM_rjpUMGWI0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

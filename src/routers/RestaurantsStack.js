@@ -51,7 +51,8 @@ export default RestaurantsStack = StackNavigator({
         screen: Category,
         navigationOptions: {
             headerBackTitleStyle: {
-                color: "transparent"
+                color: "transparent",
+                width: 0
             },
             headerStyle: {
                 ...BaseNavigationBarStyle.headerStyle

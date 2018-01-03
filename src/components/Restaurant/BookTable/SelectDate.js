@@ -7,7 +7,7 @@ import {
 } from 'native-base';
 import MyModal from "../../Common/MyModal/index";
 import platform from "../../../../native-base-theme/variables/platform";
-import {Picker, TouchableOpacity, Platform} from "react-native";
+import {Picker, TouchableOpacity, Platform, BackHandler} from "react-native";
 import moment from "moment";
 import 'moment-round'
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -32,10 +32,20 @@ export default class SelectDate extends React.Component {
     }
 
 
-    componentWillMount() {
-
+    /*componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
     }
 
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
+    }
+
+    onBackPress () {
+        AndroidPicker.isPickerShow(status => {
+            status&& AndroidPicker.hide();
+        });
+        return false
+    }*/
 
     setDay(date) {
         date = moment(date);
@@ -209,7 +219,21 @@ export default class SelectDate extends React.Component {
 
                     let count = parseInt(data[0].split(' ')[0]);
 
-                    let date = moment(data[1] + ' ' + data[2], "ddd D MMMM HH:mm");
+
+
+
+                    let date = data[1];
+
+                    if(date==='сегодня')
+                    {
+                        date=  moment( moment().format('ddd D MMMM') + ' ' + data[2], "ddd D MMMM HH:mm");
+                    }
+                    else
+                    {
+                        date = moment(date + ' ' + data[2], "ddd D MMMM HH:mm");
+                    }
+
+
 
                     this.props.onDateSelected({
                         count: count,
