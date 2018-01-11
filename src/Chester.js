@@ -121,7 +121,6 @@ class App extends React.Component {
                 <Text>.</Text>
             </View>
         }
-
         if (this.props.showTutorial) {
             return (
                 <ImageBackground source={require('../assets/images/login&registration/login-bg.png')}

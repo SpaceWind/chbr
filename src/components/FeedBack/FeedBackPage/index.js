@@ -18,6 +18,7 @@ import {getUserData, sendTicket} from "../../../actions/user";
 import Spinner from "react-native-loading-spinner-overlay";
 import AutoSizeTextInput from "../../Common/AutosizeTextInput/AutoSizeTextInput";
 import Constants from "../../../../utilities/Constants";
+import PhoneInput from "../../Common/PhoneInput/index";
 
 
 const currentPlatform = Platform.OS;
@@ -155,20 +156,14 @@ class FeedBackPageC extends React.Component {
                             />
                             <View style={InputBlockStyles.inputBlock}>
                                 <TouchableWithoutFeedback onPress={() => {
-                                    this.refs.phone.getElement().focus();
+                                    this.refs.phone.focus();
                                 }}>
                                     <Text style={InputBlockStyles.inputLabel}>Телефон</Text>
                                 </TouchableWithoutFeedback>
-                                <TextInputMask
+                                <PhoneInput
                                     style={InputBlockStyles.input}
-                                    keyboardType="phone-pad"
-                                    type={'custom'}
                                     ref={'phone'}
-                                    options={{mask: '+7 (999) 999-99-99'}}
-                                    keyboardAppearance="dark"
-                                    autoCorrect={false}
                                     value={this.state.phone}
-                                    underlineColorAndroid="transparent"
                                     onChangeText={(text) => {
                                         this.changeNumber(text)
                                     }}

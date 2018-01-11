@@ -2,7 +2,10 @@ import React from 'react';
 import {Input, Text, View} from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import {TextInputMask} from 'react-native-masked-text';
-import {Image} from "react-native";
+import {Image, TextInput} from "react-native";
+import {parse, format, asYouType, isValidNumber} from 'libphonenumber-js'
+import PhoneUtils from "../../Common/PhoneInput/PhoneUtils";
+
 export default class SignPhoneInput extends React.Component {
 
     constructor(props) {
@@ -16,20 +19,26 @@ export default class SignPhoneInput extends React.Component {
 
     changeNumber(number) {
 
+        if (number.length === 0) {
+            this.setState({
+                isValid: false,
+                text: '+'
+            });
+            this.props.onChangePhoneNumber(number.substring(1).replace(/\s/g, ''));
+            return;
+        }
+        let result = PhoneUtils.getFormattedPhone(number);
 
         this.setState({
-            isValid: this.checkValid(number),
-            text: number
+            isValid: result.isValid,
+            text: result.phoneFormatted
         });
-        this.props.onChangePhoneNumber(number.substring(1).replace(/\s/g, ''));
+        this.props.onChangePhoneNumber(result.phone, result.isValid);
     }
 
-    checkValid(number) {
-        return number && number.replace(/\s/g, '').length === 12
-    }
 
     isValidNumber() {
-        return this.checkValid(this.state.text);
+        return this.state.isValid;
     }
 
     render() {
@@ -40,18 +49,18 @@ export default class SignPhoneInput extends React.Component {
 
                 <Image source={require('../../../../assets/images/login&registration/russia-flag.png')}/>
 
-                <TextInputMask
+                <TextInput
                     keyboardType="phone-pad"
                     type={'custom'}
                     ref={'phone'}
-                    options={{mask: '+7 999 999 99 99'}}
                     style={{...styles.phoneInput, color: color}}
                     value={this.state.text}
                     keyboardAppearance="dark"
-                    placeholder="+7"
                     autoCorrect={false}
                     underlineColorAndroid="transparent"
                     onChangeText={(text) => {
+
+
                         this.changeNumber(text)
                     }}
                 />

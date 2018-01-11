@@ -17,6 +17,7 @@
     "color": "^2.0.0",
     "frisbee": "^1.5.0",
     "geolib": "^2.0.22",
+    "libphonenumber-js": "^0.4.48",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "moment-round": "^1.0.1",

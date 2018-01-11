@@ -23,12 +23,12 @@ class TutorialPageC extends React.Component {
 
         return (
             <View
-                             style={{
-                                 height: Dimensions.get('window').height,
-                                 width: null,
-                                 paddingTop: 30,
-                                 backgroundColor:"#2b3034"
-                             }}>
+                style={{
+                    height: Dimensions.get('window').height,
+                    width: null,
+                    paddingTop: 30,
+                    backgroundColor: "#2b3034"
+                }}>
 
 
                 <Swiper style={styles.wrapper}
@@ -195,7 +195,7 @@ const styles = {
     fakeImage: {
         overflow: 'visible',
         flex: 1,
-        backgroundColor:"#2b3034"
+        backgroundColor: "#2b3034"
     },
     body: {
         shadowColor: 'rgba(0,0,0,0.5)',
@@ -213,7 +213,7 @@ const styles = {
         height: null,
         flex: 1,
         paddingTop: 20,
-        paddingHorizontal: 50,
+        paddingHorizontal: Dimensions.get('window').height > 600 ? 50 : 20,
     },
     title: {
         fontSize: 24,

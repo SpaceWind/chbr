@@ -15,6 +15,7 @@ import MyModal from "../../Common/MyModal/index";
 import {Platform} from "react-native";
 import {getUserData, setSignState, signOut, updateUserData} from "../../../actions/user";
 import * as _ from "lodash";
+import PhoneInput from "../../Common/PhoneInput/index";
 
 
 const currentPlatform = Platform.OS;
@@ -158,17 +159,13 @@ class Profile extends React.Component {
                         <View style={InputBlockStyles.inputBlock}>
                             <Text style={InputBlockStyles.inputLabel}>Телефон</Text>
 
-                            <TextInputMask
+                            <PhoneInput
                                 style={InputBlockStyles.input}
                                 keyboardType="phone-pad"
                                 type={'custom'}
                                 ref={'phone'}
-                                options={{mask: '+7 (999) 999-99-99'}}
                                 editable={false}
-                                keyboardAppearance="dark"
-                                autoCorrect={false}
                                 value={this.props.phone}
-                                underlineColorAndroid="transparent"
                                 onChangeText={(text) => {
                                     this.changeNumber(text)
                                 }}

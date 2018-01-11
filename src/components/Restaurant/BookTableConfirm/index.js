@@ -23,6 +23,7 @@ import {NavigationActions} from "react-navigation";
 import moment from "moment";
 import Spinner from "react-native-loading-spinner-overlay";
 import Constants from "../../../../utilities/Constants";
+import PhoneInput from "../../Common/PhoneInput/index";
 
 
 class BookTableConfirmC extends React.Component {
@@ -35,6 +36,7 @@ class BookTableConfirmC extends React.Component {
             email: ''
         },
         phone: '+7',
+        isPhoneValid: false,
         anonymous: false
     };
 
@@ -106,32 +108,26 @@ class BookTableConfirmC extends React.Component {
                                     <View style={InputBlockStyles.inputBlock}>
                                         <TouchableWithoutFeedback onPress={() => {
                                             if (!this.props.logged) {
-                                                this.refs.phone.getElement().focus();
+                                                this.refs.phone.focus();
                                             }
                                         }}><Text
                                             style={InputBlockStyles.inputLabel}>Телефон</Text></TouchableWithoutFeedback>
 
 
-                                        <TextInputMask
+                                        <PhoneInput
                                             style={InputBlockStyles.input}
-                                            keyboardType="phone-pad"
-                                            type={'custom'}
                                             ref={'phone'}
-                                            options={{mask: '+7 (999) 999-99-99'}}
-                                            keyboardAppearance="dark"
-                                            autoCorrect={false}
                                             value={this.state.phone}
-                                            underlineColorAndroid="transparent"
-                                            onChangeText={(text) => {
+                                            onChangeText={(text, isValid) => {
                                                 if (!this.props.logged) {
-                                                    this.changeNumber(text)
+                                                    this.changeNumber(text, isValid)
                                                 }
                                                 else {
-                                                    this.changeNumber(this.state.phone)
+                                                    this.changeNumber(this.state.phone, isValid)
                                                 }
-
                                             }}
                                         />
+
                                     </View>
 
                                     <InputBlock name="Имя"
@@ -217,7 +213,7 @@ class BookTableConfirmC extends React.Component {
                                     <Button warning
                                             rounded
                                             style={{width: '100%'}}
-                                            disabled={!this.props.logged && !this.isValidNumber()}
+                                            disabled={!this.props.logged && !this.state.isPhoneValid}
                                             onPress={this.bookConfirm.bind(this)}
 
                                     >
@@ -235,14 +231,11 @@ class BookTableConfirmC extends React.Component {
         );
     }
 
-    changeNumber(phone) {
+    changeNumber(phone, isValid) {
         this.setState({
-            phone: phone
+            phone: phone,
+            isPhoneValid: isValid
         });
-    }
-
-    isValidNumber() {
-        return this.state.phone && this.state.phone.replace(/[^\d]/g, '').length === 11
     }
 
     getCurrentInfo() {

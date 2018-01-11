@@ -29,11 +29,11 @@ class SignFirstStep extends React.Component {
     }
 
 
-    changeNumber(number) {
+    changeNumber(number,isValid) {
         this.setState({
             number: number,
-            valid: this.refs.phone.isValidNumber(),
-            borderColor: this.refs.phone.isValidNumber() ? platform.brandWarning : platform.brandOutline
+            valid: isValid,
+            borderColor: isValid ? platform.brandWarning : platform.brandOutline
         });
         this.number = number;
     }
@@ -122,7 +122,7 @@ class SignFirstStep extends React.Component {
 
                                         <View style={styles.phone}>
                                             <SignPhoneInput ref="phone"
-                                                            onChangePhoneNumber={(number) => this.changeNumber(number)}/>
+                                                            onChangePhoneNumber={(number,isValid) => this.changeNumber(number,isValid)}/>
                                         </View>
                                     </View>
 

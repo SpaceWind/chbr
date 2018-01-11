@@ -32,20 +32,24 @@ export default class SelectDate extends React.Component {
     }
 
 
-    /*componentWillMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
+    componentWillMount() {
+        if (Platform.OS !== 'ios') {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
+        }
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
+        if (Platform.OS !== 'ios') {
+            BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
+        }
     }
 
-    onBackPress () {
+    onBackPress() {
         AndroidPicker.isPickerShow(status => {
-            status&& AndroidPicker.hide();
+            status && AndroidPicker.hide();
         });
-        return false
-    }*/
+        return false;
+    }
 
     setDay(date) {
         date = moment(date);
@@ -177,16 +181,28 @@ export default class SelectDate extends React.Component {
         else {
 
 
-            let days = this.getDays(50).map((day) => {
+            let selectedDay = "";
+            let selectedHour = "";
 
+            let days = this.getDays(50).map((day) => {
 
                 let hours = this.getHours(moment(day.date));
                 let result = {};
+
                 result[day.name] = hours.map((hour) => {
+
+                    console.log(moment(this.props.date).format())
+                    console.log(moment(hour.date).format())
+                    if (moment(this.props.date).format() === moment(hour.date).format()) {
+                        selectedDay = day.name;
+                        selectedHour = hour.name;
+                    }
+
                     return hour.name;
                 });
-                return result;
 
+
+                return result;
             });
 
 
@@ -213,26 +229,21 @@ export default class SelectDate extends React.Component {
                 pickerData: pickerData,
                 pickerFontSize: 21,
                 pickerToolBarFontSize: 20,
-                selectedValue: [59],
+                selectedValue: [this.props.count + " чел", selectedDay, selectedHour],
                 onPickerConfirm: data => {
 
 
                     let count = parseInt(data[0].split(' ')[0]);
 
 
-
-
                     let date = data[1];
 
-                    if(date==='сегодня')
-                    {
-                        date=  moment( moment().format('ddd D MMMM') + ' ' + data[2], "ddd D MMMM HH:mm");
+                    if (date === 'сегодня') {
+                        date = moment(moment().format('ddd D MMMM') + ' ' + data[2], "ddd D MMMM HH:mm");
                     }
-                    else
-                    {
+                    else {
                         date = moment(date + ' ' + data[2], "ddd D MMMM HH:mm");
                     }
-
 
 
                     this.props.onDateSelected({

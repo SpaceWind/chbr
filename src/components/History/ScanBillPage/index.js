@@ -38,6 +38,7 @@ export class ScanBillPageC extends React.Component {
         let restaurant = this.props.restaurants[history.restaurant_id];
         let restaurantName = restaurant.title_short;
 
+
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
 
@@ -57,7 +58,8 @@ export class ScanBillPageC extends React.Component {
                                 <Text style={styles.value}>+{history.bonus}</Text>
                             </View>
                         </View>
-                        <Text style={styles.hint}>Бонусы будут доступны после 12:00 следующего дня</Text>
+                        {history.status !== 5 &&
+                        <Text style={styles.hint}>Бонусы будут доступны после 12:00 следующего дня</Text>}
                     </View>
                 </View>
 

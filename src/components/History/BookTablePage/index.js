@@ -14,6 +14,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import {cancelReserve} from "../../../actions/restaurant";
 import {NavigationActions} from "react-navigation";
 import {MaskService} from 'react-native-masked-text'
+import PhoneUtils from "../../Common/PhoneInput/PhoneUtils";
 
 class BookTablePageC extends React.Component {
 
@@ -61,9 +62,10 @@ class BookTablePageC extends React.Component {
 
 
                     {reserve && <View style={styles.body}>
-                        <FieldValue name="Телефон" value={this._getMaskedPhone(reserve.client_phone)}/>
+                        <FieldValue name="Телефон" value={this._getPhoneFormatted(reserve.client_phone)}/>
                         <FieldValue name="Имя и фамилия" value={reserve.client_name}/>
-                        {reserve.comment !== null || reserve.comment !== '' && <FieldValue name="Комментарий к заказу" value={reserve.comment}/>}
+                        {reserve.comment !== null || reserve.comment !== '' &&
+                        <FieldValue name="Комментарий к заказу" value={reserve.comment}/>}
                     </View>}
 
 
@@ -100,10 +102,9 @@ class BookTablePageC extends React.Component {
 
     }
 
-    _getMaskedPhone(phone) {
-        return MaskService.toMask('custom', phone, {
-            mask: "+7 999 999 99 99"
-        });
+    _getPhoneFormatted(phone) {
+        let result = PhoneUtils.getFormattedPhone(phone);
+        return result.phoneFormatted;
     }
 
     async _getReserve(operation) {

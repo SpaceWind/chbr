@@ -15,6 +15,7 @@ import {reserve} from "../../../actions/restaurant";
 import Api from "../../../actions/api/api";
 import {NavigationActions} from "react-navigation";
 import {MaskService} from 'react-native-masked-text'
+import PhoneUtils from "../../Common/PhoneInput/PhoneUtils";
 
 class SignSecondStep extends React.Component {
 
@@ -157,7 +158,7 @@ class SignSecondStep extends React.Component {
                                 <Text style={{...styles.messageText}}>Код подтверждения был отправлен на номер
                                 </Text>
                                 <Text
-                                    style={{...styles.messageText}}> {' ' + this._getMaskedPhone('+' + this.props.navigation.state.params.number)}</Text>
+                                    style={{...styles.messageText}}> {' ' + this._getPhoneFormatted('+' + this.props.navigation.state.params.number)}</Text>
                             </View>
 
 
@@ -211,10 +212,9 @@ class SignSecondStep extends React.Component {
         );
     }
 
-    _getMaskedPhone(phone) {
-        return MaskService.toMask('custom', phone, {
-            mask: "+7 999 999 99 99"
-        });
+    _getPhoneFormatted(phone) {
+        let result = PhoneUtils.getFormattedPhone(phone);
+        return result.phoneFormatted;
     }
 
     async updateUserData(first_name, last_name) {
