@@ -3,7 +3,7 @@ import {Button, Container, Form, Input, Item, Text, View} from 'native-base';
 import {connect} from "react-redux";
 import {dispatch} from "redux";
 import {
-    attachDevice, confirmCode, getUserData, resetCode, sendCode, setSignState, signIn,
+    attachDevice, clearRequestData, confirmCode, getUserData, resetCode, sendCode, setSignState, signIn,
     updateUserData
 } from "../../../actions/user";
 import moment from "moment";
@@ -120,6 +120,7 @@ class SignSecondStep extends React.Component {
             if (this.isConfirmBookTable) {
                 await this.updateUserData(this.props.navigation.state.params.first_name, this.props.navigation.state.params.last_name);
                 await this.confirmBookTable();
+                this.props.clearRequestData();
             }
             else {
                 await this.props.getUserData();
@@ -251,10 +252,11 @@ class SignSecondStep extends React.Component {
                     ]
                 );
                 this.goToHistory(result.reserve_id)
-            }, 10);
+            }, 100);
         }
         catch
             (ex) {
+            this.setState({loading: false});
             let text = 'Попробуйте забронировать позже.';
             if (ex && ex.body && ex.body.error === 'user has unconfirmed reserves') {
                 text = "Вы уже оставляли заявку на бронь"
@@ -284,11 +286,11 @@ class SignSecondStep extends React.Component {
             actions: [
                 NavigationActions.navigate({
                     routeName: 'Restaurants',
-                    params: {key: this.params.restaurantId},
+                    params: {key: this.props.navigation.state.params.restaurantId},
                 }),
                 NavigationActions.navigate({
                     routeName: 'OneRestaurant',
-                    params: {key: this.params.restaurantId},
+                    params: {key: this.props.navigation.state.params.restaurantId},
                 }),
                 NavigationActions.navigate({
                     routeName: 'RestaurantBookTableHistory',
@@ -330,6 +332,9 @@ bindAction(dispatch) {
         sendCode: (number) => dispatch(sendCode(number)),
         attachDevice: (uid) => {
             return dispatch(attachDevice(uid));
+        },
+        clearRequestData: () => {
+            return dispatch(clearRequestData());
         },
         resetCode: () => dispatch(resetCode()),
         getUserData: (text) => dispatch(getUserData()),

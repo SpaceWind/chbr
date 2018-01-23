@@ -98,6 +98,8 @@ export const GET_DISCOUNT_CODE_FULFILLED = 'GET_DISCOUNT_CODE_FULFILLED';
 export const GET_DISCOUNT_CODE_REJECTED = 'GET_DISCOUNT_CODE_REJECTED';
 
 
+export const CLEAR_REQUEST_DATA = 'CLEAR_REQUEST_DATA';
+
 export const RESET_CODE = 'RESET_CODE';
 
 
@@ -265,8 +267,6 @@ export const getResultOperation = (resultId) => {
 };
 
 
-
-
 export function getTableReservesAction(promise) {
     return {
         type: GET_TABLE_RESERVES,
@@ -428,5 +428,11 @@ export function hideAlert() {
 export function resetCode() {
     return {
         type: RESET_CODE,
+    }
+}
+
+export function clearRequestData() {
+    return {
+        type: CLEAR_REQUEST_DATA,
     }
 }

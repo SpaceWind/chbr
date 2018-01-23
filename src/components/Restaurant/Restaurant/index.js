@@ -23,10 +23,19 @@ export class Restaurant extends React.Component {
 
     state = {
         position: 0,
-        interval: null
+        interval: null,
+        visibleSwiper: false
     };
 
     restaurantId = null;
+
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({
+                visibleSwiper: true
+            });
+        }, 100);
+    }
 
     componentWillMount() {
         /*this.setState({
@@ -58,7 +67,7 @@ export class Restaurant extends React.Component {
 
 
                         <View style={{height: 200}}>
-                            <Swiper style={styles.wrapper}
+                            {  this.state.visibleSwiper && <Swiper style={styles.wrapper}
                                     loop={false}
                                     index={0}
                                     dotColor={'rgba(255,255,255,0.3)'}
@@ -83,7 +92,7 @@ export class Restaurant extends React.Component {
                                 }
 
 
-                            </Swiper></View>
+                            </Swiper>}</View>
 
 
                         <View style={styles.infoBlock}>

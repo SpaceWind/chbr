@@ -1,5 +1,5 @@
 import {
-    CLEAR_PENDINGS,
+    CLEAR_PENDINGS, CLEAR_REQUEST_DATA,
     CLOSE_TUTORIAL,
     CONFIRM_CODE_FULFILLED,
     CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, CREATE_DEVICE_FULFILLED, GET_DISCOUNT_CODE,
@@ -56,7 +56,8 @@ export default function (state: State = initialState, action) {
             userData: null,
             logged: false,
             isAuth: false,
-            likes: []
+            likes: [],
+            requestData: false
         };
     }
     if (action.type === SET_SIGN_STATE) {
@@ -78,7 +79,9 @@ export default function (state: State = initialState, action) {
         return {
             ...state,
             sendCodePending: true,
-            logged: false
+            logged: false,
+            requestData: false,
+            isCodeConfirmed: false
         };
     }
     if (action.type === SEND_CODE_REJECTED) {
@@ -92,7 +95,8 @@ export default function (state: State = initialState, action) {
             ...state,
             sent: null,
             token: null,
-            phone: null
+            phone: null,
+            requestData: false
         };
     }
 
@@ -110,14 +114,15 @@ export default function (state: State = initialState, action) {
             isCodeConfirmed: true,
             confirmCodePending: false,
             logged: true,
-            showSign: false
+            requestData: true
         };
     }
     if (action.type === CONFIRM_CODE_REJECTED) {
         return {
             ...state,
             isCodeConfirmed: false,
-            confirmCodePending: false
+            confirmCodePending: false,
+            requestData: false
         };
     }
     /*if (action.type === GET_USER_DATA) {
@@ -308,6 +313,12 @@ export default function (state: State = initialState, action) {
             alert: null
         };
     }
+    if (action.type === CLEAR_REQUEST_DATA) {
+        return {
+            ...state,
+            requestData: false
+        };
+    }
 
     if (action.type === CLEAR_PENDINGS) {
         return {
@@ -320,6 +331,7 @@ export default function (state: State = initialState, action) {
             sendCodePending: false
         };
     }
+
 
     return state;
 }

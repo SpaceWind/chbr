@@ -12,17 +12,15 @@ export default class OneNews extends React.Component {
 
     render() {
 
-        let image = this.props.data.photos && this.props.data.photos.find((image)=>image.sort ===-1);
+        let image = this.props.data.photos && this.props.data.photos.find((image) => image.sort === -1);
         let containerStyle = styles.container;
-        if(image)
-        {
-            image = {uri:image.s3_url}
+        if (image) {
+            image = {uri: image.s3_url}
         }
-        else
-        {
-            containerStyle = {...containerStyle,...styles.containerBordered};
+        else {
+            containerStyle = {...containerStyle, ...styles.containerBordered};
         }
-        console.log(containerStyle);
+
 
         return (
             <View style={containerStyle}>
@@ -33,12 +31,14 @@ export default class OneNews extends React.Component {
                 <View style={{marginHorizontal: 16}}>
                     <View style={styles.infoBlock}>
 
-                        <Text style={styles.infoDate}>{moment(this.props.data.event_date).format('D MMM')}</Text>
+                        {this.props.data.show_event_date === 1 &&
+                        <Text style={styles.infoDate}>{moment(this.props.data.event_date).format('D MMMM')}</Text>}
                         {
-                            this.props.restaurants.map((rest) => {
+                            this.props.restaurants.map((rest,i) => {
+                                console.log(i);
                                 return (
                                     <View style={{flexDirection: 'row', alignItems: 'center'}} key={rest.id}>
-                                        <View style={styles.infoPoint}/>
+                                        { (i!==0 || this.props.data.show_event_date === 1) && <View style={styles.infoPoint}/>}
                                         <Text style={styles.infoName}>{rest.title_short}</Text>
                                     </View>
                                 )
@@ -65,10 +65,10 @@ const styles = {
         flex: 1,
     },
     containerBordered: {
-        borderTopWidth:1,
-        borderBottomWidth:1,
-        paddingVertical:25,
-        borderColor:platform.brandDivider
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        paddingVertical: 25,
+        borderColor: platform.brandDivider
     },
     image: {
         height: 150,

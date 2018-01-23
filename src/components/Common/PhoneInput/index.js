@@ -58,6 +58,16 @@ export default class PhoneInput extends React.Component {
         this.refs.phone.focus();
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.value) {
+            let result = PhoneUtils.getFormattedPhone(nextProps.value);
+            this.setState({
+                isValid: result.isValid,
+                text: result.phoneFormatted
+            });
+        }
+    }
+
     render() {
         return (
             <TextInput

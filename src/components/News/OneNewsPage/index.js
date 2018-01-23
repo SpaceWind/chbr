@@ -35,8 +35,7 @@ class OneNewsPageС extends React.Component {
         else {
 
             news = this.props.oneNews;
-            if(news)
-            {
+            if (news) {
                 image = news.photos && news.photos.main;
                 if (image) {
                     image = {uri: image}
@@ -46,12 +45,9 @@ class OneNewsPageС extends React.Component {
 
         }
 
-        console.log(news);
-
         if (news) {
-            if(!news.restaurants)
-            {
-                news.restaurants =[]
+            if (!news.restaurants) {
+                news.restaurants = []
             }
             if (news.event_place_all || this.props.restaurants.length === news.restaurants.length) {
                 news.restaurants = [{id: 1, title: 'Все рестораны'}]
@@ -67,18 +63,19 @@ class OneNewsPageС extends React.Component {
                          textStyle={{color: '#FFF'}}/>
                 {news && <ScrollView>
                     {image ? <Image source={image} style={styles.image}>
-                    </Image>:
-                        <View style={{height:20}}></View>
+                        </Image> :
+                        <View style={{height: 20}}></View>
                     }
                     <View style={{marginHorizontal: 16}}>
                         <View style={styles.infoBlock}>
 
-                            <Text style={styles.infoDate}>{moment(news.event_date).format('D MMM')}</Text>
+                            {news.show_event_date === 1 &&
+                            <Text style={styles.infoDate}>{moment(news.event_date).format('D MMMM')}</Text>}
                             {
-                                news.restaurants.map((rest) => {
+                                news.restaurants.map((rest,i) => {
                                     return (
                                         <View style={{flexDirection: 'row', alignItems: 'center'}} key={rest.id}>
-                                            <View style={styles.infoPoint}/>
+                                            { (i!==0 || news.show_event_date === 1) &&<View style={styles.infoPoint}/>}
                                             <Text style={styles.infoName}>{rest.title}</Text>
                                         </View>
                                     )
@@ -103,8 +100,7 @@ class OneNewsPageС extends React.Component {
 }
 
 function bindAction(dispatch) {
-    return {
-    };
+    return {};
 }
 
 const mapStateToProps = state => ({

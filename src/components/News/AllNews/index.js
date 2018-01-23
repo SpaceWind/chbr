@@ -42,11 +42,12 @@ class NewsC extends React.Component {
 
         let restaurants = this.props.restaurants.filter((rest) => rest.status === 1);
 
+        console.log(newsData)
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
                              style={signStackStyle}>
                 <View style={styles.container}>
-                    <FlatList
+                    {((newsData && newsData.length !== 0) || this.props.isPending) ? <FlatList
                         ListHeaderComponent={() => {
                             return <View>
                                 <Text style={styles.header}>
@@ -107,6 +108,35 @@ class NewsC extends React.Component {
                         }
                     >
                     </FlatList>
+
+:
+                    <View style={{
+
+                        flex: 1,
+                        width: null,
+                        height: null,
+                    }}>
+
+                        <Text style={styles.header}>
+                            Новости и акции
+                        </Text>
+                        <View style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flex: 1,
+                            width: null,
+                            height: null,
+                        }}>
+                            <Text style={{
+                                fontSize: 22,
+                                lineHeight: 33,
+                                textAlign: 'center',
+                                paddingHorizontal:20
+                            }}> На данный момент действующих акций нет.</Text>
+
+                        </View>
+                    </View>}
+
                 </View>
             </ImageBackground>
         );

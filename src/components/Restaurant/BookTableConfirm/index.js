@@ -322,14 +322,13 @@ class BookTableConfirmC extends React.Component {
         }
         else {
 
-            let phone = this.state.phone.substring(1).replace(/[^\d]/g, '');
-            let result = await this.props.sendCode(phone);
+            let result = await this.props.sendCode(this.state.phone);
 
             this.props.navigation.navigate('BookTableConfirmCode', {
                 restaurantId: restaurantId,
                 data: data,
                 confirmBookTable: true,
-                number: phone,
+                number: this.state.phone,
                 first_name: this.state.userData.first_name,
                 last_name: this.state.userData.last_name
             })

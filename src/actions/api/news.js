@@ -12,7 +12,7 @@ class NewsServiceImpl {
         if (restaurantId) {
             res = await this.Api.get('/news/combined', {
                 body: {
-                    restaurantId
+                    restaurant_id:restaurantId
                 }
             });
         }

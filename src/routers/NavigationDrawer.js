@@ -2,7 +2,7 @@ import React from 'react';
 import {DrawerItems, DrawerNavigator} from 'react-navigation';
 import RestaurantsStack from "./RestaurantsStack";
 import {Button, Text, View} from "native-base";
-import {getOperation, sendPushToken, setSignState, signOut} from "../actions/user";
+import {clearRequestData, getOperation, sendPushToken, setSignState, signOut} from "../actions/user";
 import {connect} from "react-redux";
 //import {Constants} from 'expo';
 import {Image, ScrollView, Platform, Dimensions, ImageBackground, Alert} from "react-native";
@@ -80,8 +80,7 @@ class CustomNavigationDrawer extends React.Component {
     componentWillMount() {
 
         FCM.requestPermissions().then(() => {
-            if(!this.props.user.disabledPush)
-            {
+            if (!this.props.user.disabledPush) {
                 FCM.subscribeToTopic('common_notifications');
                 console.log('subsribes');
             }
@@ -89,13 +88,11 @@ class CustomNavigationDrawer extends React.Component {
 
         FCM.getFCMToken().then(token => {
             console.log(token);
-            if (this.props.user.token) {
+            if (this.props.user.token && this.props.user.logged) {
                 this.props.sendPushToken(token);
             }
             this.token = token;
         });
-
-
 
 
         this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
@@ -111,8 +108,7 @@ class CustomNavigationDrawer extends React.Component {
                         this.props.getOperation(data.reserve_id);
                         this.props.navigation.navigate('BookTableHistory', {reserveId: data.reserve_id});
                     }
-                    if(data.news_id)
-                    {
+                    if (data.news_id) {
                         this.props.getOneNews(data.news_id);
                         this.props.getNews();
                         this.props.navigation.navigate('OneNewsPage');
@@ -136,11 +132,20 @@ class CustomNavigationDrawer extends React.Component {
             }
         });
         FCM.on(FCMEvent.RefreshToken, (token) => {
-            if (this.props.user.token) {
+            if (this.props.user.token && this.props.user.logged) {
                 this.props.sendPushToken(token);
             }
             this.token = token;
         });
+
+
+        if (this.props.logged && this.props.user && this.props.userData && this.props.requestData) {
+            if (!(this.props.userData.first_name || this.props.userData.last_name || this.props.userData.email || this.props.userData.avatar)) {
+                this.props.navigation.navigate('Profile');
+                this.props.clearRequestData();
+            }
+        }
+
     }
 
     componentWillUnmount() {
@@ -156,12 +161,10 @@ class CustomNavigationDrawer extends React.Component {
         }
         if (nextProps.user.disabledPush !== this.props.user.disabledPush) {
 
-            if(!nextProps.user.disabledPush)
-            {
+            if (!nextProps.user.disabledPush) {
                 FCM.subscribeToTopic('common_notifications');
             }
-            else
-            {
+            else {
                 FCM.unsubscribeFromTopic('common_notifications');
             }
         }
@@ -273,6 +276,9 @@ function bindAction(dispatch) {
         },
         getOneNews: (id) => {
             return dispatch(getOneNews(id));
+        },
+        clearRequestData: (id) => {
+            return dispatch(clearRequestData());
         }
     };
 }
@@ -280,6 +286,8 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
     logged: state.user.logged,
     user: state.user,
+    userData: state.user.userData,
+    requestData: state.user.requestData
 });
 
 const styles = {

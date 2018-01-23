@@ -54,41 +54,70 @@ class News extends React.Component {
                 <View style={styles.container}>
 
 
-                    <FlatList
-                        ListHeaderComponent={() => {
-                            return <Text style={styles.header}>
+                    {((newsData && newsData.length !== 0) || this.props.isPending) ? <FlatList
+                            ListHeaderComponent={() => {
+                                return <Text style={styles.header}>
+                                    Новости и акции
+                                </Text>
+                            }}
+                            data={newsData}
+                            renderItem={(rowData) => {
+                                return <TouchableOpacity
+                                    style={{marginBottom: 25}}
+                                    onPress={
+                                        () => {
+                                            this.props.navigation.navigate('OneRestaurantNewsPage', {
+                                                news: rowData.item,
+                                                restaurants: [restaurant]
+                                            })
+                                        }
+                                    }
+                                >
+                                    <OneNews data={rowData.item} restaurants={[restaurant]}/>
+                                </TouchableOpacity>
+                            }}
+                            extraData={this.state}
+                            keyExtractor={item => item.id}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={this.props.isPending}
+                                    onRefresh={this._onRefresh}
+                                    tintColor="#fff"
+                                    titleColor="#fff"
+                                />
+                            }
+                        >
+
+                        </FlatList>
+                        :
+
+                        <View style={{
+
+                            flex: 1,
+                            width: null,
+                            height: null,
+                        }}>
+
+                            <Text style={styles.header}>
                                 Новости и акции
                             </Text>
-                        }}
-                        data={newsData}
-                        renderItem={(rowData) => {
-                            return <TouchableOpacity
-                                style={{marginBottom: 25}}
-                                onPress={
-                                    () => {
-                                        this.props.navigation.navigate('OneRestaurantNewsPage', {
-                                            news: rowData.item,
-                                            restaurants: [restaurant]
-                                        })
-                                    }
-                                }
-                            >
-                                <OneNews data={rowData.item} restaurants={[restaurant]}/>
-                            </TouchableOpacity>
-                        }}
-                        extraData={this.state}
-                        keyExtractor={item => item.id}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.props.isPending}
-                                onRefresh={this._onRefresh}
-                                tintColor="#fff"
-                                titleColor="#fff"
-                            />
-                        }
-                    >
+                            <View style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flex: 1,
+                                width: null,
+                                height: null,
+                            }}>
+                                <Text style={{
+                                    fontSize: 22,
+                                    lineHeight: 33,
+                                    textAlign: 'center',
+                                    paddingHorizontal: 20
+                                }}> На данный момент действующих акций нет.</Text>
 
-                    </FlatList>
+                            </View>
+                        </View>
+                    }
                 </View>
             </ImageBackground>
         );
