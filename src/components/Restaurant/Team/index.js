@@ -64,7 +64,7 @@ class Team extends React.Component {
 
 
                             {
-                                this.props.restaurants[this.restaurantId].employees.map((item) => {
+                                this.props.restaurants[this.restaurantId].employees.filter((member) => member.status === 1).map((item) => {
                                     return this.renderMember(item);
                                 })
                             }

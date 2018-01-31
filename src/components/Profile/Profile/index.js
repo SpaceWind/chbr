@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Icon, Left, List, ListItem, Picker, Right, Switch, Text, View} from 'native-base';
-import {Image, ImageBackground, TouchableOpacity, ScrollView, Alert} from "react-native";
+import {Image, ImageBackground, TouchableOpacity, ScrollView, Alert, Linking} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 
 import UserInfo from "../../../routers/components/UserInfo/index";
@@ -16,7 +16,6 @@ import {Platform} from "react-native";
 import {getUserData, setSignState, signOut, updateUserData} from "../../../actions/user";
 import * as _ from "lodash";
 import PhoneInput from "../../Common/PhoneInput/index";
-
 
 const currentPlatform = Platform.OS;
 
@@ -50,10 +49,12 @@ class Profile extends React.Component {
             'Изменение привяжет профиль вместе с платежной информацией, историей заказов и списком адресов к новому номеру телефона.',
             [
                 {text: 'Отменить', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                {text: 'OK', onPress: () => {
+                {
+                    text: 'OK', onPress: () => {
                     this.props.signIn();
                     this.props.logOut();
-                }},
+                }
+                },
             ]
         )
     }
@@ -242,7 +243,7 @@ class Profile extends React.Component {
 
                     <View style={{
                         marginTop: 30,
-                        marginBottom: 30,
+                        marginBottom: 15,
                         paddingHorizontal: 16
                     }}>
                         <Button
@@ -251,12 +252,36 @@ class Profile extends React.Component {
                             rounded
                             onPress={() => {
 
+                                Alert.alert(
+                                    'Вы уверены?',
+                                    'Вы действительно хотите выйти из аккаунта?',
+                                    [
+                                        {
+                                            text: 'Нет', onPress: () => {
+                                        }, style: 'cancel'
+                                        },
+                                        {
+                                            text: 'Да', onPress: () => {
+                                            this.props.signIn();
+                                            this.props.logOut();
+                                        }
+                                        }
+                                    ]
+                                );
 
-                                this.props.signIn();
-                                this.props.logOut();
                             }}>
-                            <Text>Выйти</Text>
+                            <Text>Выйти из профиля</Text>
                         </Button>
+                    </View>
+
+
+                    <View style={styles.politicsBlock}>
+                        <Text style={styles.politicsText}
+                              onPress={() => {
+                                  Linking.openURL('https://docs.google.com/document/d/12AACat3xcGIGBB_FZiKCr3Cwi1Xu7CZJuvcO5opB3j8')
+                              }}>
+                            Политика конфиденциальности
+                        </Text>
                     </View>
 
 
@@ -476,6 +501,16 @@ const styles = {
         fontSize: 14,
         lineHeight: 20,
         textAlign: 'center'
+    },
+    politicsBlock: {
+        alignItems: 'center',
+        marginBottom: 15
+    },
+    politicsText: {
+        fontSize: 15,
+        color: platform.brandFontAccent,
+        textAlign: 'center',
+        paddingHorizontal: 16
     }
 };
 
@@ -494,7 +529,7 @@ export const modalCardStyles = {
         marginBottom: 37
     },
     textRow: {
-        flex:1
+        flex: 1
     },
     removeText: {
 
@@ -507,7 +542,7 @@ export const modalCardStyles = {
         fontSize: 14,
         lineHeight: 20,
         color: '#ffffff',
-        marginRight:20,
+        marginRight: 20,
         fontFamily: platform.fontFamily
     },
 

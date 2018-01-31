@@ -79,7 +79,7 @@ export default class HowWorksPage extends React.Component {
                 </View>}
                 <View style={styles.textBlock}>
                     <Text style={styles.header}>На что потратить?</Text>
-                    <Text style={styles.text}>Обменивайте свои баллы на бонусные десерты и напитки в приложении!</Text>
+                    <Text style={styles.text}>Обменивайте свои баллы на блюда из основного меню!</Text>
                 </View>
                 <Image style={styles.image} source={require('../../../../assets/images/howworks/spend-pic.png')}/>
 

@@ -149,6 +149,18 @@ export default class SelectDate extends React.Component {
         return hours;
     }
 
+    getFullHours() {
+        let hours = [];
+        let currentDate = moment().clone().floor(24, 'hours').add(12, 'hours');
+        let end = moment().clone().floor(24, 'hours').add(23, 'hours').add(30, 'minutes');
+        while (currentDate <= end) {
+            currentDate = currentDate.clone();
+            hours.push(currentDate.format('HH:mm'));
+            currentDate.add(30, 'minutes');
+        }
+        return hours
+    }
+
     selectDate() {
         this.props.onDateSelected({
             count: this.state.count,
@@ -183,29 +195,28 @@ export default class SelectDate extends React.Component {
 
             let selectedDay = "";
             let selectedHour = "";
+            if (this.props.date.day() === moment().day()) {
+                selectedDay = 'сегодня';
+                selectedHour = this.props.date.format('HH:mm');
+            }
+            else {
+                selectedDay = this.props.date.format('ddd D MMMM');
+                selectedHour = this.props.date.format('HH:mm');
+            }
 
-            let days = this.getDays(50).map((day) => {
-
-                let hours = this.getHours(moment(day.date));
+            let fullHours = this.getFullHours();
+            let days = this.getDays(31).map((day, i) => {
+                let hours = null;
+                if (i === 0) {
+                    hours = this.getHours(moment(day.date)).map(item => item.name);
+                }
+                else {
+                    hours = fullHours;
+                }
                 let result = {};
-
-                result[day.name] = hours.map((hour) => {
-
-                    console.log(moment(this.props.date).format())
-                    console.log(moment(hour.date).format())
-                    if (moment(this.props.date).format() === moment(hour.date).format()) {
-                        selectedDay = day.name;
-                        selectedHour = hour.name;
-                    }
-
-                    return hour.name;
-                });
-
-
+                result[day.name] = hours;
                 return result;
             });
-
-
             let pickerData =
                 Array.from(new Array(this.props.maxCount), (val, index) => index + 1).map((count) => {
                     let result = {};
@@ -216,7 +227,6 @@ export default class SelectDate extends React.Component {
 
 
             let selected = [];
-
             AndroidPicker.init({
                 pickerConfirmBtnText: 'Готово',
                 pickerCancelBtnText: 'Отмена',

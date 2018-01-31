@@ -13,6 +13,9 @@ import moment from "moment";
 import 'moment-round'
 import {getTime} from "../../../actions/restaurant";
 import {params} from "../Restaurant/index";
+import {modalCardStyles} from "../../Profile/Profile/index";
+import ChesterIcon from "../../Common/ChesterIcon/index";
+import MyModal from "../../Common/MyModal/index";
 
 
 class BookTable extends React.Component {
@@ -21,7 +24,8 @@ class BookTable extends React.Component {
     state = {
         isOpen: false,
         count: 2,
-        maxCount: 20
+        maxCount: 20,
+        isOpenOver: false
     };
 
     scrollTo: false;
@@ -99,80 +103,121 @@ class BookTable extends React.Component {
 
                             </View>
 
-                            { this.restaurant.reserving_available===1 ? <View>
-                                <SelectDate
-                                date={this.state.date}
-                                count={this.state.count}
-                                maxCount={this.state.maxCount}
-                                onDateSelected={(selected) => {
+                            {this.restaurant.reserving_available === 1 ? <View>
+                                    <SelectDate
+                                        date={this.state.date}
+                                        count={this.state.count}
+                                        maxCount={this.state.maxCount}
+                                        onDateSelected={(selected) => {
 
 
-                                    this.setState({date: selected.date, count: selected.count});
+                                            this.setState({date: selected.date, count: selected.count});
 
 
-                                    //if (moment(this.state.date).format('YYYY DD MM') !== moment(selected.date).format('YYYY DD MM')) {
-                                    this.getDate(selected.count, selected.date.unix());
-                                    // }
+                                            //if (moment(this.state.date).format('YYYY DD MM') !== moment(selected.date).format('YYYY DD MM')) {
+                                            this.getDate(selected.count, selected.date.unix());
+                                            // }
 
 
-                                }}/>
+                                        }}/>
 
-                                <View style={styles.timeSheet}>
-                                    <Text style={styles.timeSheetHint}>Забронируйте столик на удобное вам время:</Text>
-
-
-                                    <ScrollView horizontal style={{paddingBottom: 22, paddingTop: 14}} ref='scroll'>
-                                        <View style={{flexDirection: 'row'}}>
+                                    <View style={styles.timeSheet}>
+                                        <Text style={styles.timeSheetHint}>Забронируйте столик на удобное вам время:</Text>
 
 
-                                            {
-                                                this.props.getTimePending ?
-
-                                                    <View style={styles.activityIndicator}>
-
-                                                        <ActivityIndicator
+                                        <ScrollView horizontal style={{paddingBottom: 22, paddingTop: 14}} ref='scroll'>
+                                            <View style={{flexDirection: 'row'}}>
 
 
-                                                        />
-                                                    </View>
+                                                {
+                                                    this.props.getTimePending ?
 
-                                                    :
-                                                    this.getTimeSheet().map(time => {
+                                                        <View style={styles.activityIndicator}>
 
-                                                        if (time.state === 'enabled') {
-                                                            return <TouchableOpacity style={styles.timeButton}
-                                                                                     key={time.timestamp}
-                                                                                     onPress={() => {
-                                                                                         this.navigateToBook(time)
-                                                                                     }}>
-                                                                <Text style={styles.timeButtonText}>
-                                                                    {moment.unix(time.timestamp).format('HH:mm')}
-                                                                </Text>
-                                                            </TouchableOpacity>
-                                                        }
-                                                        else {
-                                                            return <View style={styles.timeButtonFill}
-                                                                         key={time.timestamp}
-                                                            >
-                                                                <Text style={styles.timeButtonFillText}>
-                                                                    {moment.unix(time.timestamp).format('HH:mm')}
-                                                                </Text>
-                                                            </View>
-                                                        }
-                                                    })
-                                            }
+                                                            <ActivityIndicator
 
+
+                                                            />
+                                                        </View>
+
+                                                        :
+                                                        this.getTimeSheet().map(time => {
+
+                                                            if (time.state === 'enabled') {
+                                                                return <TouchableOpacity style={styles.timeButton}
+                                                                                         key={time.timestamp}
+                                                                                         onPress={() => {
+                                                                                             this.navigateToBook(time)
+                                                                                         }}>
+                                                                    <Text style={styles.timeButtonText}>
+                                                                        {moment.unix(time.timestamp).format('HH:mm')}
+                                                                    </Text>
+                                                                </TouchableOpacity>
+                                                            }
+                                                            else {
+                                                                return <TouchableOpacity style={styles.timeButtonFill}
+
+                                                                                         onPress={() => {
+                                                                                             this.setState({isOpenOver: true});
+                                                                                         }}
+                                                                                         key={time.timestamp}
+                                                                >
+                                                                    <Text style={styles.timeButtonFillText}>
+                                                                        {moment.unix(time.timestamp).format('HH:mm')}
+                                                                    </Text>
+                                                                </TouchableOpacity>
+                                                            }
+                                                        })
+                                                }
+
+                                            </View>
+                                        </ScrollView>
+                                    </View>
+
+                                </View> :
+                                <View style={{paddingHorizontal: 16}}>
+                                    <Text>Бронирование через мобильное приложение недоступно</Text>
+
+                                </View>}
+
+                            <MyModal style={{height: 215, backgroundColor: "#7A8187"}} isOpen={this.state.isOpenOver}
+                                     ref="modal"
+                                     position={'bottom'}
+                                     onRequestClose={() => {
+
+                                     }
+                                     }>
+                                <View style={modalCardStyles.modal}>
+                                    <View style={modalCardStyles.hintRow}>
+                                        <View style={modalCardStyles.textRow}>
+                                            <Text style={modalCardStyles.removeText}>Нет свободных мест.</Text>
+                                            <Text style={modalCardStyles.removeTextQuestion}>К сожалению на выбранное
+                                                время нет
+                                                свободных столов. Попробуйте другое время или меньшее количество
+                                                человек.</Text>
                                         </View>
-                                    </ScrollView>
+                                        <Image
+                                            source={require('../../../../assets/images/restaurant/sorry.png')}
+                                        />
+                                    </View>
+
+                                    <View style={modalCardStyles.buttonRow}>
+                                        <Button bordered rounded light full style={modalCardStyles.cancelButton}
+                                                onPress={() => {
+                                                    this.setState({isOpenOver: false});
+                                                }
+                                                }>
+                                            <Text uppercase={false} style={modalCardStyles.buttonText}>ОК</Text>
+                                        </Button>
+                                    </View>
+
                                 </View>
 
-                            </View>:
-                            <View style={{paddingHorizontal: 16}}>
-                                <Text >Бронирование через мобильное приложение недоступно</Text>
+                            </MyModal>
 
-                            </View>}
                         </Content>
                     </Container>
+
 
                 </View>
             </ImageBackground>

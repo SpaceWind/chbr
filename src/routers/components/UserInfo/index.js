@@ -63,7 +63,7 @@ class UserInfoC extends React.Component {
                     />
                     <View style={styles.avatarOuterProgress}>
                         {this.props.userData && <TouchableOpacity
-                            disabled={this.props.userData.avatar && !this.props.showName}
+                            disabled={!! (this.props.userData.avatar && !this.props.showName)}
                             onPress={() => {
                                 this.props.userData.avatar && this.props.showName ?  this._goToState('Profile') : this._pickImage();
                             }}>
@@ -105,7 +105,7 @@ class UserInfoC extends React.Component {
                 </TouchableOpacity>
                 <View>
                     <Button style={styles.bonusButton} rounded warning onPress={() => {
-                       this._goToState('MyCard');
+                        this.props.navigation.navigate('MyCard');
                     }}>
 
                         {this.props.userData && <Text

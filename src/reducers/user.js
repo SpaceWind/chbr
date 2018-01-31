@@ -113,6 +113,7 @@ export default function (state: State = initialState, action) {
             ...state,
             isCodeConfirmed: true,
             confirmCodePending: false,
+            sent: null,
             logged: true,
             requestData: true
         };

@@ -33,13 +33,12 @@ class Category extends React.Component {
             return item.id === id;
         });
 
-        if(!currentCategory.items)
-        {
+        if (!currentCategory.items) {
             currentCategory = currentCategory.categories.find((category) => category.id === id);
         }
 
 
-        let items = currentCategory.items.filter(item => item.status === 1 && item.available === 1)
+        let items = currentCategory.items.filter(item => item.status === 1);
         this.restaurantId = restaurant.id;
         if (this.props.billing.restaurantId === restaurant.id) {
 
@@ -55,6 +54,10 @@ class Category extends React.Component {
                 item.count = 0;
             }
         }
+
+        items.sort((a, b) => {
+            return a.sort - b.sort;
+        });
 
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}

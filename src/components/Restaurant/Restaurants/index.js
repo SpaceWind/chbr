@@ -77,7 +77,7 @@ class Restaurants extends React.Component {
                         <ChesterIcon name="time-16" size={16}
                                      color={platform.brandWarning}/>
                         <Text
-                            style={styles.time}>{item.currentDay.isOpen ? 'Открыто' : "Закрыто"}</Text>
+                            style={styles.time}>{item.currentDay.status}</Text>
                     </View>
 
                 </CardItem>

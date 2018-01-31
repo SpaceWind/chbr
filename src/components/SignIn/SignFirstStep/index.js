@@ -3,7 +3,15 @@ import {Button, Container, Form, Input, Item, Label, Text, View} from 'native-ba
 import {sendCode, setSignState} from "../../../actions/user";
 import connect from "react-redux/es/connect/connect";
 //import {Constants} from 'expo';
-import {Image, ImageBackground, TouchableWithoutFeedback, Dimensions, ScrollView, Platform} from "react-native";
+import {
+    Image,
+    ImageBackground,
+    TouchableWithoutFeedback,
+    Dimensions,
+    ScrollView,
+    Platform,
+    Linking
+} from "react-native";
 import {signStackStyle} from "../../../routers/SignStack";
 import SignPhoneInput from "../SignPhoneInput/index";
 import H3 from "../../../../native-base-theme/components/H3";
@@ -13,6 +21,8 @@ import {Keyboard, Alert} from 'react-native';
 
 import Permissions from 'react-native-permissions';
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
+import moment from "moment";
+import Constants from "../../../../utilities/Constants";
 
 class SignFirstStep extends React.Component {
 
@@ -29,7 +39,7 @@ class SignFirstStep extends React.Component {
     }
 
 
-    changeNumber(number,isValid) {
+    changeNumber(number, isValid) {
         this.setState({
             number: number,
             valid: isValid,
@@ -50,8 +60,7 @@ class SignFirstStep extends React.Component {
 
         catch (ex) {
 
-            if(!ex || !ex.notShowAlert)
-            {
+            if (!ex || !ex.notShowAlert) {
 
                 setTimeout(() => {
                     Alert.alert(
@@ -77,6 +86,13 @@ class SignFirstStep extends React.Component {
         if (Platform.OS === 'ios') {
             Permissions.request('notification');
         }
+
+
+        if (this.props.sent &&moment().diff(this.props.sent, 'seconds') < 60 && this.props.token) {
+            this.props.navigation.navigate('SignSecond', {number: this.props.phone});
+
+        }
+
     }
 
 
@@ -122,7 +138,7 @@ class SignFirstStep extends React.Component {
 
                                         <View style={styles.phone}>
                                             <SignPhoneInput ref="phone"
-                                                            onChangePhoneNumber={(number,isValid) => this.changeNumber(number,isValid)}/>
+                                                            onChangePhoneNumber={(number, isValid) => this.changeNumber(number, isValid)}/>
                                         </View>
                                     </View>
 
@@ -149,6 +165,23 @@ class SignFirstStep extends React.Component {
 
                                     </View>
                                 </View>
+
+
+                                <View style={styles.politicsBlock}>
+                                    <View style={styles.politics}>
+                                        <Text style={styles.politicsText}>Регистрируясь, вы подтверждаете, что прочитали
+                                            и согласились с<Text> </Text>
+                                            <Text
+                                                style={styles.politicsLink}
+                                                onPress={() => {
+                                                    Linking.openURL('https://docs.google.com/document/d/12AACat3xcGIGBB_FZiKCr3Cwi1Xu7CZJuvcO5opB3j8')
+                                                }}
+
+                                            >политикой
+                                                конфиденциальности</Text></Text>
+                                    </View>
+
+                                </View>
                             </View>
 
                         </ScrollView>
@@ -171,13 +204,16 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
     sendCodePending: state.user.sendCodePending,
+    sent: state.user.sent,
+    token: state.user.token,
+    phone: state.user.phone
 });
 
 
 const styles = {
     container: {
         backgroundColor: 'transparent',
-        height: Dimensions.get('window').height
+        height: Dimensions.get('window').height - (Platform.OS !== 'ios' ? Constants.STATUSBAR_HEIGHT : 0)
     },
     centerBlock: {
         flex: 1,
@@ -219,6 +255,24 @@ const styles = {
         paddingRight: 16,
         paddingLeft: 16
     },
+    politicsBlock: {
+        alignItems: 'center'
+    },
+    politics: {
+        marginHorizontal: 'auto',
+        marginBottom: 12,
+        maxWidth: 330
+    },
+    politicsLink: {
+        borderBottomWidth: 1,
+        color: platform.brandFontAccent,
+        borderBottomColor: platform.brandFontAccent,
+        textDecorationLine: 'underline'
+    },
+    politicsText: {
+        textAlign: 'center',
+        color: platform.brandFontAccent,
+    }
 
 };
 

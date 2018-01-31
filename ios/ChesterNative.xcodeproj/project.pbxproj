@@ -1002,6 +1002,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				E8EA818B1D285D63BF73D6A5 /* [CP] Embed Pods Frameworks */,
 				E6A14CF7B9C1781A99C16562 /* [CP] Copy Pods Resources */,
+				C9A013E4201EF9B200CC5B53 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1657,6 +1658,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ChesterNativeTests/Pods-ChesterNativeTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		C9A013E4201EF9B200CC5B53 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" 82a02888834f636cd75a076a6009283d36aabd2d 12ae42feb0518cdf8bfdd69227ccd50cc1386481231096c65144caf2d3a3cd61";
 		};
 		E6A14CF7B9C1781A99C16562 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

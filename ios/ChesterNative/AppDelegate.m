@@ -13,6 +13,8 @@
 #import <React/RCTRootView.h>
 #import "SplashScreen.h"
 #import "RNFIRMessaging.h"
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
 
 @implementation AppDelegate
 
@@ -48,7 +50,7 @@
   }
   
 
-  
+  [Fabric with:@[[Crashlytics class]]];
   
   
   [SplashScreen show];

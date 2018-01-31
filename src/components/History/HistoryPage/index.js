@@ -130,7 +130,7 @@ class HistoryPage extends React.Component {
                       right={swipeoutBtns}
 
                       buttonWidth={88}
-
+                      disabled={item.status !== 6 && item.status !== 5}
                       autoClose={true}
                       scroll={() => false}>
                 <TouchableOpacity style={styles.listItemTouch} onPress={() => {

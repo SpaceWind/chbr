@@ -23,6 +23,9 @@ import {Alert} from "react-native";
 import {buyByBonus, getDish, getRestaurants, likeDish} from "../../../actions/restaurant";
 import Spinner from "react-native-loading-spinner-overlay";
 import ComingSoon from "../common/ComingSoon/index";
+import {modalCardStyles} from "../../Profile/Profile/index";
+import MyModal from "../../Common/MyModal/index";
+import DenyOrder from "../common/DenyOrder/index";
 
 
 export class DishC extends React.Component {
@@ -35,6 +38,7 @@ export class DishC extends React.Component {
         loading: false,
         likes: 0,
         isOpen: false,
+        isOpenOver:false,
         current_client_like_it: false
     };
 
@@ -59,15 +63,16 @@ export class DishC extends React.Component {
 
         let hot = false;
         let newDish = false;
-
-
+        let josper = false;
+        let recommend = false;
         if (dish.badges) {
             let badges = Object.keys(dish.badges).map((key) => {
                 return dish.badges[key]
             }).filter(item => item.status).map(item => item.title.toLowerCase());
             hot = badges.find(item => item === 'острое');
             newDish = badges.find(item => item === 'новое блюдо');
-
+            josper = badges.find(item => item === 'josper');
+            recommend = badges.find(item => item === 'рекомендуем');
         }
         let savedDish = this.props.billing.dishes.find(item => item.id === dish.id);
         let countDish = 0;
@@ -95,7 +100,7 @@ export class DishC extends React.Component {
                             }
 
 
-                            {dish.photos && dish.photos.main && <LinearGradient
+                            {!!(dish.photos && dish.photos.main) && <LinearGradient
                                 colors={['#000', 'transparent']}
                                 start={{x: 0.5, y: 1}}
                                 end={{x: 0.5, y: 0}}
@@ -110,6 +115,7 @@ export class DishC extends React.Component {
 
 
                             </LinearGradient>}
+
 
                             <View
                                 style={styles.subInfo}
@@ -166,16 +172,35 @@ export class DishC extends React.Component {
                         </View>
 
 
-                        {(hot || newDish) && <View style={styles.hang}>
-                            {newDish && <View style={{flexDirection: 'row', alignItems: 'center', paddingRight: 12}}>
+                        {(hot || newDish || josper || recommend) && <View style={styles.hang}>
+                            {newDish && <View
+                                style={styles.badge}>
                                 <ChesterIcon name="star-16" size={16} color={platform.brandWarning}/>
                                 <Text style={styles.hangText}>Новое блюдо</Text>
                             </View>}
-                            {hot && <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                            {hot && <View
+                                style={styles.badge}>
                                 <ChesterIcon name="chili-16" size={16} color={platform.brandWarning}/>
                                 <Text style={styles.hangText}>Острое блюдо</Text>
 
                             </View>}
+
+                            {josper && <View
+                                style={styles.badge}>
+                                <Image source={require('../../../../assets/images/menu/josper-16.png')}
+                                       style={styles.badgeIcon}/>
+                                <Text style={styles.hangText}>Josper</Text>
+                            </View>}
+                            {recommend &&
+                            <View
+                                style={styles.badge}>
+                                <Image source={require('../../../../assets/images/menu/recomend-16.png')}
+                                       style={styles.badgeIcon}/>
+                                <Text style={styles.hangText}>Рекомендуем</Text>
+
+                            </View>}
+
+
                         </View>}
 
 
@@ -206,9 +231,14 @@ export class DishC extends React.Component {
                                         <Button
                                             warning rounded style={{flex: 1, justifyContent: 'center'}}
                                             onPress={() => {
-
-
-                                                this.setState({isOpen: true})
+                                                if(this.dish.available)
+                                                {
+                                                    this.setState({isOpen: true})
+                                                }
+                                                else
+                                                {
+                                                    this.setState({isOpenOver: true})
+                                                }
                                                 //this.addItem()
                                             }}>
                                             <Text uppercase={false}>{dish.price + ' ₽'}</Text>
@@ -256,6 +286,12 @@ export class DishC extends React.Component {
                         <ComingSoon isOpen={this.state.isOpen} onClose={() => {
                             this.setState({isOpen: false})
                         }}/>
+
+                        <DenyOrder isOpen={this.state.isOpenOver} onClose={() => {
+                            this.setState({isOpenOver: false})
+                        }}/>
+
+
 
                     </View>
                 </ScrollView>
@@ -470,20 +506,28 @@ const styles = {
         lineHeight: 29
     },
     hang: {
-
         borderBottomWidth: 1,
         borderColor: platform.brandDivider,
-        paddingVertical: 12,
         paddingHorizontal: 16,
+        marginHorizontal: -6,
+        paddingBottom:12,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap: 'wrap'
     },
+    badge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginHorizontal: 6,
+        marginTop: 12,
+    },
+    badgeIcon: {},
     hangText: {
         color: platform.brandFontAccent,
         fontFamily: platform.fontFamily,
         fontSize: 14,
         lineHeight: 20,
-        paddingLeft: 3
+        paddingLeft: 5
     },
     contentBlock: {
         paddingHorizontal: 16,

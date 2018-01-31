@@ -136,14 +136,14 @@ export default class RestaurantContact extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={styles.contactBlock}>
-                    <View>
+                    <View style={{flex: 1}}>
 
 
                         <View style={styles.status}>
                             <ChesterIcon name="time-16" size={16} color={platform.brandWarning}
                                          style={styles.timeIcon}/>
                             <Text
-                                style={styles.statusText}>{this.currentDay.isOpen ? 'Сегодня открыто' : "Закрыто"}</Text>
+                                style={styles.statusText}>{this.currentDay.status}</Text>
 
                         </View>
 
@@ -243,7 +243,8 @@ const styles = {
     },
     status: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        flex: 1,
     },
     statusBottom: {
         paddingLeft: 23
@@ -277,6 +278,9 @@ const styles = {
     },
     circleBlock: {
         flexDirection: 'row',
+        width: 115,
+        marginLeft:10
+
 
     },
     circle: {

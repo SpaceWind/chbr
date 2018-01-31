@@ -49,9 +49,6 @@ class OneNewsPageС extends React.Component {
             if (!news.restaurants) {
                 news.restaurants = []
             }
-            if (news.event_place_all || this.props.restaurants.length === news.restaurants.length) {
-                news.restaurants = [{id: 1, title: 'Все рестораны'}]
-            }
         }
 
 

@@ -47,7 +47,7 @@ class BookTablePageC extends React.Component {
             let restaurant = this.props.restaurants[operation.restaurant_id];
             restaurantName = restaurant.title_short;
         }
-        console.log(reserve);
+        console.log(operation);
 
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
@@ -86,6 +86,25 @@ class BookTablePageC extends React.Component {
 
 
                     </View>}
+
+                    {(operation.status === 5 || operation.status === 6) && <View style={styles.buttonBlock}>
+
+                        <View style={{
+                            width: '100%', paddingHorizontal: 7,
+                        }}>
+                            <Button danger full rounded
+                                    style={{
+                                        justifyContent: 'center'
+                                    }}
+                                    onPress={() => {
+                                        this._requestCancel()
+                                    }}><Text uppercase={false}>Удалить из истории</Text>
+                            </Button>
+                        </View>
+
+
+                    </View>}
+
                 </View>}
 
 
@@ -156,6 +175,56 @@ class BookTablePageC extends React.Component {
         this.setState({loading: true});
         try {
             await this.props.cancelReserve(this.props.operation.restaurant_id, this.props.operation.result_id);
+            let result = await this.props.deleteOperation(this.props.operation.id);
+            this.props.getTableReserves();
+            this.setState({loading: false});
+            const backAction = NavigationActions.back();
+            this.props.navigation.dispatch(backAction)
+        }
+        catch
+            (ex) {
+            this.setState({loading: false});
+            setTimeout(() => {
+                Alert.alert(
+                    'Ошибка',
+                    'Не удалось выполнить операцию',
+                    [
+
+                        {
+                            text: 'Ок', onPress: () => {
+
+
+                        }
+                        }
+                    ]
+                )
+            }, 10);
+        }
+
+    }
+
+
+    _requestDelete() {
+        Alert.alert(
+            'Вы уверены?',
+            'Данная информация будет удалена из истории',
+            [
+                {
+                    text: 'Нет', onPress: () => {
+                }, style: 'cancel'
+                },
+                {
+                    text: 'Ок', onPress: () => {
+                    this._cancelOperation()
+                }
+                }
+            ]
+        );
+    }
+
+    async _cancelOperation() {
+        this.setState({loading: true});
+        try {
             let result = await this.props.deleteOperation(this.props.operation.id);
             this.props.getTableReserves();
             this.setState({loading: false});

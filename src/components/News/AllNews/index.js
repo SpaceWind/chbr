@@ -73,9 +73,7 @@ class NewsC extends React.Component {
                         renderItem={(rowData) => {
                             let restaurants = null;
 
-                            if (rowData.item.event_place_all || this.props.restaurants.length === rowData.item.restaurants.length) {
-                                restaurants = [{id: 1, title_short: 'Все рестораны'}]
-                            } else if (rowData.item.restaurants.length > 0 ) {
+                            if (rowData.item.restaurants.length > 0 ) {
                                 restaurants = this.props.restaurants.filter(rest => rowData.item.restaurants.find(restNews => rest.id === restNews.id));
                             }
                             else {
