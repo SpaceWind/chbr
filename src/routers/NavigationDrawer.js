@@ -67,6 +67,9 @@ export default NavigationDrawer = DrawerNavigator({
         }
     },
     {
+        drawerOpenRoute: 'DrawerOpen',
+        drawerCloseRoute: 'DrawerClose',
+        drawerToggleRoute: 'DrawerToggle',
         cardStyle: {
             backgroundColor: '#2B3034',
         },
@@ -113,6 +116,26 @@ class CustomNavigationDrawer extends React.Component {
                         this.props.getNews();
                         this.props.navigation.navigate('OneNewsPage');
                     }
+                    if (data.type === "order_payment_result" || data.type === "order_food_ready" || data.order_id) {
+                        const resetAction = NavigationActions.reset({
+                            index: 1,
+                            actions: [
+                                NavigationActions.navigate({
+                                    routeName: 'Restaurants',
+
+                                }),
+                                NavigationActions.navigate({
+                                    routeName: 'RestaurantLunchHistory',
+                                    params: {
+                                        name: "Информация о заказе",
+                                        resultId: data.order_id,
+                                        operationId: data.operation_id
+                                    }
+                                })
+                            ]
+                        });
+                        this.props.navigation.dispatch(resetAction);
+                    }
                 }
             }
 
@@ -137,11 +160,9 @@ class CustomNavigationDrawer extends React.Component {
             }
             this.token = token;
         });
-
-
         if (this.props.logged && this.props.user && this.props.userData && this.props.requestData) {
             if (!(this.props.userData.first_name || this.props.userData.last_name || this.props.userData.email || this.props.userData.avatar)) {
-                this.props.navigation.navigate('Profile');
+                this.props.navigation.navigate('Restaurant_Profile', {registration: true});
                 this.props.clearRequestData();
             }
         }
@@ -154,7 +175,8 @@ class CustomNavigationDrawer extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.user.token && nextProps.user.token !== this.props.user.token && nextProps.user.isCodeConfirmed) {
+        if (nextProps.user.token && nextProps.user.token !== this.props.user.token && nextProps.user.isCodeConfirmed ||
+            nextProps.logged !== this.props.logged && nextProps.user.isCodeConfirmed) {
             if (this.token) {
                 this.props.sendPushToken(this.token);
             }
@@ -210,16 +232,12 @@ class CustomNavigationDrawer extends React.Component {
                 />
 
 
-                <Button bordered warning rounded style={styles.scanBarButton}>
+                <Button bordered warning rounded style={styles.scanBarButton} onPress={() => {
+                    this._scanCheck();
+                }}>
                     <ChesterIcon name="camera-24" size={20} color={platform.brandWarning}
                                  style={{marginTop: -5, paddingRight: 5}}/>
-                    <Text style={styles.scanBarButtonText} uppercase={false} onPress={() => {
-
-
-                        this._scanCheck();
-
-
-                    }}>Сканировать чек</Text>
+                    <Text style={styles.scanBarButtonText} uppercase={false}>Сканировать чек</Text>
                 </Button>
 
 

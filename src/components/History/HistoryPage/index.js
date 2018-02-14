@@ -9,6 +9,7 @@ import platform from "../../../../native-base-theme/variables/platform";
 import {signStackStyle} from "../../../routers/SignStack";
 import {deleteOperation, getTableReserves} from "../../../actions/user";
 import Spinner from "react-native-loading-spinner-overlay";
+import TextHelper from "../../../../utilities/TextHelper";
 
 class HistoryPage extends React.Component {
 
@@ -41,7 +42,11 @@ class HistoryPage extends React.Component {
                 break;
             }
             case 4: {
-                this.props.navigation.navigate('TakeAwayOrderHistory', {name: title, history: item});
+                this.props.navigation.navigate('LunchHistory', {
+                    name: title,
+                    resultId: item.result_id,
+                    operationId: item.id
+                });
                 break;
             }
             case 5: {
@@ -49,7 +54,10 @@ class HistoryPage extends React.Component {
                 break;
             }
             case 7: {
-                this.props.navigation.navigate('LunchHistory', {name: title, history: item});
+                this.props.navigation.navigate('LunchHistory', {
+                    name: title,
+                    resultId: item.result_id,
+                    operationId: item.id});
                 break;
             }
         }
@@ -89,6 +97,31 @@ class HistoryPage extends React.Component {
             }
         }
 
+
+        let bonus = item.type === 4 ? -item.bonus : item.bonus;
+        let bonusText = bonus + ' ' + TextHelper.getBonusText(Math.abs(bonus));
+
+
+        let date = moment.utc(item.created_at).local();
+        if (item.type === 3) {
+            bonusText = item.result_data.people_quantity + ' чел.';
+            date = moment.utc(item.result_data.timestamp);
+        }
+
+        if (item.type === 4 || item.type === 5 || item.type === 7) {
+            bonus = TextHelper.getBonus(item.price || item.summ);
+            bonusText = bonus + ' ' + TextHelper.getBonusText(bonus);
+        }
+
+
+        let restaurant = this.props.restaurants[item.restaurant_id];
+
+        let restaurantName = '';
+        if (restaurant) {
+            restaurantName = restaurant.title_short;
+        }
+
+
         let swipeoutBtns = [
             {
                 onPress: () => {
@@ -104,25 +137,6 @@ class HistoryPage extends React.Component {
                 underlayColor: '#9b4f47'
             }
         ];
-
-        let bonus = item.type === 4 ? -item.bonus : item.bonus;
-        let bonusText = bonus + ' ' + 'бал.';
-
-
-        let date = moment.utc(item.created_at).local();
-        if (item.type === 3) {
-            bonusText = item.result_data.people_quantity + ' чел.';
-            date = moment.utc(item.result_data.timestamp);
-        }
-
-
-        let restaurant = this.props.restaurants[item.restaurant_id];
-
-        let restaurantName = '';
-        if (restaurant) {
-            restaurantName = restaurant.title_short;
-        }
-
 
         return (
 
@@ -179,13 +193,14 @@ class HistoryPage extends React.Component {
             if (list.length === 0) {
                 empty = true;
             }
+
+
         }
-
-
+        console.log(list)
         return <ImageBackground source={require('../../../../assets/images/background/background.png')}
                                 style={signStackStyle}>
 
-            <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
+
             {!empty || this.props.isPending
                 ? <FlatList
                     style={styles.list}

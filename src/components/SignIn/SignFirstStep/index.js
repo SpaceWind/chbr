@@ -23,6 +23,7 @@ import Permissions from 'react-native-permissions';
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import moment from "moment";
 import Constants from "../../../../utilities/Constants";
+import {NavigationActions} from "react-navigation";
 
 class SignFirstStep extends React.Component {
 
@@ -55,7 +56,11 @@ class SignFirstStep extends React.Component {
             let result = await this.props.sendCode(this.number);
 
             console.log(result);
-            this.props.navigation.navigate('SignSecond', {number: this.number})
+            this.props.navigation.navigate('SignSecond', {
+                number: this.number,
+                nested: this.props.navigation.state.params && this.props.navigation.state.params.nested,
+                back: this.props.navigation.state.params && this.props.navigation.state.params.back
+            })
         }
 
         catch (ex) {
@@ -83,22 +88,31 @@ class SignFirstStep extends React.Component {
     }
 
     componentWillMount() {
+
+
         if (Platform.OS === 'ios') {
             Permissions.request('notification');
         }
 
 
-        if (this.props.sent &&moment().diff(this.props.sent, 'seconds') < 60 && this.props.token) {
-            this.props.navigation.navigate('SignSecond', {number: this.props.phone});
-
+        if (this.props.navigation.state.params && this.props.navigation.state.params.nested) {
+            this.nested = this.props.navigation.state.params.nested;
         }
+        else {
+            if (this.props.sent && moment().diff(this.props.sent, 'seconds') < 60 && this.props.token) {
+                this.props.navigation.navigate('SignSecond', {number: this.props.phone});
+            }
+        }
+
 
     }
 
 
     render() {
 
-        let height = Dimensions.get('window').height;
+        let height = Dimensions.get('window').height
+            - (Platform.OS !== 'ios' ? Constants.STATUSBAR_HEIGHT : 0)
+            - (this.nested ? Constants.NAVBARHEIGHT : 0);
         return (
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 
@@ -112,7 +126,7 @@ class SignFirstStep extends React.Component {
                     >
                         <ScrollView ref='scroll' keyboardShouldPersistTaps="always">
 
-                            <View style={styles.container}>
+                            <View style={{...styles.container, height: height}}>
                                 <Spinner visible={this.state.loading}
                                          textStyle={{color: '#FFF'}}/>
 
@@ -154,7 +168,16 @@ class SignFirstStep extends React.Component {
 
                                         <View>
                                             <Button transparent warning onPress={() => {
-                                                this.props.signInAfter()
+
+                                                if (this.props.navigation.state.params && this.props.navigation.state.params.nested) {
+
+                                                    this._end();
+                                                }
+                                                else {
+                                                    this.props.signInAfter()
+                                                }
+
+
                                             }}>
                                                 <Text style={{lineHeight: 29, fontSize: 20}} uppercase={false}>Вступить
                                                     в
@@ -193,6 +216,19 @@ class SignFirstStep extends React.Component {
 
         );
     }
+
+
+    _end() {
+
+        if (this.props.navigation.state.params.back) {
+
+        }
+        else {
+            const backAction = NavigationActions.back();
+            this.props.navigation.dispatch(backAction);
+        }
+    }
+
 }
 
 function bindAction(dispatch) {
@@ -213,12 +249,12 @@ const mapStateToProps = state => ({
 const styles = {
     container: {
         backgroundColor: 'transparent',
-        height: Dimensions.get('window').height - (Platform.OS !== 'ios' ? Constants.STATUSBAR_HEIGHT : 0)
+
     },
     centerBlock: {
         flex: 1,
         justifyContent: 'center',
-        paddingBottom: 200
+        paddingBottom: Dimensions.get('window').height > 660 ? Dimensions.get('window').height * 0.30 : Dimensions.get('window').height * 0.19
     },
     image: {
         height: 129,

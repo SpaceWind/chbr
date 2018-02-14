@@ -104,6 +104,19 @@ class FeedBackPageC extends React.Component {
                                         this.setState({
                                             anonymous: push ? 1 : 0
                                         });
+
+                                        if (push) {
+                                            this.setState({
+                                                userData: {
+                                                    first_name: '',
+                                                    last_name: '',
+                                                    email: ''
+                                                },
+                                                phone: ""
+                                            })
+                                        }
+
+
                                     }}
                                             onTintColor={platform.brandWarning} {...(currentPlatform !== 'ios' ? {thumbTintColor: '#f4f5f5'} : {})}/>
                                 </View>
@@ -158,7 +171,14 @@ class FeedBackPageC extends React.Component {
                                 <TouchableWithoutFeedback onPress={() => {
                                     this.refs.phone.focus();
                                 }}>
-                                    <Text style={InputBlockStyles.inputLabel}>Телефон</Text>
+
+                                    <View style={InputBlockStyles.requiredLabelBlock}>
+                                        <Text
+                                            style={InputBlockStyles.requiredInputLabel}>Телефон
+                                        </Text>
+                                        <Text style={InputBlockStyles.requiredLabel}>*</Text>
+
+                                    </View>
                                 </TouchableWithoutFeedback>
                                 <PhoneInput
                                     style={InputBlockStyles.input}
@@ -187,7 +207,7 @@ class FeedBackPageC extends React.Component {
                                             this.backupEmail = this.state.userData.email;
                                         }}
                                         onBlur={() => {
-                                            if (!this.validateEmail(this.email)) {
+                                            if (this.state.userData.email.length > 0 && !this.validateEmail(this.state.userData.email)) {
                                                 this.setState({
                                                     userData: {
                                                         ...this.state.userData,
@@ -215,7 +235,13 @@ class FeedBackPageC extends React.Component {
                                 }}>
 
 
-                                    <Text style={InputBlockStyles.inputLabelV}>Отзыв или предложение</Text>
+                                    <View style={InputBlockStyles.requiredLabelBlock}>
+                                        <Text
+                                            style={InputBlockStyles.inputLabelV}>Отзыв или предложение
+                                        </Text>
+                                        <Text style={InputBlockStyles.requiredLabelV}>*</Text>
+
+                                    </View>
 
 
                                     <View style={{}}>
@@ -246,7 +272,8 @@ class FeedBackPageC extends React.Component {
 
 
                         <View style={styles.buttonBlock}>
-                            <Button warning rounded disabled={!(this.state.text && this.state.text.length > 0)}
+                            <Button warning rounded
+                                    disabled={!(this.state.text && this.state.text.length > 0 && (this.state.phone || this.state.anonymous === 1))}
                                     style={{width: '100%'}} onPress={() => {
                                 this.sendTicket(this.state);
                             }}>

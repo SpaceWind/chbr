@@ -77,7 +77,7 @@ export default class TimeService {
 
         if (currentDay.isOpen) {
             let dateEnd = null;
-            if (currentDay.endSeconds < currentDay.startSeconds  &&  !(currentHour < currentDay.startHour && currentHour <= prevDay.endHour && prevDay.endHour < prevDay.startHour)) {
+            if (currentDay.endSeconds < currentDay.startSeconds && !(currentHour < currentDay.startHour && currentHour <= prevDay.endHour && prevDay.endHour < prevDay.startHour)) {
                 dateEnd = moment().endOf('days').seconds(currentDay.endSeconds);
             }
             else {
@@ -94,10 +94,11 @@ export default class TimeService {
             }
         }
         else {
-
             let dateStart = moment().startOf('days').seconds(currentDay.startSeconds);
-
-
+            if (dateStart < moment()) {
+                let day = this.days.find((day) => day.day === moment().add(1, "days").day());
+                dateStart = moment().add(1, "days").startOf('days').seconds(day.startSeconds);
+            }
             let toOpen = dateStart.diff(moment(), 'minutes');
             if (toOpen <= minutesForOpen) {
                 currentDay.status = "Открывается " + dateStart.fromNow();
@@ -109,4 +110,6 @@ export default class TimeService {
 
         return this.days;
     }
+
+
 }

@@ -7,7 +7,6 @@ import UserInfo from "../../../routers/components/UserInfo/index";
 import {connect} from "react-redux";
 import {signStackStyle} from "../../../routers/SignStack";
 import InputBlock, {InputBlockStyles} from "../../Common/Form/InputBlock/index";
-import {TextInputMask} from "react-native-masked-text";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import Swipeout from "react-native-swipeout";
 import ChesterIcon from "../../Common/ChesterIcon/index";
@@ -16,6 +15,7 @@ import {Platform} from "react-native";
 import {getUserData, setSignState, signOut, updateUserData} from "../../../actions/user";
 import * as _ from "lodash";
 import PhoneInput from "../../Common/PhoneInput/index";
+import {NavigationActions} from "react-navigation";
 
 const currentPlatform = Platform.OS;
 
@@ -46,7 +46,7 @@ class Profile extends React.Component {
     changePhone() {
         Alert.alert(
             'Смена номера',
-            'Изменение привяжет профиль вместе с платежной информацией, историей заказов и списком адресов к новому номеру телефона.',
+            'Смена номера привяжет ваш профиль и историю заказов к новому номеру телефона',
             [
                 {text: 'Отменить', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                 {
@@ -60,6 +60,9 @@ class Profile extends React.Component {
     }
 
     render() {
+
+
+        this.endRegistration = this.props.navigation.state.params && this.props.navigation.state.params.registration;
 
         return <ImageBackground source={require('../../../../assets/images/background/background.png')}
                                 style={signStackStyle}>
@@ -135,7 +138,7 @@ class Profile extends React.Component {
                                     }}
                                     onBlur={() => {
 
-                                        if (!this.validateEmail(this.state.userData.email)) {
+                                        if (this.state.userData.email.length>0 &&!this.validateEmail(this.state.userData.email)) {
                                             this.setState({
                                                 userData: {
                                                     ...this.state.userData,
@@ -233,7 +236,7 @@ class Profile extends React.Component {
                             <Text style={InputBlockStyles.inputLabel}> Версия приложения</Text>
 
                             <View style={{paddingVertical: 16}}>
-                                <Text style={{fontSize: 18}}>1.01</Text>
+                                <Text style={{fontSize: 18}}>1.3</Text>
                             </View>
 
                         </View>
@@ -246,32 +249,46 @@ class Profile extends React.Component {
                         marginBottom: 15,
                         paddingHorizontal: 16
                     }}>
-                        <Button
-                            danger
-                            full
-                            rounded
-                            onPress={() => {
+                        {this.endRegistration ?
 
-                                Alert.alert(
-                                    'Вы уверены?',
-                                    'Вы действительно хотите выйти из аккаунта?',
-                                    [
-                                        {
-                                            text: 'Нет', onPress: () => {
-                                        }, style: 'cancel'
-                                        },
-                                        {
-                                            text: 'Да', onPress: () => {
-                                            this.props.signIn();
-                                            this.props.logOut();
-                                        }
-                                        }
-                                    ]
-                                );
+                            <Button
+                                success
+                                full
+                                rounded
+                                onPress={() => {
+                                    const backAction = NavigationActions.back();
+                                    this.props.navigation.dispatch(backAction);
+                                }}>
+                                <Text>Завершить регистрацию</Text>
+                            </Button>
 
-                            }}>
-                            <Text>Выйти из профиля</Text>
-                        </Button>
+
+                            : <Button
+                                danger
+                                full
+                                rounded
+                                onPress={() => {
+
+                                    Alert.alert(
+                                        'Вы уверены?',
+                                        'Вы действительно хотите выйти из аккаунта?',
+                                        [
+                                            {
+                                                text: 'Нет', onPress: () => {
+                                            }, style: 'cancel'
+                                            },
+                                            {
+                                                text: 'Да', onPress: () => {
+                                                this.props.signIn();
+                                                this.props.logOut();
+                                            }
+                                            }
+                                        ]
+                                    );
+
+                                }}>
+                                <Text>Выйти из профиля</Text>
+                            </Button>}
                     </View>
 
 

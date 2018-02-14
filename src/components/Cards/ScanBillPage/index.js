@@ -122,7 +122,7 @@ export class ScanBillPageC extends React.Component {
 
 
         let spend = this.props.user.money_spent;
-        let discount = spend >= this.bonusAmount;
+        let discount = spend >= this.bonusAmount || this.props.user.discount > 0;
 
 
         return <ScrollView>

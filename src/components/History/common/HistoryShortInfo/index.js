@@ -7,6 +7,7 @@ import {Text, View, Icon, Button} from "native-base";
 
 import platform from "../../../../../native-base-theme/variables/platform";
 import moment from "moment";
+import TextHelper from "../../../../../utilities/TextHelper";
 
 
 export default class HistoryShortInfo extends React.Component {
@@ -68,78 +69,114 @@ export default class HistoryShortInfo extends React.Component {
             }
         }
 
-
         let status = '';
-        switch (this.props.info.status) {
-            /* case 4: {
-                 status = "Подтвержден";
-                 break;
-             }
-             case 1: {
-                 status = "Исполнен";
-                 break;
-             }
-             case 2: {
-                 status = "В обработке";
-                 break;
-             }
-             case 3: {
-                 status = "Ожидает выдачи";
-                 break;
-             }*/
-            case 1: {
-                if (this.props.info.type === 3) {
-                    status = "Ожидает подтверждения";
-                }
-                else if(this.props.info.type === 5) {
-                    status = "Ожидает выдачи";
-                }
-                else {
-                    status = "В обработке";
+        switch (this.props.info.type) {
+            case 3: {
+                switch (this.props.info.status) {
+                    case 1: {
+                        status = "Ожидает подтверждения";
+                        break;
+                    }
+                    case 2: {
+                        status = "В обработке";
+                        break;
+                    }
+                    case 3:
+                    case 4:
+                    case 5: {
+                        status = "Подтвержден";
+                        break;
+                    }
+                    case 6: {
+                        status = "Отказ";
+                        break;
+                    }
                 }
                 break;
             }
-            case 2: {
-                if(this.props.info.type === 5) {
-                    status = "Ожидает выдачи";
-                }else
-                {
-                    status = "В обработке";
-                }
-
-
-                break;
-            }
-            case 3:
-            case 4:
             case 5: {
-
-                if (this.props.info.type === 3) {
-                    status = "Подтвержден";
+                switch (this.props.info.status) {
+                    case 1: {
+                        status = "Ожидает выдачи";
+                        break;
+                    }
+                    case 2: {
+                        status = "Ожидает выдачи";
+                        break;
+                    }
+                    case 3:
+                    case 4:
+                    case 5: {
+                        status = "Выполнена";
+                        break;
+                    }
+                    case 6: {
+                        status = "Отказ";
+                        break;
+                    }
                 }
-                else if( this.props.info.type === 5)
-                {
-                    status = "Выполнена";
-                }
-                else {
-                    status = "Готов";
-                }
-
-
                 break;
             }
+            case 4:
+            case 7: {
+                switch (this.props.info.status) {
 
-            case 6: {
+                    case 1: {
+                        status = "Не оплачен";
+                        break;
+                    }
+                    case 2: {
+                        status = "Новый";
+                        break;
+                    }
+                    case 3: {
+                        status = "Готовится";
+                        break;
+                    }
+                    case 4: {
+                        status = "Готов";
+                        break;
+                    }
 
-                status = "Отказ";
+                    case 5: {
+                        status = "Выдан";
+                        break;
+                    }
 
+                    case 6: {
+                        status = "Отменен";
+                        break;
+                    }
+                }
                 break;
+            }
+            default: {
+                switch (this.props.info.status) {
+                    case 1:
+                    case 2: {
+                        status = "В обработке";
+                        break;
+                    }
+                    case 3:
+                    case 4:
+                    case 5: {
+                        status = "Готов";
+
+                        break;
+                    }
+                    case 6: {
+
+                        status = "Отказ";
+
+                        break;
+                    }
+                }
             }
         }
 
 
         let bonus = this.props.info.type === 4 ? -this.props.info.bonus : this.props.info.bonus;
-        let bonusText = bonus + ' ' + 'бал.';
+        let bonusText = bonus + ' ' + TextHelper.getBonusText(Math.abs(bonus));
 
 
         let date = moment.utc(this.props.info.created_at).local();
@@ -147,11 +184,19 @@ export default class HistoryShortInfo extends React.Component {
             bonusText = this.props.result.people_quantity + ' чел.';
             date = moment.utc(this.props.result.timestamp);
         }
+
+        if (this.props.info.type === 4 || this.props.info.type === 5 || this.props.info.type === 7) {
+            bonus = TextHelper.getBonus(this.props.info.price);
+            bonusText = bonus + ' ' + TextHelper.getBonusText(bonus);
+            date = moment.utc(this.props.info.issue_time || this.props.info.created_at).local();
+        }
+
+
         return <View>
             <View style={styles.order}>
                 <Text
                     style={styles.orderText}>{'Заказ' + (this.props.info.numberOrder ? (' №' + this.props.info.numberOrder) : '') + ' от ' + moment.utc(this.props.info.created_at).local().format('D MMM HH:mm')}</Text>
-                {this.props.info.status === 3 || this.props.info.status === 5 ?
+                {this.props.info.status === 3 || this.props.info.status === 4 || this.props.info.status === 5 ?
                     <View style={styles.orderStatusSuccess}>
                         <Text style={styles.orderStatusText}>{status}</Text>
                     </View>

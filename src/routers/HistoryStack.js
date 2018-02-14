@@ -6,8 +6,8 @@ import HistoryPage from "../components/History/HistoryPage";
 import BookTablePage from "../components/History/BookTablePage/index";
 import ScanBillPage from "../components/History/ScanBillPage/index";
 import LunchPage from "../components/History/LunchPage/index";
-import TakeAwayOrderPage from "../components/History/TakeAwayOrderPage/index";
 import BuyByBonusPage from "../components/History/BuyByBonusPage/index";
+import Common from "./template/Common";
 
 export default ProfileStack = StackNavigator({
     Historys: {
@@ -60,20 +60,6 @@ export default ProfileStack = StackNavigator({
             },
             headerTitleStyle: {
                 ...BaseNavigationBarStyle.headerTitleStyle
-            }
-        }
-    },
-    TakeAwayOrderHistory: {
-        screen: TakeAwayOrderPage,
-        navigationOptions: {
-            headerBackTitleStyle: {
-                color: "transparent"
-            },
-            headerStyle: {
-                ...BaseNavigationBarStyle.headerStyle,
-            },
-            headerTitleStyle: {
-                ...BaseNavigationBarStyle.headerTitleStyle
             },
             drawerLockMode:'locked-closed'
         }
@@ -93,7 +79,8 @@ export default ProfileStack = StackNavigator({
             },
             drawerLockMode:'locked-closed'
         }
-    }
+    },
+    ...Common
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle

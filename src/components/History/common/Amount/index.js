@@ -8,27 +8,29 @@ import platform from "../../../../../native-base-theme/variables/platform";
 export default class Amount extends React.Component {
 
     props: {
-        info: {
-            amount: number;
-            discount: number;
-            total: number
+        info:{
+            summ: number;
+            summ_raw: number;
         }
+
     };
 
     render() {
+
+
         return <View style={styles.block}>
             <View style={styles.row}>
                 <Text style={styles.text}>Сумма заказа</Text>
-                <Text style={styles.text}>{this.props.info.amount + ' ₽'}</Text>
+                <Text style={styles.text}>{this.props.info.summ_raw + ' ₽'}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.text}>Скидка</Text>
                 <Text
-                    style={styles.text}>{(-this.props.info.discount * 100) + '%' + ' или ' + (this.props.info.amount * this.props.info.discount) + ' ₽'}</Text>
+                    style={styles.text}>{(this.props.info.summ_raw - this.props.info.summ) + ' ₽'}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.text}>Итого оплачено</Text>
-                <Text style={styles.text}>{this.props.info.total + ' ₽'}</Text>
+                <Text style={styles.text}>{this.props.info.summ + ' ₽'}</Text>
             </View>
         </View>
     }

@@ -41,54 +41,58 @@ class Restaurants extends React.Component {
     _renderItem = ({item}) => {
         return <TouchableOpacity onPress={() => {
 
-            this.props.navigation.navigate('OneRestaurant', {key: item.id})
+            this.props.navigation.navigate({
+                key: "OneRestaurant",
+                routeName: 'OneRestaurant',
+                params: {key: item.id, title: item.title_short}
+            })
         }}>
 
 
             <Card style={{...styles.card, ...styles.cardTransparent}}>
-                <CardItem cardBody style={styles.cardTransparent}>
-                    {item.photos.length>0 && <Image source={{uri: item.photos[0].url}}
-                           style={styles.image}/>}
-                    <LinearGradient id="grad"
-                                    colors={['#000', 'transparent']}
-                                    start={{x: 0.5, y: 1}}
-                                    end={{x: 0.5, y: 0}}
-                                    style={{
-                                        position: 'absolute',
-                                        bottom: 0,
-                                        left: 0,
-                                        right: 0,
-                                        height: 140,
-                                    }}
-                    >
+            <CardItem cardBody style={styles.cardTransparent}>
+        {item.photos.length>0 && <Image source={{uri: item.photos[0].url}}
+            style={styles.image}/>}
+            <LinearGradient id="grad"
+            colors={['#000', 'transparent']}
+            start={{x: 0.5, y: 1}}
+            end={{x: 0.5, y: 0}}
+            style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 140,
+            }}
+            >
 
 
-                    </LinearGradient>
-                </CardItem>
-                <CardItem style={styles.info}>
+            </LinearGradient>
+            </CardItem>
+            <CardItem style={styles.info}>
 
-                    <Text
-                        style={styles.infoHeader}>{item.title_short}</Text>
+            <Text
+            style={styles.infoHeader}>{item.title_short}</Text>
 
 
-                    <RestaurantLocation restaurant={item}/>
+            <RestaurantLocation restaurant={item}/>
 
-                    <View style={styles.infoLine}>
-                        <ChesterIcon name="time-16" size={16}
-                                     color={platform.brandWarning}/>
-                        <Text
-                            style={styles.time}>{item.currentDay.status}</Text>
-                    </View>
+            <View style={styles.infoLine}>
+            <ChesterIcon name="time-16" size={16}
+            color={platform.brandWarning}/>
+            <Text
+            style={styles.time}>{item.currentDay.status}</Text>
+            </View>
 
-                </CardItem>
+            </CardItem>
 
 
             </Card>
 
-        </TouchableOpacity>
-    }
+            </TouchableOpacity>
+            }
 
-    _onRefresh() {
+                                 _onRefresh() {
         this.props.getRestaurants();
     }
 
@@ -97,69 +101,69 @@ class Restaurants extends React.Component {
 
 
         let restaurants = Object.keys(this.props.restaurants)
-            .map((key) => this.props.restaurants[key])
-            .filter((item) => {
-                return item.status === 1;
-            });
+        .map((key) => this.props.restaurants[key])
+        .filter((item) => {
+        return item.status === 1;
+    });
 
         return (
-            <ImageBackground source={require('../../../../assets/images/background/background.png')}
-                             style={signStackStyle}>
+        <ImageBackground source={require('../../../../assets/images/background/background.png')}
+        style={signStackStyle}>
 
 
-                <View style={styles.container}>
+        <View style={styles.container}>
 
 
-                    <FlatList
+        <FlatList
 
-                        data={restaurants}
-                        renderItem={this._renderItem}
-                        extraData={this.state}
-                        keyExtractor={item => item.id}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.props.isPending}
-                                onRefresh={() => {
-                                    this._onRefresh()
-                                }}
-                                tintColor="#fff"
-                                titleColor="#fff"
-                            />
-                        }
-                    >
+        data={restaurants}
+        renderItem={this._renderItem}
+        extraData={this.state}
+        keyExtractor={item => item.id}
+        refreshControl={
+            <RefreshControl
+                refreshing={this.props.isPending}
+                onRefresh={() => {
+                    this._onRefresh()
+                }}
+                tintColor="#fff"
+                titleColor="#fff"
+            />
+        }
+        >
 
-                    </FlatList>
+        </FlatList>
 
 
-                </View>
+        </View>
 
-            </ImageBackground>
+        </ImageBackground>
         );
     }
-}
+    }
 
-function bindAction(dispatch) {
-    return {
+    function bindAction(dispatch) {
+        return {
         getRestaurants: () => {
-            return dispatch(getRestaurants());
-        }
+        return dispatch(getRestaurants());
+    }
     };
-}
+    }
 
-const mapStateToProps = state => ({
-    restaurants: state.restaurant.restaurants,
-    isPending: state.restaurant.getDataPending
-});
-const RestaurantsSwag = connect(mapStateToProps, bindAction)(Restaurants);
-export default RestaurantsSwag;
+    const mapStateToProps = state => ({
+        restaurants: state.restaurant.restaurants,
+        isPending: state.restaurant.getDataPending
+    });
+    const RestaurantsSwag = connect(mapStateToProps, bindAction)(Restaurants);
+    export default RestaurantsSwag;
 
-const styles = {
-    container: {
+    const styles = {
+        container: {
         flex: 1,
         backgroundColor: 'transparent'
     },
-    content: {},
-    card: {
+        content: {},
+        card: {
         marginVertical: 30,
         marginTop: 30,
         marginLeft: 0,
@@ -173,12 +177,12 @@ const styles = {
 
     },
 
-    cardTransparent: {
+        cardTransparent: {
         backgroundColor: "transparent",
         borderWidth: 0,
         borderColor: 'transparent'
     },
-    info: {
+        info: {
         paddingLeft: 16,
         backgroundColor: "transparent",
         borderWidth: 0,
@@ -188,23 +192,23 @@ const styles = {
         flexDirection: 'column',
         alignItems: "flex-start"
     },
-    infoHeader: {
+        infoHeader: {
         fontFamily: platform.fontFamily,
         fontSize: 30,
         lineHeight: 43
     },
-    infoLine: {
+        infoLine: {
         flexDirection: 'row',
         alignItems: "center"
     },
-    time: {
+        time: {
         paddingLeft: 5,
         fontSize: 14,
         lineHeight: 20
     },
-    image: {
+        image: {
         height: 160,
         width: null,
         flex: 1
     }
-}
+    }

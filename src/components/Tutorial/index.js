@@ -190,12 +190,14 @@ const styles = {
         width: '100%',
         position: 'absolute',
         overflow: 'visible',
-        bottom: 0
+        top: 0
     },
     fakeImage: {
         overflow: 'visible',
         flex: 1,
-        backgroundColor: "#2b3034"
+        backgroundColor: "#2b3034",
+        marginTop: 'auto',
+        maxHeight: 364,
     },
     body: {
         shadowColor: 'rgba(0,0,0,0.5)',

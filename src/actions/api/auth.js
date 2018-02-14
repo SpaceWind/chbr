@@ -106,6 +106,16 @@ class AuthServiceImpl {
         return res.body;
     }
 
+
+    async getOrder(orderId)
+    {
+        let res = await this.Api.get('/orders/' + orderId, {
+            body: {}
+        });
+        if (res.err) throw res;
+        return res.body;
+    }
+
     async getReserve(restaurantId, reserveId) {
         let res = await this.Api.get(`/restaurant/` + restaurantId + '/reserve/' + reserveId, {
             body: {}

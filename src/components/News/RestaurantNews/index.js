@@ -46,7 +46,9 @@ class News extends React.Component {
         newsData = newsData.filter((news, pos) => {
             return newsData.indexOf(newsData.find((inNews) => inNews.id === news.id)) === pos;
         });
-
+        newsData.sort((a, b) => {
+            return a.sort - b.sort;
+        });
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
                              style={signStackStyle}>

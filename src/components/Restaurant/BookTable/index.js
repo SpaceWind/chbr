@@ -16,6 +16,7 @@ import {params} from "../Restaurant/index";
 import {modalCardStyles} from "../../Profile/Profile/index";
 import ChesterIcon from "../../Common/ChesterIcon/index";
 import MyModal from "../../Common/MyModal/index";
+import SorryModal from "../common/SorryModal/index";
 
 
 class BookTable extends React.Component {
@@ -180,40 +181,11 @@ class BookTable extends React.Component {
 
                                 </View>}
 
-                            <MyModal style={{height: 215, backgroundColor: "#7A8187"}} isOpen={this.state.isOpenOver}
-                                     ref="modal"
-                                     position={'bottom'}
-                                     onRequestClose={() => {
 
-                                     }
-                                     }>
-                                <View style={modalCardStyles.modal}>
-                                    <View style={modalCardStyles.hintRow}>
-                                        <View style={modalCardStyles.textRow}>
-                                            <Text style={modalCardStyles.removeText}>Нет свободных мест.</Text>
-                                            <Text style={modalCardStyles.removeTextQuestion}>К сожалению на выбранное
-                                                время нет
-                                                свободных столов. Попробуйте другое время или меньшее количество
-                                                человек.</Text>
-                                        </View>
-                                        <Image
-                                            source={require('../../../../assets/images/restaurant/sorry.png')}
-                                        />
-                                    </View>
+                                <SorryModal isOpen={this.state.isOpenOver} onClose={()=>{
+                                    this.setState({isOpenOver:false})
+                                }}/>
 
-                                    <View style={modalCardStyles.buttonRow}>
-                                        <Button bordered rounded light full style={modalCardStyles.cancelButton}
-                                                onPress={() => {
-                                                    this.setState({isOpenOver: false});
-                                                }
-                                                }>
-                                            <Text uppercase={false} style={modalCardStyles.buttonText}>ОК</Text>
-                                        </Button>
-                                    </View>
-
-                                </View>
-
-                            </MyModal>
 
                         </Content>
                     </Container>

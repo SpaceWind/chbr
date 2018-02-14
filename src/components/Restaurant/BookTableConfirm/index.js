@@ -16,7 +16,7 @@ import {TextInputMask} from "react-native-masked-text";
 import {connect} from "react-redux";
 import {InputBlockStyles} from "../../Common/Form/InputBlock/index";
 import InputBlock from "../../Common/Form/InputBlock/index";
-import {getUserData, sendCode} from "../../../actions/user";
+import {getUserData, sendCode, updateUserData} from "../../../actions/user";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import {reserve} from "../../../actions/restaurant";
 import {NavigationActions} from "react-navigation";
@@ -107,11 +107,16 @@ class BookTableConfirmC extends React.Component {
                                 }>
                                     <View style={InputBlockStyles.inputBlock}>
                                         <TouchableWithoutFeedback onPress={() => {
-                                            if (!this.props.logged) {
-                                                this.refs.phone.focus();
-                                            }
-                                        }}><Text
-                                            style={InputBlockStyles.inputLabel}>Телефон</Text></TouchableWithoutFeedback>
+
+                                            this.refs.phone.focus();
+
+                                        }}><View style={InputBlockStyles.requiredLabelBlock}>
+                                            <Text
+                                                style={InputBlockStyles.requiredInputLabel}>Телефон
+                                            </Text>
+                                            <Text style={InputBlockStyles.requiredLabel}>*</Text>
+
+                                        </View></TouchableWithoutFeedback>
 
 
                                         <PhoneInput
@@ -119,12 +124,7 @@ class BookTableConfirmC extends React.Component {
                                             ref={'phone'}
                                             value={this.state.phone}
                                             onChangeText={(text, isValid) => {
-                                                if (!this.props.logged) {
-                                                    this.changeNumber(text, isValid)
-                                                }
-                                                else {
-                                                    this.changeNumber(this.state.phone, isValid)
-                                                }
+                                                this.changeNumber(text, isValid)
                                             }}
                                         />
 
@@ -133,6 +133,7 @@ class BookTableConfirmC extends React.Component {
                                     <InputBlock name="Имя"
                                                 keyboardAppearance="dark"
                                                 autoCorrect={false}
+                                                required={true}
                                                 value={this.state.userData.first_name}
                                                 onChangeText={(text) => {
                                                     this.setState({
@@ -213,8 +214,10 @@ class BookTableConfirmC extends React.Component {
                                     <Button warning
                                             rounded
                                             style={{width: '100%'}}
-                                            disabled={!this.props.logged && !this.state.isPhoneValid}
-                                            onPress={this.bookConfirm.bind(this)}
+                                            disabled={!this.props.logged && !this.state.isPhoneValid && !this.state.userData.first_name && !this.state.userData.first_name.length > 0}
+                                            onPress={
+                                                this.boorConfirmRequest.bind(this)
+                                            }
 
                                     >
                                         <Text style={{textAlign: 'center', flex: 1}} uppercase={false}>Забронировать
@@ -239,10 +242,7 @@ class BookTableConfirmC extends React.Component {
     }
 
     getCurrentInfo() {
-
-
         let result = this.params.people_quantity + ' ' + (this.params.people_quantity === 1 || this.props.people_quantity >= 5 ? 'человек' : 'человека');
-
         let date = moment.unix(this.params.time.timestamp);
         if (date.day() === moment().day()) {
             result += ', сегодня, ' + date.format('HH:mm');
@@ -254,12 +254,44 @@ class BookTableConfirmC extends React.Component {
     }
 
 
-    async bookConfirm(ticket) {
+    boorConfirmRequest() {
+
+
+        if (!this.props.logged || this.state.userData.first_name !== this.props.user.first_name
+            || this.state.phone !== this.props.phone || this.state.userData.last_name !== this.props.user.last_name) {
+            Alert.alert(
+                'Сохранение данных',
+                'Сохранить данные в вашем профиле для последующих бронирований?',
+                [
+                    {
+                        text: 'Нет', onPress: () => {
+                        this.bookConfirm(false)
+
+                    }, style: 'cancel'
+                    },
+                    {
+                        text: 'Ок', onPress: () => {
+
+                        this.bookConfirm(true)
+
+                    }
+                    }
+                ]
+            )
+        }
+        else {
+            this.bookConfirm(false)
+        }
+
+    }
+
+    async bookConfirm(save) {
 
         let data = {
             people_quantity: this.props.navigation.state.params.people_quantity,
             timestamp: this.props.navigation.state.params.time.timestamp,
-            comment: this.state.text
+            comment: this.state.text,
+            phone: this.state.phone
         };
         let restaurantId = this.props.navigation.state.params.restaurant.id;
 
@@ -272,6 +304,11 @@ class BookTableConfirmC extends React.Component {
                     restaurantId,
                     data
                 );
+
+                if (save) {
+                    await this.props.updateUserData(this.state.userData);
+                }
+
 
                 setTimeout(() => {
                     Alert.alert(
@@ -323,11 +360,11 @@ class BookTableConfirmC extends React.Component {
         else {
 
             let result = await this.props.sendCode(this.state.phone);
-
             this.props.navigation.navigate('BookTableConfirmCode', {
                 restaurantId: restaurantId,
                 data: data,
                 confirmBookTable: true,
+                save: save,
                 number: this.state.phone,
                 first_name: this.state.userData.first_name,
                 last_name: this.state.userData.last_name
@@ -385,6 +422,7 @@ bindAction(dispatch) {
         sendCode: (number) => dispatch(sendCode(number)),
         bookTable: (restaurantId, data) => dispatch(reserve(restaurantId, data)),
         getUserData: () => dispatch(getUserData()),
+        updateUserData: (data) => dispatch(updateUserData(data)),
 
     };
 }

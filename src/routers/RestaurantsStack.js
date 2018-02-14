@@ -17,7 +17,14 @@ import OneNewsPage from "../components/News/OneNewsPage/index";
 import ScanBillPage from "../components/Cards/ScanBillPage/index";
 import BookTablePage from "../components/History/BookTablePage/index";
 import BuyByBonusPage from "../components/History/BuyByBonusPage/index";
+import PayPage from "../components/Basket/PayPage/index";
+import LunchPage from "../components/History/LunchPage/index";
+import LoginTemplate from "./template/LoginTemplate";
+import Common from "./template/Common";
 
+import Profile from "../components/Profile/Profile";
+import CardTemplate from "./template/CardTemplate";
+import OneRestaurant from "./OneRestaurant";
 
 export default RestaurantsStack = StackNavigator({
     Restaurants: {
@@ -28,9 +35,8 @@ export default RestaurantsStack = StackNavigator({
         })
     },
     OneRestaurant: {
-        screen: RestaurantTabs,
+        screen: OneRestaurant,
         navigationOptions: {
-            title: 'Ресторан',
             headerBackTitleStyle: {
                 color: "transparent"
             },
@@ -136,6 +142,21 @@ export default RestaurantsStack = StackNavigator({
             drawerLockMode: 'locked-closed',
         })
     },
+    Pay: {
+        screen: PayPage,
+        navigationOptions: props => ({
+            title: 'Оплата',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            headerRight: <View></View>,
+            headerTitleStyle: {
+                ...BaseNavigationBarStyle.headerTitleStyle,
+                marginHorizontal: 0
+            },
+            drawerLockMode: 'locked-closed',
+        })
+    },
     OneRestaurantNewsPage: {
         screen: OneNewsPage,
         navigationOptions: props => ({
@@ -145,16 +166,6 @@ export default RestaurantsStack = StackNavigator({
             },
             drawerLockMode: 'locked-closed'
         }),
-    },
-    ScanBill: {
-        screen: ScanBillPage,
-        navigationOptions: {
-            title: 'Сканирование чека',
-            headerBackTitleStyle: {
-                color: "transparent"
-            },
-            drawerLockMode:'locked-closed'
-        }
     },
     RestaurantBookTableHistory: {
         screen: BookTablePage,
@@ -169,7 +180,7 @@ export default RestaurantsStack = StackNavigator({
             headerTitleStyle: {
                 ...BaseNavigationBarStyle.headerTitleStyle
             },
-            drawerLockMode:'locked-closed'
+            drawerLockMode: 'locked-closed'
         }
     },
     RestaurantBuyByBonusHistory: {
@@ -185,9 +196,38 @@ export default RestaurantsStack = StackNavigator({
             headerTitleStyle: {
                 ...BaseNavigationBarStyle.headerTitleStyle
             },
-            drawerLockMode:'locked-closed'
+            drawerLockMode: 'locked-closed'
         }
-    }
+    },
+    RestaurantLunchHistory: {
+        screen: LunchPage,
+        navigationOptions: {
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+            headerStyle: {
+                ...BaseNavigationBarStyle.headerStyle,
+            },
+            headerTitleStyle: {
+                ...BaseNavigationBarStyle.headerTitleStyle
+            },
+            drawerLockMode: 'locked-closed'
+        }
+    },
+    Restaurant_Profile: {
+        screen: Profile,
+        navigationOptions: props => ({
+            title: 'Регистрация',
+            headerRight: <View></View>,
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+        }),
+        drawerLockMode: 'locked-closed'
+    },
+    ...LoginTemplate,
+    ...CardTemplate,
+    ...Common
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle,

@@ -16,15 +16,23 @@ class BasketIconC extends React.Component {
             return a + b.price * b.count;
         }, 0);
 
-        return (
+
+        return <View></View>
+
+        /*return (
             <View>
-                {/*release <TouchableOpacity onPress={() => {
-                    navigation.navigate('Basket');
+                <TouchableOpacity
+
+                    style={{padding: 10,paddingLeft: 10}}
+
+                    onPress={() => {
+                    navigation.navigate({key: "BasketKey", routeName: 'Basket'});
                 }}>
-                    <View style={{padding: 10, marginLeft: 10, flexDirection: 'row'}}>
+                    <View style={{flexDirection: 'row'}}>
 
                         {total > 0 && <Text style={
                             {
+                                paddingTop: 2,
                                 color: platform.brandWarning,
                                 fontSize: 16,
                                 lineHeight: 21
@@ -38,9 +46,9 @@ class BasketIconC extends React.Component {
                     </View>
 
 
-                </TouchableOpacity>*/}
+                </TouchableOpacity>
             </View>
-        );
+        );*/
     }
 
 }

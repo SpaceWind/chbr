@@ -47,7 +47,7 @@
     "react-native-swiper": "^1.5.13",
     "react-native-uuid-generator": "^3.0.2",
     "react-native-vector-icons": "^4.4.0",
-    "react-navigation": "^1.0.0-beta.21",
+    "react-navigation": "^1.0.3",
     "react-redux": "^5.0.2",
     "redux": "^3.6.0",
     "redux-form": "^6.7.0",

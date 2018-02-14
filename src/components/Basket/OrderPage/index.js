@@ -1,6 +1,9 @@
 import React from 'react';
-import {Button, Icon, Text, View} from 'native-base';
-import {Image, ImageBackground, TouchableOpacity, ScrollView, TextInput} from "react-native";
+import {Button, Icon, Switch, Text, View} from 'native-base';
+import {
+    Image, ImageBackground, TouchableOpacity, ScrollView, TextInput, TouchableWithoutFeedback,
+    WebView, LayoutAnimation, Alert
+} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import {Platform} from "react-native";
 import {connect} from "react-redux";
@@ -10,7 +13,14 @@ import {InputBlockStyles as inputBlockStyles} from "../../Common/Form/InputBlock
 import SelectDate from "../../Restaurant/BookTable/SelectDate";
 import InputBlock from "../../Common/Form/InputBlock/index";
 import moment from "moment";
-import ChesterIcon from "../../Common/ChesterIcon/index";
+import SelectDateOrder from "./SelectDateOrder";
+import {buy} from "../../../actions/restaurant";
+import {getOrder} from "../../../actions/user";
+import SorryModal from "../../Restaurant/common/SorryModal/index";
+import Amount from "../../History/common/Amount/index";
+import TextHelper from "../../../../utilities/TextHelper";
+
+const currentPlatform = Platform.OS;
 
 
 class OrderPage extends React.Component {
@@ -18,101 +28,65 @@ class OrderPage extends React.Component {
 
     state = {
         count: 2,
-        countDevice: 2
+        maxCount: 20,
+        firstname: "",
+        lastname: "",
+        comment: "",
+        email: "",
+        send_cheque: 0,
+        isOpenOver: false
+
     };
 
     constructor() {
         super();
-        let currentHour = parseInt(moment().format('H'));
-        let currentMinute = parseInt(moment().format('m'));
-        if (currentHour < 10) {
-            this.state.date = moment().floor(24, 'hours').add(10, 'hours');
-        }
-        else if (currentHour < 23 || (currentHour === 23 && currentMinute <= 30)) {
-
-            if (currentHour + 2 < 23) {
-                this.state.date = moment().add(2, 'hours').ceil(30, 'minutes');
-            }
-            else {
-                this.state.date = moment().ceil(30, 'minutes');
-            }
-        }
-        else {
-            this.state.date = moment().ceil(24, 'hours').add(10, 'hours');
-        }
 
 
         this.state.count = 2;
     }
 
     componentWillMount() {
+        this.type = this.props.navigation.state.params.type;
+        this.amount = this.props.navigation.state.params.amount;
+        this.restaurant = this.props.restaurants[this.props.billing.restaurantId];
+        let day = moment().locale('en').format('dddd').toLowerCase();
+        let timesheet = null;
+        if (this.type === "out") {
+            timesheet = this.restaurant.schedule_takeouts[day];
+            this.start = moment().startOf('day').seconds(timesheet.start);
+            this.end = moment().startOf('day').seconds(timesheet.finish);
+        }
+        else {
+            timesheet = this.restaurant.schedule_business_lunch[day];
+            this.start = moment().startOf('day').seconds(timesheet.start);
+            this.end = moment().startOf('day').seconds(timesheet.finish);
+        }
+        this.end.add(-15, 'minutes');
+
+        let currentDate = moment().add(1, "hours");
+        if (currentDate < this.start) {
+            currentDate = this.start.clone().ceil(15, 'minutes');
+        }
+        else {
+            currentDate = currentDate.ceil(15, 'minutes');
+        }
+
+        this.setState({
+            date: currentDate,
+            firstname: this.props.user.first_name,
+            lastname: this.props.user.last_name,
+            email: this.props.user.email
+        })
 
     }
+
 
     componentWillUnmount() {
 
     }
 
-    addItem(item) {
-        this.setState((prevState) => {
-            return {countDevice: prevState.countDevice + 1};
-        });
-
-
-    }
-
-    minusItem(item) {
-        if (this.state.countDevice > 1) {
-            this.setState((prevState) => {
-                return {countDevice: prevState.countDevice - 1};
-            });
-        }
-
-    }
-
-    renderCard() {
-
-        let source;
-        switch ('visa') {
-            case 'visa': {
-                source = require(`../../../../assets/images/payment/visa.png`);
-                break;
-            }
-            case 'mastercard': {
-                source = require(`../../../../assets/images/payment/mastercard.png`);
-                break;
-            }
-            case 'apple': {
-                source = require(`../../../../assets/images/payment/apple.png`);
-                break;
-            }
-        }
-
-
-        return (
-            <View style={styles.card}>
-                <View style={styles.cardImage}>
-                    <Image source={source}/>
-                </View>
-
-                <Text style={styles.cardText}>
-
-                    1212 ****
-                </Text>
-                <TouchableOpacity style={styles.cardTextMain} onPress={() => {
-
-                }
-                }>
-                    <Text style={styles.cardButtonText}>Изменить</Text>
-                </TouchableOpacity>
-            </View>
-        )
-    }
-
 
     render() {
-
-        let type = this.props.navigation.state.params.type;
 
 
         return <ImageBackground source={require('../../../../assets/images/background/background.png')}
@@ -121,22 +95,20 @@ class OrderPage extends React.Component {
             <ScrollView>
 
                 <View style={styles.header}>
-                    <Text style={styles.headerOrderNumber}>Заказ №24312 от 1 июня 12:35</Text>
-                    <Text style={styles.headerText}>Ланч в ресторане</Text>
+                    <Text style={styles.headerText}>{this.type === 'out' ? "Заказ на вынос" : "Ланч в ресторане"}</Text>
                     <Text style={styles.headerRestaurant}>Рестобар Chester</Text>
                 </View>
 
-                {
-                    type === 'lunch' && <View style={styles.peopleCount}>
-                        <Text style={styles.peopleCountText}>Выберите время и количество человек</Text>
-                        <SelectDate
-                            date={this.state.date}
-                            count={this.state.count}
-                            onDateSelected={(selected) => {
-                                this.setState({date: selected.date, count: selected.count});
-                            }}/>
-                    </View>
-                }
+
+                <SelectDateOrder
+                    date={this.state.date}
+                    count={this.state.count}
+                    maxCount={this.state.maxCount}
+                    start={this.start}
+                    end={this.end}
+                    onDateSelected={(selected) => {
+                        this.setState({date: selected.date, count: selected.count});
+                    }}/>
 
 
                 <View style={{
@@ -146,38 +118,30 @@ class OrderPage extends React.Component {
                 }
                 }>
 
-                    <InputBlock name="Имя" keyboardType="email-address"/>
-                    <InputBlock name="Фамилия"/>
+                    <InputBlock name="Имя"
+                                keyboardAppearance="dark"
+                                autoCorrect={false}
+                                value={this.state.firstname}
+                                onChangeText={(text) => {
+                                    this.setState({
+                                        firstname: text
+                                    })
+                                }}
+
+                    />
+                    <InputBlock name="Фамилия"
+                                keyboardAppearance="dark"
+                                autoCorrect={false}
+                                value={this.state.lastname}
+                                onChangeText={(text) => {
+                                    this.setState({
+                                        lastname: text
+                                    })
+                                }}
+
+
+                    />
                 </View>
-
-                {
-                    type === 'out' &&
-                    <View style={styles.deviceCount}>
-                        <Text style={styles.deviceCountText}>Количество приборов</Text>
-                        <View style={styles.changeCountItemButton}>
-                            <Button dark bordered warning rounded style={styles.minusItemButton} onPress={() => {
-                                this.minusItem()
-                            }}>
-                                <Icon name="remove" size={24}/>
-                            </Button>
-
-                            <View style={styles.counterItemButton}>
-                                <Text style={styles.counterItemButtonText}> {this.state.countDevice}</Text>
-                            </View>
-
-                            <View style={styles.plusItemButton}>
-                                <Button androidRippleColor="rgba(0, 0, 0, 0.15)" bordered warning rounded
-                                        style={styles.plusItemButton} onPress={() => {
-                                    this.addItem()
-                                }}>
-                                    <ChesterIcon name="plus-24" color={platform.brandWarning} size={16}/>
-                                </Button>
-                            </View>
-
-
-                        </View>
-                    </View>
-                }
 
 
                 <View style={{
@@ -189,7 +153,9 @@ class OrderPage extends React.Component {
                         ...inputBlockStyles.inputBlock,
                         flex: 1,
                         flexDirection: 'column',
-                        padding: 16
+                        paddingTop: 16,
+
+
                     }}>
                         <TouchableWithoutFeedback onPress={() => {
                             this.refs.comment.focus();
@@ -209,62 +175,196 @@ class OrderPage extends React.Component {
                                    underlineColorAndroid="transparent"
                                    onChangeText={(text) => {
                                        this.setState({
-                                           text
+                                           comment: text
                                        })
                                    }}
                         />
 
 
-                        <TextInput style={{flex: 1}} multiline={true} underlineColorAndroid="transparent"/>
                     </View>
                 </View>
 
-                <View style={styles.payment}>
-                    <Text style={styles.paymentText}>Метод оплаты</Text>
-                    <View style={{
-                        borderTopWidth: 1,
-                        borderColor: platform.brandDivider
-                    }}>
-                        <View style={inputBlockStyles.inputBlock}>
 
-                            {this.renderCard()}
+                <View style={{
+                    borderTopWidth: 1,
+                    borderColor: platform.brandDivider,
+                    marginTop: 15,
+                }}>
+                    <View style={inputBlockStyles.inputBlock}>
+                        <Text style={inputBlockStyles.inputLabel}>Получить электронный чек</Text>
+
+                        <View style={{paddingVertical: 16}}>
+                            <Switch value={this.state.send_cheque === 1} onValueChange={(push) => {
+                                this.setState({
+                                    send_cheque: push ? 1 : 0
+                                });
+                                LayoutAnimation.easeInEaseOut();
+                            }}
+                                    onTintColor={platform.brandWarning} {...(currentPlatform !== 'ios' ? {thumbTintColor: '#f4f5f5'} : {})}/>
                         </View>
+
                     </View>
 
+                    {this.state.send_cheque === 1 && <InputBlock name="Email"
+                                                                 keyboardType="email-address"
+                                                                 keyboardAppearance="dark"
+                                                                 autoCorrect={false}
+                                                                 value={this.state.email}
+                                                                 onChangeText={(text) => {
+                                                                     this.setState({
+                                                                         email: text
+                                                                     })
+                                                                 }}
+                                                                 onFocus={() => {
+                                                                 }}
+                                                                 onBlur={() => {
+                                                                     if (!this._validateEmail(this.state.email)) {
+                                                                         this.setState({
+                                                                             email: ""
+                                                                         })
+                                                                     }
+                                                                 }}
+
+                    />}
+
+
                 </View>
+
 
                 <View style={styles.bottom}>
-                    <View style={styles.priceRow}>
+                    {this.amount.discount && <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Сумма заказа</Text>
-                        <Text style={styles.priceText}>1000 ₽</Text>
-                    </View>
-                    <View style={styles.priceRow}>
+                        <Text style={styles.priceText}>{this.amount.amount} ₽</Text>
+                    </View>}
+                    {this.amount.discount && <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Скидка</Text>
-                        <Text style={styles.priceText}>1000 ₽</Text>
-                    </View>
+                        <Text style={styles.priceText}>{this.amount.discountSize > 0 ? this.amount.discountSize + "% или " : ""}{this.amount.discountAmount} ₽</Text>
+                    </View>}
                     <View style={styles.priceRow}>
-                        <Text style={styles.priceText}>Сумма заказа</Text>
-                        <Text style={styles.priceText}>1000 ₽</Text>
+                        <Text style={styles.priceText}>Итого к оплате</Text>
+                        <Text
+                            style={styles.priceText}>{this.amount.total} ₽</Text>
                     </View>
-                    <Button warning full rounded style={styles.submit}>
+                    <Button warning full rounded style={styles.submit} onPress={() => this._buy()}>
                         <Text uppercase={false}>Оформить заказ</Text>
                     </Button>
-                    <Text style={styles.mark}>Вы получите 12 баллов</Text>
+                    <Text style={styles.mark}>Вы
+                        получите {TextHelper.getBonus(this.amount.total)} {TextHelper.getBonusText(TextHelper.getBonus(this.amount.total))}</Text>
                 </View>
 
+                <SorryModal isOpen={this.state.isOpenOver} onClose={() => {
+                    this.setState({isOpenOver: false})
+                }}/>
             </ScrollView>
 
 
         </ImageBackground>
     }
+
+
+    async _buy() {
+
+
+        let dishes = this.props.billing.dishes.map(dish => ({
+            id: dish.id,
+            quantity: dish.count
+        }));
+        if (this.type === 'out') {
+            let allDishes = this.getAllDish(this.props.billing.restaurantId);
+            for (let dish of dishes) {
+                let storedDish = allDishes.find(d => d.id === dish.id);
+                if (storedDish) {
+                    dish.lunch = storedDish.lunch;
+                }
+            }
+            dishes = dishes.filter(dish => !dish.lunch);
+        }
+
+
+        let data = {
+            type: this.type === 'lunch' ? 2 : 3,
+            people_quantity: this.state.count,
+            timestamp: this.state.date.unix(),
+            comment: this.state.comment,
+            firstname: this.state.firstname,
+            lastname: this.state.lastname,
+            email: this.state.email,
+            send_cheque: this.state.send_cheque,
+            food: dishes
+
+        };
+        try {
+            let result = await this.props.buy(this.props.billing.restaurantId, data);
+            this.props.navigation.navigate('Pay', {order: result, type: this.type});
+        }
+        catch (ex) {
+
+            if (ex && ex.body && ex.body.error === 'no free tables') {
+                this.setState({
+                    isOpenOver: true
+                })
+            }
+            else {
+                setTimeout(() => {
+                    Alert.alert(
+                        'Произошла ошибка',
+                        'Повторите еще раз или обратитесь в поддержку',
+                        [
+
+                            {
+                                text: 'Ок', onPress: () => {
+
+                            }
+                            }
+                        ]
+                    );
+                }, 10)
+            }
+        }
+
+    }
+
+    _validateEmail = (email) => {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    };
+
+
+    getAllDish(restaurantId) {
+        return this.props.restaurants[restaurantId].menu.categories
+            .reduce((a, b) => {
+                let items = [];
+                if (b.categories) {
+                    items = b.categories.reduce((a, subCategory) => {
+                        return a.concat(subCategory.items);
+                    }, [])
+                } else {
+                    items = b.items;
+                    if (b.is_business_lunch === 1) {
+                        for (let dish of items) {
+                            dish.lunch = true;
+                        }
+                    }
+
+
+                }
+                return a.concat(items);
+            }, []);
+    }
 }
 
 function bindAction(dispatch) {
-    return {};
+    return {
+        buy: (restaurantId, data) => {
+            return dispatch(buy(restaurantId, data));
+        }
+    };
 }
 
 const mapStateToProps = state => ({
-    restaurants: state.restaurant.restaurants
+    restaurants: state.restaurant.restaurants,
+    billing: state.billing,
+    user: state.user.userData
 });
 const OrderPageSwag = connect(mapStateToProps, bindAction)(OrderPage);
 export default OrderPageSwag;
@@ -275,8 +375,11 @@ const styles = {
     },
 
     header: {
-        marginHorizontal: 16,
-        marginTop: 15
+        paddingHorizontal: 16,
+        marginTop: 15,
+        paddingBottom: 12,
+        borderBottomWidth: 2,
+        borderBottomColor: platform.brandDivider
     },
     headerOrderNumber: {
         fontSize: 14,

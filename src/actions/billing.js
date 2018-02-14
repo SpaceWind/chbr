@@ -1,5 +1,7 @@
 export const ADD_DISH = 'ADD_DISH';
 export const REMOVE_DISH = 'REMOVE_DISH';
+export const DELETE_DISH = 'DELETE_DISH';
+
 export const CLEAR_BASKET = 'CLEAR_BASKET';
 export const INIT_BASKET = 'INIT_BASKET';
 
@@ -13,6 +15,14 @@ export function addDish(dish) {
 export function removeDish(dish) {
     return {
         type: REMOVE_DISH,
+        payload: dish
+
+    }
+}
+
+export function deleteDish(dish) {
+    return {
+        type: DELETE_DISH,
         payload: dish
 
     }

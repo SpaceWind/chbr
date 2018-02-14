@@ -5,6 +5,8 @@ import {
     CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, CREATE_DEVICE_FULFILLED, GET_DISCOUNT_CODE,
     GET_DISCOUNT_CODE_FULFILLED, GET_LIKES,
     GET_LIKES_FULFILLED, GET_OPERATION, GET_OPERATION_FULFILLED, GET_OPERATION_PENDING, GET_OPERATION_REJECTED,
+    GET_ORDER_FULFILLED,
+    GET_ORDER_PENDING, GET_ORDER_REJECTED,
     GET_RESERVE,
     GET_RESERVE_FULFILLED,
     GET_RESERVE_PENDING,
@@ -280,6 +282,31 @@ export default function (state: State = initialState, action) {
         };
     }
 
+    if (action.type === GET_ORDER_PENDING) {
+        return {
+            ...state,
+            order: null,
+            getOrderPending: true,
+        };
+    }
+
+    if (action.type === GET_ORDER_FULFILLED) {
+        return {
+            ...state,
+            order: action.payload,
+            getOrderPending: false
+        };
+    }
+
+    if (action.type === GET_ORDER_REJECTED) {
+        return {
+            ...state,
+            order: null,
+            getOrderPending: false
+        };
+    }
+
+
     if (action.type === GET_DISCOUNT_CODE) {
         return {
             ...state,
@@ -329,7 +356,8 @@ export default function (state: State = initialState, action) {
             isReservePending: false,
             sendTicketPending: false,
             confirmCodePending: false,
-            sendCodePending: false
+            sendCodePending: false,
+            getOrderPending: false
         };
     }
 

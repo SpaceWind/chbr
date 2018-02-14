@@ -43,7 +43,7 @@ const RestaurantTabs = TabNavigator({
     Home: {
         screen: Restaurant,
         navigationOptions: {
-            title: 'Информация'
+            title: 'Инфо'
         }
     },
     Menu: {
@@ -58,7 +58,6 @@ const RestaurantTabs = TabNavigator({
         navigationOptions: {
             title: 'Заказ стола'
         }
-
     },
     News: {
         screen: News,
@@ -72,7 +71,6 @@ const RestaurantTabs = TabNavigator({
         navigationOptions: {
             title: 'Команда'
         }
-
     }
 }, {
     tabBarComponent: TabBarTop,

@@ -1,5 +1,5 @@
 /*@flow*/
-import {ADD_DISH, CLEAR_BASKET, INIT_BASKET, REMOVE_DISH} from "../actions/billing";
+import {ADD_DISH, CLEAR_BASKET, DELETE_DISH, INIT_BASKET, REMOVE_DISH} from "../actions/billing";
 
 export type State = {
     dishes: [],
@@ -44,6 +44,17 @@ export default function (state: State = initialState, action) {
             else {
                 state.dishes.splice(state.dishes.indexOf(dishExist), 1);
             }
+            return {
+                ...state,
+                dishes: Object.assign([], state.dishes)
+            }
+        }
+    }
+
+    if (action.type === DELETE_DISH) {
+        let dishExist = state.dishes.find(dish => dish.id === action.payload.id);
+        if (dishExist) {
+            state.dishes.splice(state.dishes.indexOf(dishExist), 1);
             return {
                 ...state,
                 dishes: Object.assign([], state.dishes)

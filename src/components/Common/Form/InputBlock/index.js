@@ -22,8 +22,30 @@ export default class InputBlock extends React.Component {
 
             <View style={InputBlockStyles.inputBlock}>
 
-                <Text
-                    style={InputBlockStyles.inputLabel}>{this.props.name}</Text>
+
+
+                {this.props.required ?
+
+
+                    <View style={InputBlockStyles.requiredLabelBlock}>
+                        <Text
+                            style={InputBlockStyles.requiredInputLabel}>{this.props.name}
+                        </Text>
+                        <Text style={InputBlockStyles.requiredLabel}>*</Text>
+
+                    </View>
+
+
+                    :
+
+
+
+                    <Text
+                    style={InputBlockStyles.inputLabel}>{this.props.name}
+
+
+
+                    </Text>}
 
                 <TextInput ref='input' style={InputBlockStyles.input}
                            underlineColorAndroid="transparent" {...this.props}/>
@@ -75,5 +97,33 @@ export const InputBlockStyles = {
         fontSize: 20,
         paddingVertical: 16,
         color: "#fff"
+    },
+    requiredLabelBlock:{
+        flex: 1,
+        flexDirection:'row'
+    },
+    requiredInputLabel:{
+        color: '#B3BBC1',
+        fontFamily: platform.fontFamily,
+        fontSize: 18,
+        lineHeight: 20,
+    },
+    requiredLabel:{
+        paddingLeft:1,
+        marginTop:-3,
+        textAlignVertical:"top",
+        fontFamily: platform.fontFamily,
+        fontSize: 18,
+        lineHeight: 20,
+        color:platform.brandDanger
+    },
+    requiredLabelV:{
+        paddingLeft:1,
+        paddingTop: 12,
+        textAlignVertical:"top",
+        fontFamily: platform.fontFamily,
+        fontSize: 18,
+        lineHeight: 20,
+        color:platform.brandDanger
     }
 };

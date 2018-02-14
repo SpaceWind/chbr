@@ -70,6 +70,12 @@ export const GET_RESERVE_PENDING = 'GET_RESERVE_PENDING';
 export const GET_RESERVE_FULFILLED = 'GET_RESERVE_FULFILLED';
 export const GET_RESERVE_REJECTED = 'GET_RESERVE_REJECTED';
 
+export const GET_ORDER = 'GET_ORDER';
+export const GET_ORDER_PENDING = 'GET_ORDER_PENDING';
+export const GET_ORDER_FULFILLED = 'GET_ORDER_FULFILLED';
+export const GET_ORDER_REJECTED = 'GET_ORDER_REJECTED';
+
+
 export const CLOSE_TUTORIAL = 'CLOSE_TUTORIAL';
 
 export const UPLOAD_PHOTO = 'UPLOAD_PHOTO';
@@ -324,6 +330,21 @@ export const getReserve = (restaurantId, reserveId) => {
     return dispatch => {
         let promise = AuthService.getReserve(restaurantId, reserveId);
         dispatch(getReserveAction(promise));
+        return promise;
+    }
+};
+
+function getOrderAction(promise) {
+    return {
+        type: GET_ORDER,
+        payload: promise
+    }
+}
+
+export const getOrder = (orderId) => {
+    return dispatch => {
+        let promise = AuthService.getOrder(orderId);
+        dispatch(getOrderAction(promise));
         return promise;
     }
 };

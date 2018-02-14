@@ -4,9 +4,9 @@ import Profile from "../components/Profile/Profile";
 import AddCard from "../components/Profile/AddCard";
 import DrawerIcon from './components/DrawerIcon'
 import {BaseNavigationBarStyle} from "./BaseNavigationBarStyle";
+import CardTemplate from "./template/CardTemplate";
+import Common from "./template/Common";
 
-import BasketIcon from "./components/BasketIcon/index";
-import ScanBillPage from "../components/Cards/ScanBillPage/index";
 export default ProfileStack = StackNavigator({
     Profile: {
         screen: Profile,
@@ -23,19 +23,11 @@ export default ProfileStack = StackNavigator({
             headerBackTitleStyle: {
                 color: "transparent"
             },
-            drawerLockMode:'locked-closed'
+            drawerLockMode: 'locked-closed'
         })
     },
-    ScanBill: {
-        screen: ScanBillPage,
-        navigationOptions: {
-            title: 'Сканирование чека',
-            headerBackTitleStyle: {
-                color: "transparent"
-            },
-            drawerLockMode:'locked-closed'
-        }
-    },
+    ...CardTemplate,
+    ...Common
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle

@@ -23,7 +23,8 @@ export default class CategoryListItem extends React.Component {
         active: string,
         addItem: () => void,
         minusItem: () => void;
-        basket?: boolean
+        basket?: boolean,
+        noAnimate: boolean
 
     }
 
@@ -34,50 +35,89 @@ export default class CategoryListItem extends React.Component {
 
 
     shouldComponentUpdate(nextProps, nextState) {
+
+
         return nextProps.item.count !== this.props.item.count
             || nextProps.item.fadeAnim !== this.props.item.fadeAnim
             || nextProps.active !== this.props.active && this.props.item.id === this.props.active
+            || nextProps.item.disabled !== this.props.item.disabled
     }
 
     render() {
+
+        if (this.props.noAnimate) {
+
+            return (
+                <View>
+
+                    {this._renderItem()}
+                </View>
+            )
+        }
+
         return (
             <Animated.View style={{
-                ...styles.menuItem,
-                marginLeft: this.props.item.fadeAnim,
-                paddingVertical: this.props.basket ? 6 : 12
+                marginLeft: this.props.item.fadeAnim
             }}>
-                <View style={styles.info}>
-                    <TouchableOpacity style={styles.infoTouch} onPress={() => {
-                        this.props.navigation.navigate('Dish', {name: this.props.item.title, dish: this.props.item})
-                    }}>
-                        <View style={styles.infoImageBlock}>
 
-                            {this.props.item.photos && this.props.item.photos.thumb ?
-                                <Image source={{uri: this.props.item.photos.thumb}} style={styles.image}/>
-                                :
-                                <View style={styles.defaultImageBlock}><Image
-                                    source={require('../../../../assets/images/menu/dish-icon.png')}
-                                    style={styles.defaultImage}/></View>
-                            }
-
-
-                            {this.props.item.available_for_bonus === 1 && <View style={styles.infoBonusBlock}>
-
-                                <Text style={styles.infoBonusText}>За баллы</Text>
-
-                            </View>}
-                        </View>
-                        <View style={styles.infoBlockText}>
-                            <Text style={styles.infoText}>{this.props.item.title}</Text>
-                            {!this.props.basket && <Text style={styles.weight}>{this.props.item.weight}</Text>}
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View>
-                    {this.renderButton(this.props.item)}
-                </View>
+                {this._renderItem()}
             </Animated.View>
         )
+    }
+
+    _renderItem() {
+
+        let imageStyles = getImagesStyles(this.props.basket ? 60 : 72);
+
+        return <View style={{
+            ...styles.menuItem,
+            paddingVertical: this.props.basket ? 6 : 12
+        }}>
+            <View style={styles.info}>
+                <TouchableOpacity style={styles.infoTouch} onPress={() => {
+                    this.props.navigation.navigate('Dish', {name: this.props.item.title, dish: this.props.item})
+                }}>
+                    <View style={styles.infoImageBlock}>
+
+                        {this.props.item.photos && this.props.item.photos.thumb ?
+                            <Image source={{uri: this.props.item.photos.thumb}} style={imageStyles.image}/>
+                            :
+                            <View style={styles.defaultImageBlock}><Image
+                                source={require('../../../../assets/images/menu/dish-icon.png')}
+                                style={styles.defaultImage}/></View>
+                        }
+
+
+                        {this.props.item.available_for_bonus === 1 && <View style={imageStyles.infoBonusBlock}>
+
+                            <Text style={imageStyles.infoBonusText}>За баллы</Text>
+
+                        </View>}
+
+
+                        {this.props.item.disabled &&
+                        <View style={imageStyles.lunchDisabledImage}>
+                            <View style={imageStyles.lunchDisabledBlock}>
+                                <Text style={imageStyles.lunchDisabledText}>!</Text>
+                            </View>
+                        </View>
+
+
+                        }
+                    </View>
+                    <View style={styles.infoBlockText}>
+                        <Text style={styles.infoText}>{this.props.item.title}</Text>
+                        {!this.props.basket
+                            ? <Text style={styles.weight}>{this.props.item.weight}</Text>
+                            : this.props.item.disabled && <Text style={styles.disabledText}>Недоступно</Text>
+                        }
+                    </View>
+                </TouchableOpacity>
+            </View>
+            <View>
+                {this.renderButton(this.props.item)}
+            </View>
+        </View>
     }
 
     renderButton(item) {
@@ -90,10 +130,12 @@ export default class CategoryListItem extends React.Component {
     }
 
     renderBasketButton(item) {
-        return (  <Button bordered warning rounded style={styles.addItemButton} onPress={() => {
-            this.props.navigation.navigate('Dish', {name: item.title, dish: item})
-        }}>
-            <Text style={styles.addItemButtonText}
+        return (<Button bordered warning rounded
+                        style={{...styles.addItemButton, ...(this.props.item.disabled ? styles.disabledButton : {})}}
+                        onPress={() => {
+                            this.props.navigation.navigate('Dish', {name: item.title, dish: item})
+                        }}>
+            <Text style={{...styles.addItemButtonText, ...(this.props.item.disabled ? styles.disabledButtonText : {})}}
                   uppercase={false}>{item.count + ' ' + 'X' + ' ' + item.price + " ₽"}</Text>
         </Button>        )
     }
@@ -148,10 +190,9 @@ export default class CategoryListItem extends React.Component {
         else {
             return (  <Button
 
+                disabled={true}
                 bordered warning rounded style={styles.addItemButton} onPress={() => {
-
-                this.props.navigation.navigate('Dish', {name: item.title, dish: item})
-                //this.props.addItem(item)
+                this.props.addItem(item)
             }}>
                 <Text style={styles.addItemButtonText} uppercase={false}>{item.price + " ₽"}</Text>
             </Button>        )
@@ -161,6 +202,79 @@ export default class CategoryListItem extends React.Component {
 
     }
 
+}
+
+
+const getImagesStyles = (size) => {
+
+
+    return {
+        defaultImageBlock: {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            backgroundColor: '#7A8187',
+            alignItems: 'center',
+            justifyContent: 'center'
+        },
+        defaultImage: {
+            width: 18,
+            height: 38
+        },
+
+        infoImageBlock: {},
+
+
+        image: {
+            width: size,
+            height: size,
+            borderRadius: size / 2
+        },
+        infoBonusBlock: {
+            position: 'absolute',
+            bottom: 0,
+
+            left: 6,
+            overflow: 'hidden',
+            height: 17,
+            width: 57,
+            borderWidth: 2,
+            borderColor: '#2B3034',
+            borderRadius: 100,
+            backgroundColor: '#6FB423',
+            justifyContent: 'center'
+        },
+        infoBonusText: {
+            fontFamily: platform.fontFamily,
+            fontSize: 10,
+            textAlign: "center"
+        },
+        lunchDisabledImage: {
+            height: size,
+            width: size,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            borderRadius: size / 2,
+            overflow: 'hidden',
+            backgroundColor: "rgba(0,0,0,0.5)"
+        },
+        lunchDisabledBlock: {
+            height: 32,
+            width: 32,
+            position: "absolute",
+            top: 14,
+            left: 14,
+            borderRadius: 16,
+            backgroundColor: platform.brandDanger,
+            overflow: 'hidden',
+            alignItems: "center"
+        },
+        lunchDisabledText: {
+            fontSize: 28,
+            textAlign: "center"
+        },
+    }
 }
 
 
@@ -201,56 +315,29 @@ const styles = {
         color: platform.brandWarning
 
     },
-
-    defaultImageBlock: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
-        backgroundColor: '#7A8187',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    defaultImage: {
-        width: 18,
-        height: 38
-    },
-
-    infoImageBlock: {},
-
-
-    image: {
-        width: 70,
-        height: 70,
-        borderRadius: 35
-    },
-    infoBonusBlock: {
-        position: 'absolute',
-        bottom: 0,
-
-        left: 6,
-        overflow: 'hidden',
-        height: 17,
-        width: 57,
-        borderWidth: 2,
-        borderColor: '#2B3034',
-        borderRadius: 100,
-        backgroundColor: '#6FB423',
-        justifyContent: 'center'
-    },
-    infoBonusText: {
+    disabledText: {
         fontFamily: platform.fontFamily,
-        fontSize: 10,
-        textAlign: "center"
+        fontSize: 14,
+        lineHeight: 20,
+        color: platform.brandFontAccent
     },
+
     addItemButton: {
         height: 28,
         borderRadius: 8,
         paddingRight: 16.5,
-        paddingLeft: 16.5
+        paddingLeft: 16.5,
+
     },
     addItemButtonText: {
         fontSize: 14,
         color: platform.brandWarning
+    },
+    disabledButton: {
+        borderColor: platform.brandOutline
+    },
+    disabledButtonText: {
+        color: platform.brandOutline
     },
     changeCountItemButton: {
         flexDirection: 'row'

@@ -39,6 +39,13 @@ export const GET_DISH_FULFILLED = 'GET_DISH_FULFILLED';
 export const GET_DISH_REJECTED = 'GET_DISH_REJECTED';
 
 
+
+export const BUY = 'BUY';
+export const BUY_PENDING = 'BUY_PENDING';
+export const BUY_FULFILLED = 'BUY_FULFILLED';
+export const BUY_REJECTED = 'BUY_REJECTED';
+
+
 export function getDataAction(promise) {
     return {
         type: GET_DATA,
@@ -145,6 +152,24 @@ export const getDish = (restaurantId, categoryId, dishId,deviceId) => {
         return promise;
     }
 };
+
+export function buyAction(promise) {
+    return {
+        type: BUY,
+        payload: promise
+    }
+}
+
+export const buy = (restaurantId,data) => {
+    return dispatch => {
+        let promise = RestaurantService.buy(restaurantId,data);
+        dispatch(buyAction(promise));
+        return promise;
+    }
+};
+
+
+
 
 
 

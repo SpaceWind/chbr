@@ -32,7 +32,9 @@ class NewsC extends React.Component {
         newsData = newsData.filter((news, pos) => {
             return newsData.indexOf(newsData.find((inNews) => inNews.id === news.id)) === pos;
         });
-
+        newsData.sort((a, b) => {
+            return a.sort - b.sort;
+        });
         if (this.state.restaurant !== 'all') {
             newsData = newsData.filter((news, pos) => {
                 return news.restaurants.length === 0 && news.event_place_all || news.restaurants.find(rest => rest.id === this.state.restaurant)
@@ -42,7 +44,6 @@ class NewsC extends React.Component {
 
         let restaurants = this.props.restaurants.filter((rest) => rest.status === 1);
 
-        console.log(newsData)
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
                              style={signStackStyle}>

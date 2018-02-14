@@ -110,6 +110,22 @@ class RestaurantServiceImpl {
         if (res.err) throw res;
         return res.body;
     }
+
+
+    async buy(restaurantId,
+              data: any) {
+
+        let res = await this.Api.post(`/restaurant/` + restaurantId + '/buy', {
+            body: {
+                data: JSON.stringify(data)
+            }
+        });
+        if (res.err) throw res;
+
+        return res.body;
+    }
+
+
 }
 
 export const RestaurantService = new RestaurantServiceImpl();

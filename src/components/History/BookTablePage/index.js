@@ -97,7 +97,7 @@ class BookTablePageC extends React.Component {
                                         justifyContent: 'center'
                                     }}
                                     onPress={() => {
-                                        this._requestCancel()
+                                        this._requestDelete()
                                     }}><Text uppercase={false}>Удалить из истории</Text>
                             </Button>
                         </View>

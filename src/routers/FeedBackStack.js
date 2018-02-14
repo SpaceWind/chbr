@@ -5,6 +5,7 @@ import {BaseNavigationBarStyle} from "./BaseNavigationBarStyle";
 
 import FeedBackPage from "../components/FeedBack/FeedBackPage/index";
 import ScanBillPage from "../components/Cards/ScanBillPage/index";
+import Common from "./template/Common";
 
 export default FeedBackStack = StackNavigator({
     FeedBack: {
@@ -15,16 +16,7 @@ export default FeedBackStack = StackNavigator({
         })
     }
     ,
-    ScanBill: {
-        screen: ScanBillPage,
-        navigationOptions: {
-            title: 'Сканирование чека',
-            headerBackTitleStyle: {
-                color: "transparent"
-            },
-            drawerLockMode:'locked-closed'
-        }
-    },
+    ...Common
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle

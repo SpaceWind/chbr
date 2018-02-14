@@ -40,6 +40,12 @@ class Category extends React.Component {
 
         let items = currentCategory.items.filter(item => item.status === 1);
         this.restaurantId = restaurant.id;
+        items.sort((a, b) => {
+            return a.sort - b.sort;
+        });
+        for (let item of items) {
+            item.count = 0;
+        }
         if (this.props.billing.restaurantId === restaurant.id) {
 
             for (let item of this.props.billing.dishes) {
@@ -49,15 +55,8 @@ class Category extends React.Component {
                 }
             }
         }
-        else {
-            for (let item of items) {
-                item.count = 0;
-            }
-        }
 
-        items.sort((a, b) => {
-            return a.sort - b.sort;
-        });
+
 
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}

@@ -118,14 +118,27 @@ class SignSecondStep extends React.Component {
             }
 
             if (this.isConfirmBookTable) {
-                await this.updateUserData(this.props.navigation.state.params.first_name, this.props.navigation.state.params.last_name);
+                if(this.props.navigation.state.params.save)
+                {
+                    await this.updateUserData(this.props.navigation.state.params.first_name, this.props.navigation.state.params.last_name);
+                }
                 await this.confirmBookTable();
                 this.props.clearRequestData();
             }
             else {
                 await this.props.getUserData();
                 this.setState({loading: false});
-                this.props.signInAfter();
+
+
+                if (this.props.navigation.state.params && this.props.navigation.state.params.nested) {
+
+                    this._end();
+                }
+                else {
+                    this.props.signInAfter();
+                }
+
+
             }
 
 
@@ -197,8 +210,14 @@ class SignSecondStep extends React.Component {
 
                                 <View>
                                     <Button transparent warning onPress={() => {
-                                        this.props.resetCode();
-                                        this.props.signInAfter()
+                                        if (this.props.navigation.state.params && this.props.navigation.state.params.nested) {
+
+                                            this._end();
+                                        }
+                                        else {
+                                            this.props.resetCode();
+                                            this.props.signInAfter();
+                                        }
                                     }}>
                                         <Text uppercase={false}>Вступить в клуб позже ></Text>
                                     </Button>
@@ -212,6 +231,20 @@ class SignSecondStep extends React.Component {
             </TouchableWithoutFeedback>
         );
     }
+
+
+    _end() {
+
+        if (this.props.navigation.state.params.back) {
+
+        }
+        else {
+            const backAction = NavigationActions.back();
+            this.props.navigation.dispatch(backAction);
+            this.props.navigation.dispatch(backAction);
+        }
+    }
+
 
     _getPhoneFormatted(phone) {
         let result = PhoneUtils.getFormattedPhone(phone);
