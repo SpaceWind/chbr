@@ -44,18 +44,24 @@ export default class BasketList extends React.Component {
                              style={signStackStyle}>
 
 
-                {(this.props.data && this.props.data.length > 0 || this.props.basket) ? <FlatList
-                    data={this.props.data}
-                    extraData={this.state}
-                    keyExtractor={this._keyExtractor}
-                    renderItem={this._renderItem}
-                    ItemSeparatorComponent={() => {
-                        return <View style={styles.divider}>
+                {(this.props.data && this.props.data.length > 0 || this.props.basket) ?
 
-                        </View>
-                    }}
+                    <View style={styles.flatList}>
+                        <FlatList
 
-                /> : <View style={{
+                            data={this.props.data}
+                            extraData={this.state}
+                            keyExtractor={this._keyExtractor}
+                            renderItem={this._renderItem}
+                            ItemSeparatorComponent={() => {
+                                return <View style={styles.divider}>
+
+                                </View>
+                            }}
+
+                        />
+                    </View>
+                    : <View style={{
                     alignItems: 'center',
                     justifyContent: 'center',
                     flex: 1,
@@ -145,6 +151,11 @@ const styles = {
         lineHeight: 20,
         textAlign: 'center',
         color: '#fff'
+    },
+    flatList:{
+        borderColor: platform.brandDivider,
+        borderBottomWidth: 1,
+
     }
 }
 

@@ -45,10 +45,21 @@ class OneNewsPageС extends React.Component {
 
         }
 
+        let all = false;
         if (news) {
             if (!news.restaurants) {
                 news.restaurants = []
             }
+            if (news.restaurants.length === this.props.restaurants.filter((item) => {
+                    return item.status === 1;
+                }).length) {
+                news.restaurants = [{
+                    id: "all",
+                    title: "Все рестораны"
+                }]
+            }
+
+
         }
 
 
@@ -69,10 +80,11 @@ class OneNewsPageС extends React.Component {
                             {news.show_event_date === 1 &&
                             <Text style={styles.infoDate}>{moment(news.event_date).format('D MMMM')}</Text>}
                             {
-                                news.restaurants.map((rest,i) => {
+                                news.restaurants.map((rest, i) => {
                                     return (
                                         <View style={{flexDirection: 'row', alignItems: 'center'}} key={rest.id}>
-                                            { (i!==0 || news.show_event_date === 1) &&<View style={styles.infoPoint}/>}
+                                            {(i !== 0 || news.show_event_date === 1) &&
+                                            <View style={styles.infoPoint}/>}
                                             <Text style={styles.infoName}>{rest.title}</Text>
                                         </View>
                                     )
@@ -120,7 +132,8 @@ const styles = {
     },
     infoBlock: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap:'wrap'
     },
     infoDate: {
         color: platform.brandWarning,

@@ -203,19 +203,7 @@ class FeedBackPageC extends React.Component {
                                                 }
                                             })
                                         }}
-                                        onFocus={() => {
-                                            this.backupEmail = this.state.userData.email;
-                                        }}
-                                        onBlur={() => {
-                                            if (this.state.userData.email.length > 0 && !this.validateEmail(this.state.userData.email)) {
-                                                this.setState({
-                                                    userData: {
-                                                        ...this.state.userData,
-                                                        email: this.backupEmail
-                                                    }
-                                                })
-                                            }
-                                        }}
+
 
                             />
 

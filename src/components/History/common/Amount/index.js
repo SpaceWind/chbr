@@ -26,7 +26,7 @@ export default class Amount extends React.Component {
             <View style={styles.row}>
                 <Text style={styles.text}>Скидка</Text>
                 <Text
-                    style={styles.text}>{(this.props.info.summ_raw - this.props.info.summ) + ' ₽'}</Text>
+                    style={styles.text}>{Math.floor(this.props.info.summ_raw - this.props.info.summ) + ' ₽'}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.text}>Итого оплачено</Text>

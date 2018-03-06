@@ -19,6 +19,7 @@ import {getOrder} from "../../../actions/user";
 import SorryModal from "../../Restaurant/common/SorryModal/index";
 import Amount from "../../History/common/Amount/index";
 import TextHelper from "../../../../utilities/TextHelper";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const currentPlatform = Platform.OS;
 
@@ -98,7 +99,7 @@ class OrderPage extends React.Component {
                     <Text style={styles.headerText}>{this.type === 'out' ? "Заказ на вынос" : "Ланч в ресторане"}</Text>
                     <Text style={styles.headerRestaurant}>Рестобар Chester</Text>
                 </View>
-
+                <Spinner visible={this.props.isBuyPending} textStyle={{color: '#FFF'}}/>
 
                 <SelectDateOrder
                     date={this.state.date}
@@ -238,7 +239,9 @@ class OrderPage extends React.Component {
                     </View>}
                     {this.amount.discount && <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Скидка</Text>
-                        <Text style={styles.priceText}>{this.amount.discountSize > 0 ? this.amount.discountSize + "% или " : ""}{this.amount.discountAmount} ₽</Text>
+                        <Text
+                            style={styles.priceText}>{this.amount.discountSize > 0 ? this.amount.discountSize + "% или " : ""}{this.amount.discountAmount}
+                            ₽</Text>
                     </View>}
                     <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Итого к оплате</Text>
@@ -364,6 +367,7 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
     restaurants: state.restaurant.restaurants,
     billing: state.billing,
+    isBuyPending: state.restaurant.isBuyPending,
     user: state.user.userData
 });
 const OrderPageSwag = connect(mapStateToProps, bindAction)(OrderPage);

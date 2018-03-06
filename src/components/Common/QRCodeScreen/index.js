@@ -14,7 +14,7 @@ import Camera from 'react-native-camera';
 import {Button, Text} from "native-base";
 import {Vibration} from "react-native";
 
-class QRCodeScreen extends React.Component{
+class QRCodeScreen extends React.Component {
 
     /*props: {
         cancelButtonVisible: number,
@@ -22,6 +22,7 @@ class QRCodeScreen extends React.Component{
         onSucess: ()=>{},
         onCancel:()=>{},
     },*/
+
 
 
     _onPressCancel() {
@@ -34,22 +35,22 @@ class QRCodeScreen extends React.Component{
 
     _onBarCodeRead(result) {
 
-        if (this.barCodeFlag) {
+        if (this.barCodeFlag && !this.props.isScanDisabled) {
             this.barCodeFlag = false;
-
-            setTimeout(()=>{
-                Vibration.vibrate();
+            Vibration.vibrate();
+            setTimeout(() => {
                 this.props.onSuccess(result.data);
             }, 100);
         }
     }
 
-    render () {
+    render() {
         let cancelButton = null;
         this.barCodeFlag = true;
 
         if (this.props.cancelButtonVisible) {
-            cancelButton = <CancelButton onPress={this._onPressCancel.bind(this)} title={this.props.cancelButtonTitle}/>;
+            cancelButton =
+                <CancelButton onPress={this._onPressCancel.bind(this)} title={this.props.cancelButtonTitle}/>;
         }
 
         return (
@@ -63,7 +64,7 @@ class QRCodeScreen extends React.Component{
     }
 }
 
-class CancelButton  extends React.Component{
+class CancelButton extends React.Component {
     render() {
         return (
             <View style={styles.cancelButton}>

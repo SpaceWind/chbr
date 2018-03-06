@@ -38,7 +38,7 @@ export class DishC extends React.Component {
         loading: false,
         likes: 0,
         isOpen: false,
-        isOpenOver: false,
+        isOpenOver:false,
         current_client_like_it: false
     };
 
@@ -176,12 +176,12 @@ export class DishC extends React.Component {
                             {newDish && <View
                                 style={styles.badge}>
                                 <ChesterIcon name="star-16" size={16} color={platform.brandWarning}/>
-                                <Text style={styles.hangText}>Новое блюдо</Text>
+                                <Text style={styles.hangText}>Новое</Text>
                             </View>}
                             {hot && <View
                                 style={styles.badge}>
                                 <ChesterIcon name="chili-16" size={16} color={platform.brandWarning}/>
-                                <Text style={styles.hangText}>Острое блюдо</Text>
+                                <Text style={styles.hangText}>Острое</Text>
 
                             </View>}
 
@@ -230,16 +230,13 @@ export class DishC extends React.Component {
 
                                         <Button
                                             warning rounded style={{flex: 1, justifyContent: 'center'}}
-
                                             onPress={() => {
-
-                                                this.setState({isOpen: true})
-                                                return;
-
-                                                if (this.dish.available) {
+                                                if(this.dish.available)
+                                                {
                                                     this.addItem();
                                                 }
-                                                else {
+                                                else
+                                                {
                                                     this.setState({isOpenOver: true})
                                                 }
 
@@ -293,6 +290,7 @@ export class DishC extends React.Component {
                         <DenyOrder isOpen={this.state.isOpenOver} onClose={() => {
                             this.setState({isOpenOver: false})
                         }}/>
+
 
 
                     </View>
@@ -512,7 +510,7 @@ const styles = {
         borderColor: platform.brandDivider,
         paddingHorizontal: 16,
         marginHorizontal: -6,
-        paddingBottom: 12,
+        paddingBottom:12,
         flexDirection: 'row',
         alignItems: 'center',
         flexWrap: 'wrap'

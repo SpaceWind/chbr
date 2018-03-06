@@ -97,7 +97,11 @@ class PayPageC extends React.Component {
 
 
     _onMessage(data) {
-        this.end(data === "payment_success");
+        if(data==="payment_success" || data==="payment_failed" )
+        {
+            this.end(data === "payment_success");
+        }
+
     }
 
     end(success, redirect = true) {

@@ -46,29 +46,29 @@ export default class TimeService {
         for (let item of this.days) {
             let current = schedule[item.id];
             item.start = moment().startOf('day').seconds(current.start).format('HH:mm');
-            item.startHour = moment().startOf('day').seconds(current.start).hour();
+            item.startHour =current.start;
             item.end = moment().startOf('day').seconds(current.finish).format('HH:mm');
-            item.endHour = moment().startOf('day').seconds(current.finish).hour();
+            item.endHour =current.finish;
             item.startSeconds = current.start;
-            item.endSeconds = current.finish
+            item.endSeconds = current.finish;
+
         }
 
-        let currentHour = moment().hour();
+        let currentHour = moment().hour() * 60*60 +moment().minutes()*60+moment().seconds();
         let currentIndex = moment().day();
         let currentDay = this.days.find((day) => day.day === currentIndex);
 
         let prevIndex = currentIndex === 0 ? 6 : currentIndex - 1;
         let prevDay = this.days.find((day) => day.day === prevIndex);
 
-        if (currentHour < currentDay.startHour && currentHour <= prevDay.endHour && prevDay.endHour < prevDay.startHour) {
+        if (currentHour < currentDay.startHour && currentHour < prevDay.endHour && prevDay.endHour < prevDay.startHour) {
             currentDay = prevDay;
-        }
-        if (currentHour < currentDay.startHour || (currentHour > currentDay.endHour && currentDay.endHour > currentDay.startHour)) {
-            currentDay.isOpen = false;
-        }
-        else {
             currentDay.isOpen = true;
+        } else
+        {
+            currentDay.isOpen = !(currentHour < currentDay.startHour || (currentHour > currentDay.endHour && currentDay.endHour > currentDay.startHour));
         }
+
 
         currentDay.isCurrent = true;
 
@@ -77,7 +77,7 @@ export default class TimeService {
 
         if (currentDay.isOpen) {
             let dateEnd = null;
-            if (currentDay.endSeconds < currentDay.startSeconds && !(currentHour < currentDay.startHour && currentHour <= prevDay.endHour && prevDay.endHour < prevDay.startHour)) {
+            if (currentDay.endSeconds < currentDay.startSeconds && !(currentHour < currentDay.startHour && currentHour < prevDay.endHour && prevDay.endHour < prevDay.startHour)) {
                 dateEnd = moment().endOf('days').seconds(currentDay.endSeconds);
             }
             else {

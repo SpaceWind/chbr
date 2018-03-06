@@ -75,16 +75,21 @@ export default class CategoryListItem extends React.Component {
         }}>
             <View style={styles.info}>
                 <TouchableOpacity style={styles.infoTouch} onPress={() => {
-                    this.props.navigation.navigate('Dish', {name: this.props.item.title, dish: this.props.item})
-                }}>
+
+                    this.props.navigation.navigate({
+                        routeName: 'Dish',
+                        params: {name: this.props.item.title, dish: this.props.item},
+                        key: "Dish"
+                    })
+                }} disabled={!this.props.navigation}>
                     <View style={styles.infoImageBlock}>
 
                         {this.props.item.photos && this.props.item.photos.thumb ?
                             <Image source={{uri: this.props.item.photos.thumb}} style={imageStyles.image}/>
                             :
-                            <View style={styles.defaultImageBlock}><Image
+                            <View style={imageStyles.defaultImageBlock}><Image
                                 source={require('../../../../assets/images/menu/dish-icon.png')}
-                                style={styles.defaultImage}/></View>
+                                style={imageStyles.defaultImage}/></View>
                         }
 
 
@@ -132,8 +137,13 @@ export default class CategoryListItem extends React.Component {
     renderBasketButton(item) {
         return (<Button bordered warning rounded
                         style={{...styles.addItemButton, ...(this.props.item.disabled ? styles.disabledButton : {})}}
+                        disabled={!this.props.navigation}
                         onPress={() => {
-                            this.props.navigation.navigate('Dish', {name: item.title, dish: item})
+                            this.props.navigation.navigate({
+                                routeName: 'Dish',
+                                params: {name: this.props.item.title, dish: this.props.item},
+                                key: "Dish"
+                            })
                         }}>
             <Text style={{...styles.addItemButtonText, ...(this.props.item.disabled ? styles.disabledButtonText : {})}}
                   uppercase={false}>{item.count + ' ' + 'X' + ' ' + item.price + " ₽"}</Text>
@@ -190,7 +200,7 @@ export default class CategoryListItem extends React.Component {
         else {
             return (  <Button
 
-                disabled={true}
+
                 bordered warning rounded style={styles.addItemButton} onPress={() => {
                 this.props.addItem(item)
             }}>
@@ -327,6 +337,7 @@ const styles = {
         borderRadius: 8,
         paddingRight: 16.5,
         paddingLeft: 16.5,
+        borderColor:platform.brandWarning
 
     },
     addItemButtonText: {

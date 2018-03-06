@@ -9,7 +9,7 @@ export default class TextHelper {
     }
 
     static getBonus(amount) {
-        return Math.ceil(amount * 0.02);
+        return Math.floor(amount * 0.02);
     }
 
 }

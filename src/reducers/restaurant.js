@@ -1,6 +1,6 @@
 import {
     BUY_BY_BONUS_FULFILLED, BUY_BY_BONUS_PENDING,
-    BUY_BY_BONUS_REJECTED,
+    BUY_BY_BONUS_REJECTED, BUY_FULFILLED, BUY_PENDING, BUY_REJECTED,
     GET_DATA, GET_DATA_FULFILLED, GET_DATA_PENDING, GET_DATA_REJECTED, GET_DISH, GET_DISH_FULFILLED, GET_DISH_PENDING,
     GET_DISH_REJECTED,
     GET_TIME_FULFILLED, GET_TIME_PENDING, GET_TIME_REJECTED, LIKE, LIKE_FULFILLED, LIKE_PENDING, LIKE_REJECTED
@@ -103,6 +103,25 @@ export default function (state: State = initialState, action) {
         return {
             ...state,
             buyByBonusPending: false
+        };
+    }
+
+    if (action.type === BUY_PENDING) {
+        return {
+            ...state,
+            isBuyPending: true
+        };
+    }
+    if (action.type === BUY_FULFILLED) {
+        return {
+            ...state,
+            isBuyPending: false
+        };
+    }
+    if (action.type === BUY_REJECTED) {
+        return {
+            ...state,
+            isBuyPending: false
         };
     }
 

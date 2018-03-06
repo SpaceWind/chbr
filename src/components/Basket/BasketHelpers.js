@@ -4,11 +4,9 @@
 export default class BasketHelpers {
     static calcAmount(dishes, lunch, lunchDiscount, userDiscount): { amount: number, discount: boolean, discountAmount: number, total: number } {
 
-        let fullAmount = dishes.filter(dish=> lunch || !dish.lunch).map(dish => dish.price * dish.count).reduce((a, b) => a + b, 0);
+        let fullAmount = dishes.filter(dish => lunch || !dish.lunch).map(dish => dish.price * dish.count).reduce((a, b) => a + b, 0);
+        let discountAmount = Math.floor(dishes.filter(dish => !dish.lunch).map(dish => dish.price * dish.count * (lunchDiscount / 100)).reduce((a, b) => a + b, 0));
         if (lunch) {
-
-            let discountAmount = dishes.filter(dish => !dish.lunch).map(dish => dish.price * dish.count * (lunchDiscount / 100)).reduce((a, b) => a + b, 0);
-
             return {
                 amount: fullAmount,
                 discount: discountAmount > 0,
@@ -18,9 +16,6 @@ export default class BasketHelpers {
             }
         }
         else {
-
-
-            let discountAmount = dishes.filter(dish => !dish.lunch).map(dish => dish.price * dish.count * (userDiscount / 100)).reduce((a, b) => a + b, 0);
 
             return {
                 amount: fullAmount,

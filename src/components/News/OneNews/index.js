@@ -21,6 +21,14 @@ export default class OneNews extends React.Component {
             containerStyle = {...containerStyle, ...styles.containerBordered};
         }
 
+        let restaurants = this.props.restaurants;
+        if (this.props.all) {
+            restaurants = [{
+                id: "all",
+                title_short: "Все рестораны"
+            }]
+        }
+
 
         return (
             <View style={containerStyle}>
@@ -34,11 +42,12 @@ export default class OneNews extends React.Component {
                         {this.props.data.show_event_date === 1 &&
                         <Text style={styles.infoDate}>{moment(this.props.data.event_date).format('D MMMM')}</Text>}
                         {
-                            this.props.restaurants.map((rest,i) => {
-                                console.log(i);
+                            restaurants.map((rest, i) => {
+
                                 return (
                                     <View style={{flexDirection: 'row', alignItems: 'center'}} key={rest.id}>
-                                        { (i!==0 || this.props.data.show_event_date === 1) && <View style={styles.infoPoint}/>}
+                                        {(i !== 0 || this.props.data.show_event_date === 1) &&
+                                        <View style={styles.infoPoint}/>}
                                         <Text style={styles.infoName}>{rest.title_short}</Text>
                                     </View>
                                 )
@@ -77,7 +86,8 @@ const styles = {
     },
     infoBlock: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap:'wrap'
     },
     infoDate: {
         color: platform.brandWarning,

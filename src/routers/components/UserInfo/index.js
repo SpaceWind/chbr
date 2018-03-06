@@ -45,6 +45,9 @@ class UserInfoC extends React.Component {
 
 
             let progress = this.props.userData ? (this.props.userData.money_spent / this.bonusAmount) * 100 : 0;
+            if (this.props.userData && this.props.userData.discount > 0) {
+                progress = 100;
+            }
 
             return (<View style={styles.container}>
                 <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
@@ -63,9 +66,9 @@ class UserInfoC extends React.Component {
                     />
                     <View style={styles.avatarOuterProgress}>
                         {this.props.userData && <TouchableOpacity
-                            disabled={!! (this.props.userData.avatar && !this.props.showName)}
+                            disabled={!!(this.props.userData.avatar && !this.props.showName)}
                             onPress={() => {
-                                this.props.userData.avatar && this.props.showName ?  this._goToState('Profile') : this._pickImage();
+                                this.props.userData.avatar && this.props.showName ? this._goToState('Profile') : this._pickImage();
                             }}>
                             <View style={styles.avatarInner}>
 
@@ -107,12 +110,10 @@ class UserInfoC extends React.Component {
                     <Button style={styles.bonusButton} rounded warning onPress={() => {
 
 
-                        if(!this.props.showName)
-                        {
+                        if (!this.props.showName) {
                             this.props.navigation.navigate('MayCardPage');
                         }
-                        else
-                        {
+                        else {
                             this.props.navigation.navigate('MyCard');
                         }
 

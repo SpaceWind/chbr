@@ -102,9 +102,9 @@ class Restaurants extends React.Component {
 
         let restaurants = Object.keys(this.props.restaurants)
         .map((key) => this.props.restaurants[key])
-        .filter((item) => {
-        return item.status === 1;
-    });
+            .filter((item) => {
+                return item.status === 1;
+            });
 
         return (
         <ImageBackground source={require('../../../../assets/images/background/background.png')}

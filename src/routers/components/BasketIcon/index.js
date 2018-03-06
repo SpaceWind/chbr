@@ -16,10 +16,7 @@ class BasketIconC extends React.Component {
             return a + b.price * b.count;
         }, 0);
 
-
-        return <View></View>
-
-        /*return (
+        return (
             <View>
                 <TouchableOpacity
 
@@ -48,7 +45,7 @@ class BasketIconC extends React.Component {
 
                 </TouchableOpacity>
             </View>
-        );*/
+        );
     }
 
 }

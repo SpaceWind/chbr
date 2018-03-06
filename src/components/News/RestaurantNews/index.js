@@ -40,7 +40,7 @@ class News extends React.Component {
     render() {
 
 
-        let restaurant = this.props.restaurants[this.restaurantId];
+
 
         let newsData = this.props.news;
         newsData = newsData.filter((news, pos) => {
@@ -64,18 +64,37 @@ class News extends React.Component {
                             }}
                             data={newsData}
                             renderItem={(rowData) => {
+
+
+                                let restaurants = null;
+
+
+                                if (rowData.item.restaurants.length > 0 ) {
+                                    restaurants = this.props.restaurants.filter(rest => rowData.item.restaurants.find(restNews => rest.id === restNews.id));
+                                }
+                                else {
+                                    restaurants = [];
+                                }
+
+
+                                const all = rowData.item.restaurants.length === this.props.restaurants.filter((item) => {
+                                    return item.status === 1;
+                                }).length;
+
+
+
                                 return <TouchableOpacity
                                     style={{marginBottom: 25}}
                                     onPress={
                                         () => {
                                             this.props.navigation.navigate('OneRestaurantNewsPage', {
                                                 news: rowData.item,
-                                                restaurants: [restaurant]
+                                                restaurants: restaurants
                                             })
                                         }
                                     }
                                 >
-                                    <OneNews data={rowData.item} restaurants={[restaurant]}/>
+                                    <OneNews data={rowData.item} restaurants={restaurants} all={all}/>
                                 </TouchableOpacity>
                             }}
                             extraData={this.state}
@@ -135,7 +154,7 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
-    restaurants: state.restaurant.restaurants,
+    restaurants: state.restaurant.restaurantsArray,
     news: state.news.news,
     isPending: state.news.getNewsPending
 });

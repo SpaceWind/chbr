@@ -39,11 +39,8 @@ export default class SorryModal extends React.Component {
             <View style={modalCardStyles.modal}>
                 <View style={modalCardStyles.hintRow}>
                     <View style={modalCardStyles.textRow}>
-                        <Text style={modalCardStyles.removeText}>Нет свободных мест.</Text>
-                        <Text style={modalCardStyles.removeTextQuestion}>К сожалению на выбранное
-                            время нет
-                            свободных столов. Попробуйте другое время или меньшее количество
-                            человек.</Text>
+                        <Text style={modalCardStyles.removeText}>Все столы заняты!</Text>
+                        <Text style={modalCardStyles.removeTextQuestion}>На выбранное время все столы заняты, но вы можете встать в очередь на бронирование.</Text>
                     </View>
                     <Image
                         source={require('../../../../../assets/images/restaurant/sorry.png')}
@@ -53,7 +50,7 @@ export default class SorryModal extends React.Component {
                 <View style={modalCardStyles.buttonRow}>
                     <Button bordered rounded light full style={modalCardStyles.cancelButton}
                             onPress={() => {
-                                this.props.onClose()
+                                this.props.onClose(true)
                             }
                             }>
                         <Text uppercase={false} style={modalCardStyles.buttonText}>ОК</Text>

@@ -13,7 +13,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 
 import LinearGradient from "react-native-linear-gradient";
 import BonusIndicator from "../BonusIndicator/index";
-import { NavigationActions } from 'react-navigation'
+import {NavigationActions} from 'react-navigation'
 
 
 export class ScanBillPageC extends React.Component {
@@ -43,7 +43,6 @@ export class ScanBillPageC extends React.Component {
             <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
 
             {
-                !this.state.loading &&
 
                 <View style={signStackStyle}>
                     {this.state.end ? this.renderResult() : this.renderCamera()}
@@ -55,49 +54,105 @@ export class ScanBillPageC extends React.Component {
     }
 
 
-    back()
-    {
+    back() {
         const backAction = NavigationActions.back();
         this.props.navigation.dispatch(backAction)
     }
 
     async checkBill(code) {
-        this.setState({loading: true});
-        try {
-            let result = await this.props.checkBill(code);
-            console.log(result);
-            let userDate = await this.props.getUserData();
-            this.setState({end: true, checkSum: result.summ});
+
+        if (!this.codeRead && !this.state.loading) {
+            this.setState({loading: true, isScanDisabled: true});
+            this.codeRead = true;
+            console.log(code);
+            if (code.includes("chesterapp.ru")) {
+                try {
+                    let result = await this.props.checkBill(code);
+                    console.log(result);
+                    let userDate = await this.props.getUserData();
+                    this.setState({end: true, checkSum: result.summ});
+                }
+                catch (ex) {
+                    console.log(ex);
+
+                    if (ex.body.msg === "Cheque already linked.") {
+                        setTimeout(() => {
+                            Alert.alert(
+                                'Ошибка сканирования',
+                                'Чек уже отсканирован. Обратитесь в поддержку, если не вы отсканировали его.',
+                                [
+
+                                    {
+                                        text: 'Нет', onPress: () => {
+
+                                        this.back();
+
+                                    }
+                                        , style: 'cancel'
+                                    },
+                                    {
+                                        text: 'Ок'
+                                        , onPress: () => {
+                                        this.setState({isScanDisabled: false});
+
+                                    }
+                                    }
+                                ]
+                            )
+                        }, 100);
+                    }
+                    else {
+                        setTimeout(() => {
+                            Alert.alert(
+                                'Ошибка соединения с сервером',
+                                'Сервер не может выполнить сканирование, попробуйте позже',
+                                [
+
+                                    {
+                                        text: 'Нет', onPress: () => {
+
+                                        this.back();
+
+                                    }
+                                        , style: 'cancel'
+                                    },
+                                    {
+                                        text: 'Ок'
+                                        , onPress: () => {
+                                        this.setState({isScanDisabled: false});
+
+                                    }
+                                    }
+                                ]
+                            )
+                        }, 100);
+                    }
+
+
+                }
+            } else {
+                setTimeout(() => {
+                    Alert.alert(
+                        'Неккоректный QR code',
+                        'Отсканируйте QR code, который находится на предварительном чеке',
+                        [
+                            {
+                                text: 'Ок'
+                                , onPress: () => {
+                                this.setState({isScanDisabled: false});
+
+                            }
+                            }
+                        ]
+                    )
+                }, 100);
+            }
+
+
             this.setState({loading: false});
+            this.codeRead = false;
         }
-        catch (ex) {
-            console.log(ex);
-            setTimeout(() => {
-                Alert.alert(
-                    'Ошибка сканирования',
-                    'Возможно чек некорректен или уже отсканирован. Попробовать снова?',
-                    [
 
-                        {
-                            text: 'Нет', onPress: () => {
-
-                            this.back();
-
-                        }
-                            , style: 'cancel'
-                        },
-                        {
-                            text: 'Ок'
-                            , onPress: () => {
-
-                            this.setState({loading: false});
-
-                        }
-                        }
-                    ]
-                )
-            }, 100);
-        }
 
     }
 
@@ -109,8 +164,9 @@ export class ScanBillPageC extends React.Component {
                     this.checkBill(qrCode);
                 }}
                 onCancel={() => {
-                   this.back();
+                    this.back();
                 }}
+                isScanDisabled={this.state.isScanDisabled}
                 cancelButtonVisible={true}
                 cancelButtonTitle={'Отмена'}>
 

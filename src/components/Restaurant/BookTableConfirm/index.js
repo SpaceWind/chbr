@@ -61,7 +61,8 @@ class BookTableConfirmC extends React.Component {
         }
         if (nextProps.phone) {
             this.setState({
-                phone: nextProps.phone
+                phone: nextProps.phone,
+                isPhoneValid: true
             });
         }
 
@@ -214,7 +215,11 @@ class BookTableConfirmC extends React.Component {
                                     <Button warning
                                             rounded
                                             style={{width: '100%'}}
-                                            disabled={!this.props.logged && !this.state.isPhoneValid && !this.state.userData.first_name && !this.state.userData.first_name.length > 0}
+                                            disabled={
+
+                                                !(this.state.isPhoneValid &&
+                                                    (this.state.userData.first_name && this.state.userData.first_name.length > 0))
+                                            }
                                             onPress={
                                                 this.boorConfirmRequest.bind(this)
                                             }
@@ -257,8 +262,9 @@ class BookTableConfirmC extends React.Component {
     boorConfirmRequest() {
 
 
-        if (!this.props.logged || this.state.userData.first_name !== this.props.user.first_name
-            || this.state.phone !== this.props.phone || this.state.userData.last_name !== this.props.user.last_name) {
+        if (!this.props.logged ||
+            (!this.props.user.first_name || this.props.user.first_name.length ===0) ||
+            (!this.props.user.last_name || this.props.user.last_name.length ===0) &&  this.state.userData.last_name !== this.props.user.last_name) {
             Alert.alert(
                 'Сохранение данных',
                 'Сохранить данные в вашем профиле для последующих бронирований?',
@@ -291,7 +297,8 @@ class BookTableConfirmC extends React.Component {
             people_quantity: this.props.navigation.state.params.people_quantity,
             timestamp: this.props.navigation.state.params.time.timestamp,
             comment: this.state.text,
-            phone: this.state.phone
+            client_name: this.state.userData.first_name + " " + this.state.userData.last_name,
+            client_phone: this.state.phone
         };
         let restaurantId = this.props.navigation.state.params.restaurant.id;
 
@@ -300,7 +307,7 @@ class BookTableConfirmC extends React.Component {
             try {
 
 
-                let result = await  this.props.bookTable(
+                const result = await  this.props.bookTable(
                     restaurantId,
                     data
                 );

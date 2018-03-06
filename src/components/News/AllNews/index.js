@@ -80,6 +80,9 @@ class NewsC extends React.Component {
                             else {
                                 restaurants = [];
                             }
+                            const all = rowData.item.restaurants.length === this.props.restaurants.filter((item) => {
+                                return item.status === 1;
+                            }).length;
 
                             return (<TouchableOpacity
                                 style={{marginBottom: 25}}
@@ -92,7 +95,7 @@ class NewsC extends React.Component {
                                     }
                                 }
                             >
-                                <OneNews data={rowData.item} restaurants={restaurants}/>
+                                <OneNews data={rowData.item} restaurants={restaurants} all={all}/>
                             </TouchableOpacity>)
                         }}
                         extraData={this.state}

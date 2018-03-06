@@ -13,6 +13,7 @@ import {deleteOperation, getOrder, getTableReserves} from "../../../actions/user
 import Spinner from "react-native-loading-spinner-overlay";
 import moment from "moment";
 import {NavigationActions} from "react-navigation";
+import platform from "../../../../native-base-theme/variables/platform";
 
 
 class LunchPageC extends React.Component {
@@ -65,7 +66,6 @@ class LunchPageC extends React.Component {
 
             });
 
-
         }
 
 
@@ -97,8 +97,13 @@ class LunchPageC extends React.Component {
                         <FieldValue name="Комментарий к заказу" value={this.order.comment}/>}
                     </View>
 
-                    <View style={{height: 82 * this.food.length}}>
-                        <CategoryList data={this.food} basket={true} navigation={this.props.navigation}/>
+                    <View style={{
+                        height: 73 * this.food.length,
+                        borderColor: platform.brandDivider,
+                        borderBottomWidth: 1,
+                        borderTopWidth: 1
+                    }}>
+                        <CategoryList data={this.food} basket={true}/>
                     </View>
 
 

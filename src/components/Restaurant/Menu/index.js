@@ -53,7 +53,9 @@ class Menu extends React.Component {
     _renderList() {
 
         let categories = this.props.restaurants[this.restaurantId].menu.categories.filter(item => item.status === 1);
-
+        categories.sort((a, b) => {
+            return a.sort - b.sort;
+        });
         if (!this.state.results) {
             return categories.map((item, i) => {
                 if (item.categories) {
@@ -129,17 +131,21 @@ class Menu extends React.Component {
                             this.changeState(section.id)
                         }
                         else {
-                            this.props.navigation.navigate('Category', {
-                                id: section.id,
-                                name: section.title,
-                                restaurant: this.props.restaurants[this.restaurantId]
+                            this.props.navigation.navigate({
+                                routeName: 'Category',
+                                params: {
+                                    id: section.id,
+                                    name: section.title,
+                                    restaurant: this.props.restaurants[this.restaurantId]
+                                },
+                                key: "Category"
                             })
                         }
                     }}>
                     <Text style={styles.listItemText}>{section.title}</Text>
                     <View>
                         {
-                            this.state.activeSection === section.title ?
+                            this.state.activeSection === section.id ?
                                 <Icon style={styles.listItemIcon} name="arrow-up"/>
                                 : <Icon style={styles.listItemIcon} name="arrow-forward"/>
                         }
@@ -159,10 +165,14 @@ class Menu extends React.Component {
                               style={styles.subListItem}
                               onPress={() => {
 
-                                  this.props.navigation.navigate('Category', {
-                                      id: item.id,
-                                      name: item.title,
-                                      restaurant: this.props.restaurants[this.restaurantId]
+                                  this.props.navigation.navigate({
+                                      routeName: 'Category',
+                                      params: {
+                                          id: section.id,
+                                          name: section.title,
+                                          restaurant: this.props.restaurants[this.restaurantId]
+                                      },
+                                      key: "Category"
                                   })
 
                               }}>

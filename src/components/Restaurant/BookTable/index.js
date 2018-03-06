@@ -157,13 +157,17 @@ class BookTable extends React.Component {
                                                             }
                                                             else {
                                                                 return <TouchableOpacity style={styles.timeButtonFill}
-
-                                                                                         onPress={() => {
-                                                                                             this.setState({isOpenOver: true});
-                                                                                         }}
                                                                                          key={time.timestamp}
+                                                                                         onPress={() => {
+
+                                                                                             this.setState({
+                                                                                                 isOpenOver: true,
+                                                                                                 time: time
+                                                                                             });
+                                                                                         }}
+
                                                                 >
-                                                                    <Text style={styles.timeButtonFillText}>
+                                                                    <Text style={styles.timeButtonText}>
                                                                         {moment.unix(time.timestamp).format('HH:mm')}
                                                                     </Text>
                                                                 </TouchableOpacity>
@@ -182,9 +186,13 @@ class BookTable extends React.Component {
                                 </View>}
 
 
-                                <SorryModal isOpen={this.state.isOpenOver} onClose={()=>{
-                                    this.setState({isOpenOver:false})
-                                }}/>
+                            <SorryModal isOpen={this.state.isOpenOver} onClose={(navigate) => {
+                                if (navigate) {
+                                    this.navigateToBook(this.state.time)
+                                }
+                                this.setState({isOpenOver: false})
+
+                            }}/>
 
 
                         </Content>
@@ -312,7 +320,7 @@ const styles = {
         height: 32,
         width: 77,
         borderRadius: 8,
-        backgroundColor: platform.brandWarning,
+        backgroundColor: platform.brandSuccess,
         overflow: 'hidden',
         marginLeft: 4,
         marginRight: 4
@@ -328,7 +336,7 @@ const styles = {
         width: 77,
         borderRadius: 8,
         overflow: 'hidden',
-        backgroundColor: platform.brandOutline,
+        backgroundColor: platform.brandWarning,
         marginLeft: 4,
         marginRight: 4
     },
