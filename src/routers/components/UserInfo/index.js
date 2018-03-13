@@ -111,10 +111,16 @@ class UserInfoC extends React.Component {
 
 
                         if (!this.props.showName) {
-                            this.props.navigation.navigate('MayCardPage');
+                            this.props.navigation.navigate({
+                                routeName: 'MayCardPage',
+                                key: "MayCardPage"
+                            });
                         }
                         else {
-                            this.props.navigation.navigate('MyCard');
+                            this.props.navigation.navigate({
+                                routeName: 'MyCard',
+                                key: "MyCard"
+                            });
                         }
 
                     }}>

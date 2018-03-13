@@ -110,7 +110,7 @@ class BasketPage extends React.Component {
                                               this.requestLunch();
                                           }}>
                             <Text style={styles.pillText}>
-                                Ланч в ресторане
+                                Ланч в ресторане (-{this.restaurant.discount_on_main_menu}%)
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -294,7 +294,13 @@ class BasketPage extends React.Component {
                             this.setState({isOpenExistLunchDishes: false});
 
                             if (this.dishes.filter((dish) => !dish.lunch).length > 0) {
-                                this.props.navigation.navigate('Order', {type: this.state.type, amount: this.amount})
+
+                                this.props.navigation.navigate({
+                                    routeName: 'Order',
+                                    params: {type: this.state.type, amount: this.amount},
+                                    key: "Order"
+                                });
+
                             }
 
                         }
@@ -368,7 +374,11 @@ class BasketPage extends React.Component {
                         })
                     }
                     else {
-                        this.props.navigation.navigate('Order', {type: this.state.type, amount: this.amount})
+                        this.props.navigation.navigate({
+                            routeName: 'Order',
+                            params: {type: this.state.type, amount: this.amount},
+                            key: "Order"
+                        });
                     }
 
 
@@ -379,7 +389,11 @@ class BasketPage extends React.Component {
             }
             else {
                 if (this.lunchAvailable()) {
-                    this.props.navigation.navigate('Order', {type: this.state.type, amount: this.amount})
+                    this.props.navigation.navigate({
+                        routeName: 'Order',
+                        params: {type: this.state.type, amount: this.amount},
+                        key: "Order"
+                    });
                 } else {
                     this.setState({isOpenLunchWarning: true})
                 }
@@ -388,7 +402,11 @@ class BasketPage extends React.Component {
 
         }
         else {
-            this.props.navigation.navigate('Login', {nested: true, back: null})
+            this.props.navigation.navigate({
+                routeName: 'Login',
+                params: {nested: true, back: null},
+                key: "Login"
+            });
         }
     }
 

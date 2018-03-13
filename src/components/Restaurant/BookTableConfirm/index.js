@@ -263,8 +263,8 @@ class BookTableConfirmC extends React.Component {
 
 
         if (!this.props.logged ||
-            (!this.props.user.first_name || this.props.user.first_name.length ===0) ||
-            (!this.props.user.last_name || this.props.user.last_name.length ===0) &&  this.state.userData.last_name !== this.props.user.last_name) {
+            (!this.props.user.first_name || this.props.user.first_name.length === 0) ||
+            (!this.props.user.last_name || this.props.user.last_name.length === 0) && this.state.userData.last_name !== this.props.user.last_name) {
             Alert.alert(
                 'Сохранение данных',
                 'Сохранить данные в вашем профиле для последующих бронирований?',
@@ -297,7 +297,7 @@ class BookTableConfirmC extends React.Component {
             people_quantity: this.props.navigation.state.params.people_quantity,
             timestamp: this.props.navigation.state.params.time.timestamp,
             comment: this.state.text,
-            client_name: this.state.userData.first_name + " " + this.state.userData.last_name,
+            client_name: this.state.userData.first_name + " " + this.state.userData.last_name ? this.state.userData.last_name : "",
             client_phone: this.state.phone
         };
         let restaurantId = this.props.navigation.state.params.restaurant.id;
@@ -367,15 +367,21 @@ class BookTableConfirmC extends React.Component {
         else {
 
             let result = await this.props.sendCode(this.state.phone);
-            this.props.navigation.navigate('BookTableConfirmCode', {
-                restaurantId: restaurantId,
-                data: data,
-                confirmBookTable: true,
-                save: save,
-                number: this.state.phone,
-                first_name: this.state.userData.first_name,
-                last_name: this.state.userData.last_name
-            })
+
+            this.props.navigation.navigate({
+                routeName: 'BookTableConfirmCode',
+                params: {
+                    restaurantId: restaurantId,
+                    data: data,
+                    confirmBookTable: true,
+                    save: save,
+                    number: this.state.phone,
+                    first_name: this.state.userData.first_name,
+                    last_name: this.state.userData.last_name
+                },
+                key: "BookTableConfirmCode"
+            });
+
         }
 
     }

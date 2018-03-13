@@ -2,7 +2,8 @@ import {
     CLEAR_PENDINGS, CLEAR_REQUEST_DATA,
     CLOSE_TUTORIAL,
     CONFIRM_CODE_FULFILLED,
-    CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, CREATE_DEVICE_FULFILLED, GET_DISCOUNT_CODE,
+    CONFIRM_CODE_PENDING, CONFIRM_CODE_REJECTED, CREATE_DEVICE_FULFILLED, DELETE_OPERATION_FULFILLED,
+    DELETE_OPERATION_PENDING, DELETE_OPERATION_REJECTED, GET_DISCOUNT_CODE,
     GET_DISCOUNT_CODE_FULFILLED, GET_LIKES,
     GET_LIKES_FULFILLED, GET_OPERATION, GET_OPERATION_FULFILLED, GET_OPERATION_PENDING, GET_OPERATION_REJECTED,
     GET_ORDER_FULFILLED,
@@ -282,6 +283,28 @@ export default function (state: State = initialState, action) {
         };
     }
 
+    if (action.type === DELETE_OPERATION_PENDING) {
+        return {
+            ...state,
+            isDeleteOperationPending: true
+        };
+    }
+
+    if (action.type === DELETE_OPERATION_FULFILLED) {
+        return {
+            ...state,
+            isDeleteOperationPending: false
+        };
+    }
+
+    if (action.type === DELETE_OPERATION_REJECTED) {
+        return {
+            ...state,
+            order: null,
+            isDeleteOperationPending: false
+        };
+    }
+
     if (action.type === GET_ORDER_PENDING) {
         return {
             ...state,
@@ -357,7 +380,8 @@ export default function (state: State = initialState, action) {
             sendTicketPending: false,
             confirmCodePending: false,
             sendCodePending: false,
-            getOrderPending: false
+            getOrderPending: false,
+            isDeleteOperationPending: false
         };
     }
 

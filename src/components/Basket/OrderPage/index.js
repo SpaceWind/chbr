@@ -240,8 +240,7 @@ class OrderPage extends React.Component {
                     {this.amount.discount && <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Скидка</Text>
                         <Text
-                            style={styles.priceText}>{this.amount.discountSize > 0 ? this.amount.discountSize + "% или " : ""}{this.amount.discountAmount}
-                            ₽</Text>
+                            style={styles.priceText}>{this.amount.discountAmount}₽</Text>
                     </View>}
                     <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Итого к оплате</Text>
@@ -298,7 +297,12 @@ class OrderPage extends React.Component {
         };
         try {
             let result = await this.props.buy(this.props.billing.restaurantId, data);
-            this.props.navigation.navigate('Pay', {order: result, type: this.type});
+
+            this.props.navigation.navigate({
+                routeName: 'Pay',
+                params: {order: result, type: this.type},
+                key: "Pay"
+            });
         }
         catch (ex) {
 

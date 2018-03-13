@@ -21,16 +21,16 @@ export default class Amount extends React.Component {
         return <View style={styles.block}>
             <View style={styles.row}>
                 <Text style={styles.text}>Сумма заказа</Text>
-                <Text style={styles.text}>{this.props.info.summ_raw + ' ₽'}</Text>
+                <Text style={styles.text}>{Math.round(this.props.info.summ_raw) + ' ₽'}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.text}>Скидка</Text>
                 <Text
-                    style={styles.text}>{Math.floor(this.props.info.summ_raw - this.props.info.summ) + ' ₽'}</Text>
+                    style={styles.text}>{Math.round(this.props.info.summ_raw - this.props.info.summ) + ' ₽'}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.text}>Итого оплачено</Text>
-                <Text style={styles.text}>{this.props.info.summ + ' ₽'}</Text>
+                <Text style={styles.text}>{Math.round(this.props.info.summ) + ' ₽'}</Text>
             </View>
         </View>
     }

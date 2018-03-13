@@ -56,11 +56,17 @@ class SignFirstStep extends React.Component {
             let result = await this.props.sendCode(this.number);
 
             console.log(result);
-            this.props.navigation.navigate('SignSecond', {
-                number: this.number,
-                nested: this.props.navigation.state.params && this.props.navigation.state.params.nested,
-                back: this.props.navigation.state.params && this.props.navigation.state.params.back
-            })
+
+            this.props.navigation.navigate({
+                routeName: 'SignSecond',
+                params:{
+                    number: this.number,
+                    nested: this.props.navigation.state.params && this.props.navigation.state.params.nested,
+                    back: this.props.navigation.state.params && this.props.navigation.state.params.back
+                },
+                key: "SignSecond"
+            });
+
         }
 
         catch (ex) {

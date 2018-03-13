@@ -236,7 +236,7 @@ class Profile extends React.Component {
                             <Text style={InputBlockStyles.inputLabel}> Версия приложения</Text>
 
                             <View style={{paddingVertical: 16}}>
-                                <Text style={{fontSize: 18}}>1.3</Text>
+                                <Text style={{fontSize: 18}}>2.0</Text>
                             </View>
 
                         </View>

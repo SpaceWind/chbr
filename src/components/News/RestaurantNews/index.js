@@ -87,10 +87,16 @@ class News extends React.Component {
                                     style={{marginBottom: 25}}
                                     onPress={
                                         () => {
-                                            this.props.navigation.navigate('OneRestaurantNewsPage', {
-                                                news: rowData.item,
-                                                restaurants: restaurants
-                                            })
+
+                                            this.props.navigation.navigate({
+                                                routeName: 'OneRestaurantNewsPage',
+                                                params: {
+                                                    news: rowData.item,
+                                                    restaurants: restaurants
+                                                },
+                                                key: "OneRestaurantNewsPage"
+                                            });
+
                                         }
                                     }
                                 >

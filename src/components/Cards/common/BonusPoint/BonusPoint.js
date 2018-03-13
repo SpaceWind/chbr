@@ -33,7 +33,11 @@ export default class BonusPoint extends React.Component {
             </View>
             <View style={styles.buttonRow}>
                 <Button style={{flex: 1, justifyContent: 'center',paddingRight:8,paddingLeft:8}} warning rounded bordered onPress={() => {
-                    this.props.navigation.navigate('HowWorksPage')
+
+                    this.props.navigation.navigate({
+                        routeName: 'HowWorksPage',
+                        key: "HowWorksPage"
+                    });
                 }}>
                     <Text uppercase={false} style={{fontSize: width < 340 ? 20 : 22}}>Как накопить и тратить
                         баллы?</Text>

@@ -3,7 +3,7 @@
 
 import React from "react";
 
-import {TouchableOpacity, Animated, Image} from "react-native";
+import {TouchableOpacity, Animated, Image, Dimensions} from "react-native";
 import {Button, Text, View, Icon} from 'native-base';
 import platform from "../../../../native-base-theme/variables/platform";
 import ChesterIcon from "../../Common/ChesterIcon/index";
@@ -79,7 +79,7 @@ export default class CategoryListItem extends React.Component {
                     this.props.navigation.navigate({
                         routeName: 'Dish',
                         params: {name: this.props.item.title, dish: this.props.item},
-                        key: "Dish"
+                        key: "Dish" + this.props.item.id
                     })
                 }} disabled={!this.props.navigation}>
                     <View style={styles.infoImageBlock}>
@@ -307,7 +307,10 @@ const styles = {
     },
     infoBlockText: {
         marginLeft: 12,
-        maxWidth: '100%',
+
+        width: Dimensions.get('window').width - 32 - 72  - 65 -8,
+        maxWidth: Dimensions.get('window').width - 32 - 72  - 65 -8,
+        minWidth: Dimensions.get('window').width - 32 - 72  - 65 -8,
         flex: 1
     },
     infoText: {
@@ -337,7 +340,7 @@ const styles = {
         borderRadius: 8,
         paddingRight: 16.5,
         paddingLeft: 16.5,
-        borderColor:platform.brandWarning
+        borderColor: platform.brandWarning
 
     },
     addItemButtonText: {

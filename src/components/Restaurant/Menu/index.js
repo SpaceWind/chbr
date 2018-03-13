@@ -33,11 +33,13 @@ class Menu extends React.Component {
             this.restaurantId = this.props.navigation.state.params.key;
         }
 
-
         return (
             <View style={styles.container}>
                 <Container style={{flex: 1}}>
-                    <Content keyboardShouldPersistTaps="always" style={{flex: 1, minHeight: '100%'}}>
+                    <Content keyboardShouldPersistTaps="always"
+                             style={{flex: 1, minHeight: '100%'}}
+                             ref={ref => this.content = ref}
+                    >
                         <SearchInput onChangeText={(text) => {
                             this.onStartSearch(text)
                         }}/>
@@ -61,8 +63,11 @@ class Menu extends React.Component {
                 if (item.categories) {
                     return (
                         <View key={i}>
-                            {this._renderHeader(item, true)}
-                            <Collapsible collapsed={this.state.activeSection !== item.id}>
+                            {this._renderHeader(item, true, categories.length - 1 - i)}
+                            <Collapsible
+                                collapsed={this.state.activeSection !== item.id}
+                                duration={100}
+                            >
                                 {this.state.activeSection === item.id ? this._renderContent(item) :
                                     <View/>}
                             </Collapsible>
@@ -121,14 +126,22 @@ class Menu extends React.Component {
 
     }
 
-    _renderHeader(section, category) {
+    _renderHeader(section, category, i) {
         return (
             <View>
                 <TouchableOpacity
                     style={styles.listItem}
                     onPress={() => {
                         if (category) {
-                            this.changeState(section.id)
+                            this.changeState(section.id);
+                            if (i < 3 && this.state.activeSection !== section.id) {
+
+                                setTimeout(() => {
+                                    this.content._root.scrollToEnd({animated: true});
+                                }, 150)
+                            }
+
+
                         }
                         else {
                             this.props.navigation.navigate({
@@ -168,8 +181,8 @@ class Menu extends React.Component {
                                   this.props.navigation.navigate({
                                       routeName: 'Category',
                                       params: {
-                                          id: section.id,
-                                          name: section.title,
+                                          id: item.id,
+                                          name: item.title,
                                           restaurant: this.props.restaurants[this.restaurantId]
                                       },
                                       key: "Category"
@@ -194,7 +207,7 @@ class Menu extends React.Component {
 
     getAllDish() {
         return this.props.restaurants[this.restaurantId].menu.categories
-            .filter(item => item.status === 1 && item.title!=='Еда за баллы')
+            .filter(item => item.status === 1 && item.title !== 'Еда за баллы')
             .reduce((a, b) => {
                 let items = [];
                 if (b.categories) {

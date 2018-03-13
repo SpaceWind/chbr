@@ -30,11 +30,11 @@ class HistoryPage extends React.Component {
 
         switch (item.type) {
             case 2: {
-                this.props.navigation.navigate('ScanBillHistory', {name: title, history: item});
+                this.navigateTo('ScanBillHistory', {name: title, history: item});
                 break;
             }
             case 3: {
-                this.props.navigation.navigate('BookTableHistory', {
+                this.navigateTo('BookTableHistory', {
                     name: title,
                     history: item,
                     reserveId: item.result_id
@@ -42,7 +42,7 @@ class HistoryPage extends React.Component {
                 break;
             }
             case 4: {
-                this.props.navigation.navigate('LunchHistory', {
+                this.navigateTo('LunchHistory', {
                     name: title,
                     resultId: item.result_id,
                     operationId: item.id
@@ -50,17 +50,26 @@ class HistoryPage extends React.Component {
                 break;
             }
             case 5: {
-                this.props.navigation.navigate('BuyByBonusHistory', {name: title, resultId: item.result_id});
+                this.navigateTo('BuyByBonusHistory', {name: title, resultId: item.result_id});
                 break;
             }
             case 7: {
-                this.props.navigation.navigate('LunchHistory', {
+                this.navigateTo('LunchHistory', {
                     name: title,
                     resultId: item.result_id,
-                    operationId: item.id});
+                    operationId: item.id
+                });
                 break;
             }
         }
+    }
+
+    navigateTo(name, params) {
+        this.props.navigation.navigate({
+            routeName: name,
+            params: params,
+            key: name
+        });
     }
 
 
@@ -129,7 +138,7 @@ class HistoryPage extends React.Component {
                 },
                 component: (<Button danger style={styles.swipeButton}
                                     onPress={() => {
-                                        this._deleteOperation(item.id);
+                                        this._requestDelete(item.id);
                                     }}
                 >
                     <Text style={styles.swipeButtonText} uppercase={false}>Удалить</Text>
@@ -159,7 +168,8 @@ class HistoryPage extends React.Component {
                                     style={styles.listItemPointText}>{date.format('D MMM, HH:mm')}</Text>
                                 {item.type !== 5 && item.type !== 3 && <View style={styles.listItemPriceBlock}>
                                     <View style={styles.infoPoint}/>
-                                    <Text style={styles.listItemPointText}>{(item.price || item.summ) + ' ₽'}</Text>
+                                    <Text
+                                        style={styles.listItemPointText}>{Math.round(item.price || item.summ) + ' ₽'}</Text>
                                 </View>}
                                 <View style={styles.infoPoint}/>
                                 <Text style={styles.listItemPointText}>{bonusText}</Text>
@@ -196,10 +206,10 @@ class HistoryPage extends React.Component {
 
 
         }
-        console.log(list)
         return <ImageBackground source={require('../../../../assets/images/background/background.png')}
                                 style={signStackStyle}>
 
+            <Spinner visible={this.state.loading} textStyle={{color: '#FFF'}}/>
 
             {!empty || this.props.isPending
                 ? <FlatList
@@ -240,6 +250,25 @@ class HistoryPage extends React.Component {
         </ImageBackground>
     }
 
+
+    async _requestDelete(id) {
+        Alert.alert(
+            'Вы уверены?',
+            'Данная информация будет удалена из истории',
+            [
+                {
+                    text: 'Нет', onPress: () => {
+                }, style: 'cancel'
+                },
+                {
+                    text: 'Ок', onPress: () => {
+                    this._deleteOperation(id)
+                }
+                }
+            ]
+        );
+    }
+
     async _deleteOperation(id) {
 
 
@@ -275,7 +304,8 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
     restaurants: state.restaurant.restaurants,
     history: state.user.history,
-    isPending: state.user.getHistoryPending
+    isPending: state.user.getHistoryPending,
+    isDeleteOperationPending: state.user.isDeleteOperationPending
 });
 const HistoryPageSwag = connect(mapStateToProps, bindAction)(HistoryPage);
 export default HistoryPageSwag;

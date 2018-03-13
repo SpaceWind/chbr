@@ -56,39 +56,40 @@ export default class CategoryList extends React.Component {
 
 
     addItem(item) {
-        this.setState((prevState, props) => {
-                let obj = {
-                    active: item.id
-                };
+        let result = this.props.onAddDish(item);
+        if (result) {
+            this.setState((prevState, props) => {
+                    let obj = {
+                        active: item.id
+                    };
 
-                if (prevState.active !== obj.active || item.count === 0) {
-                    Animated.timing(                  // Animate over time
-                        item.fadeAnim,            // The animated value to drive
-                        {
-                            toValue: -50,                   // Animate to opacity: 1 (opaque)
-                            duration: 300,              // Make it take a while
-                        }
-                    ).start();
-
-                    if (prevState.active !== null && prevState.active !== obj.active) {
+                    if (prevState.active !== obj.active || item.count === 0) {
                         Animated.timing(                  // Animate over time
-                            this.props.data.find((it) => it.id === prevState.active).fadeAnim,            // The animated value to drive
+                            item.fadeAnim,            // The animated value to drive
                             {
-                                toValue: 0,                   // Animate to opacity: 1 (opaque)
+                                toValue: -50,                   // Animate to opacity: 1 (opaque)
                                 duration: 300,              // Make it take a while
                             }
                         ).start();
+
+                        if (prevState.active !== null && prevState.active !== obj.active) {
+                            Animated.timing(                  // Animate over time
+                                this.props.data.find((it) => it.id === prevState.active).fadeAnim,            // The animated value to drive
+                                {
+                                    toValue: 0,                   // Animate to opacity: 1 (opaque)
+                                    duration: 300,              // Make it take a while
+                                }
+                            ).start();
+                        }
                     }
+                    else {
+
+                    }
+
+                    return obj;
                 }
-                else {
-
-                }
-                this.props.onAddDish(item);
-                return obj;
-            }
-        );
-
-
+            );
+        }
     }
 
     minusItem(item) {

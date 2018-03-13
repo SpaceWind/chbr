@@ -14,12 +14,20 @@ import {signStackStyle} from "../../../routers/SignStack";
 import CategoryList from "./CategoryList";
 import {connect} from "react-redux";
 import {addDish, initBasket, removeDish} from "../../../actions/billing";
+import OnlyRestobarChester from "../common/OnlyRestobarChester/index";
+import DenyOrder from "../common/DenyOrder/index";
 
 
 class Category extends React.Component {
     static navigationOptions = ({navigation, screenProps}) => ({
         title: navigation.state.params.name
     });
+
+
+    state = {
+        isOpen: false,
+        isOpenOver: false
+    }
 
 
     render() {
@@ -57,7 +65,6 @@ class Category extends React.Component {
         }
 
 
-
         return (
             <ImageBackground source={require('../../../../assets/images/background/background.png')}
                              style={signStackStyle}>
@@ -68,6 +75,13 @@ class Category extends React.Component {
                               onRemoveDish={this.removeDish.bind(this)}
                 />
 
+                <OnlyRestobarChester isOpen={this.state.isOpen} restaurantName={restaurant.title_short} onClose={() => {
+                    this.setState({isOpen: false})
+                }}/>
+                <DenyOrder isOpen={this.state.isOpenOver}  onClose={() => {
+                    this.setState({isOpenOver: false})
+                }}/>
+
 
             </ImageBackground>
 
@@ -76,31 +90,43 @@ class Category extends React.Component {
 
     addDish(item) {
 
+        if (this.restaurantId === "1070b543-5104-4191-9a42-cbf1e9a1e9f9") {
+            if (!item.available) {
+                this.setState({isOpenOver: true});
+                return false;
+            }
 
-        if (this.props.billing.restaurantId !== this.restaurantId) {
-            if (this.props.billing.restaurantId && this.props.billing.dishes.length > 0) {
-                Alert.alert(
-                    'Очистить корзину?',
-                    'В корзине есть товары из другого ресторана, очистить корзину?',
-                    [
-                        {text: 'Нет', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                        {
-                            text: 'Да', onPress: () => {
-                            this.props.initBasket(this.restaurantId);
-                            this.props.addDish(item);
-                        }
-                        },
-                    ]
-                )
+            if (this.props.billing.restaurantId !== this.restaurantId) {
+                if (this.props.billing.restaurantId && this.props.billing.dishes.length > 0) {
+                    Alert.alert(
+                        'Очистить корзину?',
+                        'В корзине есть товары из другого ресторана, очистить корзину?',
+                        [
+                            {text: 'Нет', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                            {
+                                text: 'Да', onPress: () => {
+                                this.props.initBasket(this.restaurantId);
+                                this.props.addDish(item);
+                            }
+                            },
+                        ]
+                    )
+                }
+                else {
+                    this.props.initBasket(this.restaurantId);
+                    this.props.addDish(item);
+                }
             }
             else {
-                this.props.initBasket(this.restaurantId);
                 this.props.addDish(item);
             }
+            return true;
         }
         else {
-            this.props.addDish(item);
+            this.setState({isOpen: true});
+            return false;
         }
+
 
     }
 

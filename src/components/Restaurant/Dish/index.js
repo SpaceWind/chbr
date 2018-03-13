@@ -26,6 +26,7 @@ import ComingSoon from "../common/ComingSoon/index";
 import {modalCardStyles} from "../../Profile/Profile/index";
 import MyModal from "../../Common/MyModal/index";
 import DenyOrder from "../common/DenyOrder/index";
+import OnlyRestobarChester from "../common/OnlyRestobarChester/index";
 
 
 export class DishC extends React.Component {
@@ -38,7 +39,8 @@ export class DishC extends React.Component {
         loading: false,
         likes: 0,
         isOpen: false,
-        isOpenOver:false,
+        isOpenOver: false,
+        isOpenOnlyRestobarChester: false,
         current_client_like_it: false
     };
 
@@ -59,7 +61,7 @@ export class DishC extends React.Component {
     render() {
         let dish = this.dish;
         this.restaurantId = dish.restaurant_id;
-
+        const restaurant = this.props.restaurants[this.restaurantId];
 
         let hot = false;
         let newDish = false;
@@ -231,14 +233,9 @@ export class DishC extends React.Component {
                                         <Button
                                             warning rounded style={{flex: 1, justifyContent: 'center'}}
                                             onPress={() => {
-                                                if(this.dish.available)
-                                                {
-                                                    this.addItem();
-                                                }
-                                                else
-                                                {
-                                                    this.setState({isOpenOver: true})
-                                                }
+
+                                                this.addItem();
+
 
                                             }}>
                                             <Text uppercase={false}>{dish.price + ' ₽'}</Text>
@@ -287,10 +284,12 @@ export class DishC extends React.Component {
                             this.setState({isOpen: false})
                         }}/>
 
-                        <DenyOrder isOpen={this.state.isOpenOver} onClose={() => {
+                        <DenyOrder isOpen={this.state.isOpenOver}  onClose={() => {
                             this.setState({isOpenOver: false})
                         }}/>
-
+                        <OnlyRestobarChester isOpen={this.state.isOpenOnlyRestobarChester} restaurantName={restaurant.title_short} onClose={() => {
+                            this.setState({isOpenOnlyRestobarChester: false})
+                        }}/>
 
 
                     </View>
@@ -300,11 +299,46 @@ export class DishC extends React.Component {
     }
 
 
-    addItem(item) {
-        if (this.props.billing.restaurantId !== this.restaurantId) {
-            this.props.initBasket(this.restaurantId);
+    addItem() {
+
+
+        if (this.restaurantId === "1070b543-5104-4191-9a42-cbf1e9a1e9f9") {
+
+            if (!this.dish.available) {
+                this.setState({isOpenOver: true});
+                return;
+            }
+
+            if (this.props.billing.restaurantId !== this.restaurantId) {
+                if (this.props.billing.restaurantId && this.props.billing.dishes.length > 0) {
+                    Alert.alert(
+                        'Очистить корзину?',
+                        'В корзине есть товары из другого ресторана, очистить корзину?',
+                        [
+                            {text: 'Нет', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                            {
+                                text: 'Да', onPress: () => {
+                                this.props.initBasket(this.restaurantId);
+                                this.props.addDish(this.dish);
+                            }
+                            },
+                        ]
+                    )
+                }
+                else {
+                    this.props.initBasket(this.restaurantId);
+                    this.props.addDish(this.dish);
+                }
+            }
+            else {
+                this.props.addDish(this.dish);
+            }
+            return true;
         }
-        this.props.addDish(this.dish);
+        else {
+            this.setState({isOpenOnlyRestobarChester: true});
+            return false;
+        }
     }
 
     minusItem(item) {
@@ -510,7 +544,7 @@ const styles = {
         borderColor: platform.brandDivider,
         paddingHorizontal: 16,
         marginHorizontal: -6,
-        paddingBottom:12,
+        paddingBottom: 12,
         flexDirection: 'row',
         alignItems: 'center',
         flexWrap: 'wrap'

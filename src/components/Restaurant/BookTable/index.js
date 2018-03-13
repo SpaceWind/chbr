@@ -206,6 +206,7 @@ class BookTable extends React.Component {
 
 
     getDate(count, date) {
+        console.log(date)
         this.props.getTime(this.restaurant.id, {
             people_quantity: count,
             timestamp: date
@@ -247,17 +248,23 @@ class BookTable extends React.Component {
 
 
     getTimeSheet() {
+        console.log(this.props.timeSheet)
         return this.props.timeSheet.filter(time => {
             return time.timestamp > moment().unix();
         });
     }
 
     navigateToBook(time) {
-        this.props.navigation.navigate('BookTableConfirm', {
-            time: time,
-            restaurant: this.restaurant,
-            people_quantity: this.state.count
-        })
+
+        this.props.navigation.navigate({
+            routeName: 'BookTableConfirm',
+            params: {
+                time: time,
+                restaurant: this.restaurant,
+                people_quantity: this.state.count
+            },
+            key: "BookTableConfirm"
+        });
     }
 }
 

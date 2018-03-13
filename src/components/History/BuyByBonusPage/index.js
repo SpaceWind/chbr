@@ -52,6 +52,7 @@ export class BuyByBonusPageC extends React.Component {
             }
         }
 
+        console.log(operation)
 
         return (<ImageBackground source={require('../../../../assets/images/background/background.png')}
                                  style={signStackStyle}>
@@ -75,8 +76,9 @@ export class BuyByBonusPageC extends React.Component {
 
                     {dish &&
                     <View style={styles.dish}>
-                        <CategoryList data={[dish]} basket={true}
-                                      navigation={this.props.navigation}/></View>
+                        <CategoryList data={[dish]}
+                                      basket={true}
+                                      /></View>
                     }
 
 
