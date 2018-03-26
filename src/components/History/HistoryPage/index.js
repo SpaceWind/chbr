@@ -206,6 +206,7 @@ class HistoryPage extends React.Component {
 
 
         }
+
         return <ImageBackground source={require('../../../../assets/images/background/background.png')}
                                 style={signStackStyle}>
 

@@ -76,11 +76,24 @@ export default class CategoryListItem extends React.Component {
             <View style={styles.info}>
                 <TouchableOpacity style={styles.infoTouch} onPress={() => {
 
-                    this.props.navigation.navigate({
-                        routeName: 'Dish',
-                        params: {name: this.props.item.title, dish: this.props.item},
-                        key: "Dish" + this.props.item.id
-                    })
+
+                    if (!this.props.item.disabled)
+                    {
+                        this.props.navigation.navigate({
+                            routeName: 'Dish',
+                            params: {name: this.props.item.title, dish: this.props.item},
+                            key: "Dish" + this.props.item.id
+                        })
+                    }
+                    else
+                    {
+                        this.props.onDisabledDish()
+                    }
+
+
+
+
+
                 }} disabled={!this.props.navigation}>
                     <View style={styles.infoImageBlock}>
 
@@ -139,11 +152,18 @@ export default class CategoryListItem extends React.Component {
                         style={{...styles.addItemButton, ...(this.props.item.disabled ? styles.disabledButton : {})}}
                         disabled={!this.props.navigation}
                         onPress={() => {
-                            this.props.navigation.navigate({
-                                routeName: 'Dish',
-                                params: {name: this.props.item.title, dish: this.props.item},
-                                key: "Dish"
-                            })
+                            if (!this.props.item.disabled)
+                            {
+                                this.props.navigation.navigate({
+                                    routeName: 'Dish',
+                                    params: {name: this.props.item.title, dish: this.props.item},
+                                    key: "Dish" + this.props.item.id
+                                })
+                            }
+                            else
+                            {
+                                this.props.onDisabledDish()
+                            }
                         }}>
             <Text style={{...styles.addItemButtonText, ...(this.props.item.disabled ? styles.disabledButtonText : {})}}
                   uppercase={false}>{item.count + ' ' + 'X' + ' ' + item.price + " ₽"}</Text>

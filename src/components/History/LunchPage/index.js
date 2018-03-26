@@ -28,6 +28,7 @@ class LunchPageC extends React.Component {
     constructor(props) {
         super(props);
         this.resultId = this.props.navigation.state.params.resultId;
+        this.operationId = this.props.navigation.state.params.operationId;
     }
 
     componentWillMount() {
@@ -91,7 +92,7 @@ class LunchPageC extends React.Component {
 
                     <View style={styles.body}>
                         <FieldValue name="Имя и фамилия"
-                                    value={this.order.client_firstname + " " + this.order.client_lastname}/>
+                                    value={this.order.client_firstname + " " + (this.order.client_lastname ? this.order.client_lastname : '')}/>
                         <FieldValue name="Время" value={moment.utc(this.order.issue_time).local().format("HH:mm")}/>
                         {!!(this.order.comment && this.order.comment !== "") &&
                         <FieldValue name="Комментарий к заказу" value={this.order.comment}/>}
@@ -101,7 +102,8 @@ class LunchPageC extends React.Component {
                         height: 73 * this.food.length,
                         borderColor: platform.brandDivider,
                         borderBottomWidth: 1,
-                        borderTopWidth: 1
+                        borderTopWidth: 1,
+                        marginBottom: 16,
                     }}>
                         <CategoryList data={this.food} basket={true}/>
                     </View>
@@ -153,7 +155,7 @@ class LunchPageC extends React.Component {
     async _cancelOperation() {
         this.setState({loading: true});
         try {
-            let result = await this.props.deleteOperation(this.operation.id);
+            let result = await this.props.deleteOperation(this.operationId);
             this.props.getTableReserves();
             this.setState({loading: false});
             const backAction = NavigationActions.back();

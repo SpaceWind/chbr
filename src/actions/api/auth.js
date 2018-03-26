@@ -1,5 +1,6 @@
 import Api from "./api"
 import moment from "moment";
+const qs = require('qs'); // included in Jest.
 
 class AuthServiceImpl {
 
@@ -33,7 +34,10 @@ class AuthServiceImpl {
 
     async updateUserData(data) {
         let res = await this.Api.put(`/client/current`, {
-            body: data
+            body: qs.stringify(data),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
         });
         if (res.err) throw res;
         return res.body;

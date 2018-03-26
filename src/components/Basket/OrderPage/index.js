@@ -49,6 +49,7 @@ class OrderPage extends React.Component {
     componentWillMount() {
         this.type = this.props.navigation.state.params.type;
         this.amount = this.props.navigation.state.params.amount;
+        this.dishes =  this.props.navigation.state.params.dishes;
         this.restaurant = this.props.restaurants[this.props.billing.restaurantId];
         let day = moment().locale('en').format('dddd').toLowerCase();
         let timesheet = null;
@@ -62,7 +63,6 @@ class OrderPage extends React.Component {
             this.start = moment().startOf('day').seconds(timesheet.start);
             this.end = moment().startOf('day').seconds(timesheet.finish);
         }
-        this.end.add(-15, 'minutes');
 
         let currentDate = moment().add(1, "hours");
         if (currentDate < this.start) {
@@ -123,6 +123,7 @@ class OrderPage extends React.Component {
                                 keyboardAppearance="dark"
                                 autoCorrect={false}
                                 value={this.state.firstname}
+                                required={true}
                                 onChangeText={(text) => {
                                     this.setState({
                                         firstname: text
@@ -247,7 +248,8 @@ class OrderPage extends React.Component {
                         <Text
                             style={styles.priceText}>{this.amount.total} ₽</Text>
                     </View>
-                    <Button warning full rounded style={styles.submit} onPress={() => this._buy()}>
+                    <Button warning full rounded style={styles.submit} onPress={() => this._buy()}
+                            disabled={!(this.state.firstname && this.state.firstname.length > 0 )}>
                         <Text uppercase={false}>Оформить заказ</Text>
                     </Button>
                     <Text style={styles.mark}>Вы
@@ -267,21 +269,10 @@ class OrderPage extends React.Component {
     async _buy() {
 
 
-        let dishes = this.props.billing.dishes.map(dish => ({
+        let dishes = this.dishes.map(dish => ({
             id: dish.id,
             quantity: dish.count
         }));
-        if (this.type === 'out') {
-            let allDishes = this.getAllDish(this.props.billing.restaurantId);
-            for (let dish of dishes) {
-                let storedDish = allDishes.find(d => d.id === dish.id);
-                if (storedDish) {
-                    dish.lunch = storedDish.lunch;
-                }
-            }
-            dishes = dishes.filter(dish => !dish.lunch);
-        }
-
 
         let data = {
             type: this.type === 'lunch' ? 2 : 3,

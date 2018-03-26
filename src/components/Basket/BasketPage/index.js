@@ -17,6 +17,7 @@ import {clearBasket, deleteDish} from "../../../actions/billing";
 import BasketList from "./BasketList";
 import BasketHelpers from "../BasketHelpers";
 import TextHelper from "../../../../utilities/TextHelper";
+import DenyOrder from "../../Restaurant/common/DenyOrder/index";
 
 
 class BasketPage extends React.Component {
@@ -29,7 +30,9 @@ class BasketPage extends React.Component {
         isOpenClearBasket: false,
         isOpenLunchWarning: false,
         isOpenOut: false,
-        isOpenExistLunchDishes: false
+        isOpenExistLunchDishes: false,
+        isOpenDisabledDish: false,
+        isOpenOver: false
     };
 
     componentWillMount() {
@@ -63,7 +66,7 @@ class BasketPage extends React.Component {
                 let storedDish = allDishes.find(d => d.id === dish.id);
                 if (storedDish) {
 
-                    let dishResult ={
+                    let dishResult = {
                         ...dish,
                         ...storedDish
                     };
@@ -75,6 +78,11 @@ class BasketPage extends React.Component {
                     else {
                         dishResult.disabled = false;
                     }
+                    if (!dishResult.available) {
+                        dishResult.disabled = true;
+                    }
+
+
                     result.push(dishResult);
                 }
             }
@@ -120,6 +128,22 @@ class BasketPage extends React.Component {
                     {result.length > 0 ?
                         <BasketList data={result}
                                     navigation={this.props.navigation}
+                                    onDisabledDish={(item) => {
+
+                                        if (item.lunch) {
+                                            this.setState({
+                                                isOpenDisabledDish: true
+                                            })
+                                        }
+                                        else {
+                                            this.setState({
+                                                isOpenOver: true
+                                            })
+                                        }
+
+
+                                    }
+                                    }
                                     onDeleteDish={(dish) => {
                                         this._onDeleteDish(dish)
                                     }}
@@ -160,10 +184,9 @@ class BasketPage extends React.Component {
                                 full
                                 rounded
                                 style={styles.submit}
-                                disabled={!result.length > 0}
+                                disabled={this.isEmpty()}
                                 onPress={() => {
                                     this._order();
-
                                 }}>
                             <Text uppercase={false}>Оформить заказ</Text>
                         </Button>
@@ -212,7 +235,6 @@ class BasketPage extends React.Component {
                 </View>
 
             </MyModal>
-
             <MyModal style={{height: 215, backgroundColor: "#7A8187"}} isOpen={this.state.isOpenLunchWarning}
                      ref="modal"
                      position={'bottom'}
@@ -223,7 +245,7 @@ class BasketPage extends React.Component {
                             <Text style={modalCardStyles.removeText}>Ланч в ресторане</Text>
                             <Text style={modalCardStyles.removeTextQuestion}>Извините, но ланч в ресторане
                                 {
-                                    !this.disabledLunch ? ` доступен только с ${this.startLunch.format('HH:mm')} до ${this.endLunch.format('HH:mm')}. Оформление заказа возможно с 10:00.` : " сегодня недоступен"
+                                    !this.disabledLunch ? ` доступен с ${this.startLunch.format('HH:mm')} до ${this.endLunch.format('HH:mm')}. Оформление заказа возможно с 10:00 до ${this.endLunch.clone().add(-1, 'hour').format('HH:mm')}` : " сегодня недоступен"
                                 }</Text>
                         </View>
                         <ChesterIcon name="trash" size={56} color={"#fff"}/>
@@ -241,8 +263,6 @@ class BasketPage extends React.Component {
                 </View>
 
             </MyModal>
-
-
             <MyModal style={{height: 215, backgroundColor: "#7A8187"}} isOpen={this.state.isOpenOut}
                      ref="modal"
                      position={'bottom'}
@@ -251,9 +271,9 @@ class BasketPage extends React.Component {
                     <View style={modalCardStyles.hintRow}>
                         <View style={modalCardStyles.textRow}>
                             <Text style={modalCardStyles.removeText}>Заказ на вынос</Text>
-                            <Text style={modalCardStyles.removeTextQuestion}>Извините, но заказ на вынос в ресторане
+                            <Text style={modalCardStyles.removeTextQuestion}>Извините, но заказ на вынос
                                 {
-                                    !this.disabledOut ? ` доступен только с ${this.startOut.format('HH:mm')} до ${this.endOut.format('HH:mm')}. Оформление заказа возможно с 10:00.` : " сегодня недоступен"
+                                    !this.disabledOut ? ` доступен с ${this.startOut.format('HH:mm')} до ${this.endOut.format('HH:mm')}. Оформление заказа возможно с 10:00 до ${this.endOut.clone().add(-1, 'hour').format('HH:mm')}` : " сегодня недоступен"
                                 }
                             </Text>
                         </View>
@@ -272,8 +292,6 @@ class BasketPage extends React.Component {
                 </View>
 
             </MyModal>
-
-
             <MyModal style={{height: 215, backgroundColor: "#7A8187"}} isOpen={this.state.isOpenExistLunchDishes}
                      ref="modal"
                      position={'bottom'}
@@ -294,13 +312,7 @@ class BasketPage extends React.Component {
                             this.setState({isOpenExistLunchDishes: false});
 
                             if (this.dishes.filter((dish) => !dish.lunch).length > 0) {
-
-                                this.props.navigation.navigate({
-                                    routeName: 'Order',
-                                    params: {type: this.state.type, amount: this.amount},
-                                    key: "Order"
-                                });
-
+                                this.navigateToOrder();
                             }
 
                         }
@@ -312,7 +324,35 @@ class BasketPage extends React.Component {
                 </View>
 
             </MyModal>
+            <MyModal style={{height: 215, backgroundColor: "#7A8187"}} isOpen={this.state.isOpenDisabledDish}
+                     ref="modal"
+                     position={'bottom'}
+                     onRequestClose={() => this.setState({isOpenDisabledDish: false})}>
+                <View style={modalCardStyles.modal}>
+                    <View style={modalCardStyles.hintRow}>
+                        <View style={modalCardStyles.textRow}>
+                            <Text style={modalCardStyles.removeText}>Блюдо недоступно</Text>
+                            <Text style={modalCardStyles.removeTextQuestion}>Блюда из Обеденного предложения доступны
+                                только для ланча в ресторане</Text>
+                        </View>
+                        <ChesterIcon name="trash" size={56} color={"#fff"}/>
+                    </View>
 
+                    <View style={modalCardStyles.buttonRow}>
+                        <Button bordered rounded light full style={modalCardStyles.cancelButton} onPress={() => {
+                            this.setState({isOpenDisabledDish: false});
+                        }
+                        }>
+                            <Text uppercase={false} style={modalCardStyles.buttonText}>ОК</Text>
+                        </Button>
+                    </View>
+
+                </View>
+
+            </MyModal>
+            <DenyOrder isOpen={this.state.isOpenOver} onClose={() => {
+                this.setState({isOpenOver: false})
+            }}/>
         </ImageBackground>
     }
 
@@ -337,8 +377,15 @@ class BasketPage extends React.Component {
                 let items = [];
                 if (b.categories) {
                     items = b.categories.reduce((a, subCategory) => {
+                        if (b.is_business_lunch === 1 && subCategory.is_business_lunch) {
+                            for (let dish of subCategory.items) {
+                                dish.lunch = true;
+                            }
+                        }
                         return a.concat(subCategory.items);
-                    }, [])
+                    }, []);
+
+
                 } else {
                     items = b.items;
                     if (b.is_business_lunch === 1) {
@@ -355,13 +402,17 @@ class BasketPage extends React.Component {
 
 
     outAvailable() {
-        return !this.disabledOut && moment().add(1, 'hours') < this.endOut.clone().add(-15, "minutes") && moment().hours() >= 10;
+        return !this.disabledOut && moment().add(1, 'hours') < this.endOut.clone() && moment().hours() >= 10;
     }
 
     lunchAvailable() {
-        return !this.disabledLunch && moment().add(1, 'hours') < this.endLunch.clone().add(-15, "minutes") && moment().hours() >= 10;
+        return !this.disabledLunch && moment().add(1, 'hours') < this.endLunch.clone() && moment().hours() >= 10;
     }
 
+
+    isEmpty() {
+        return !this.dishes || this.dishes.filter((dish) => !dish.disabled).length === 0
+    }
 
     _order() {
         if (this.props.logged) {
@@ -374,11 +425,7 @@ class BasketPage extends React.Component {
                         })
                     }
                     else {
-                        this.props.navigation.navigate({
-                            routeName: 'Order',
-                            params: {type: this.state.type, amount: this.amount},
-                            key: "Order"
-                        });
+                        this.navigateToOrder();
                     }
 
 
@@ -389,11 +436,7 @@ class BasketPage extends React.Component {
             }
             else {
                 if (this.lunchAvailable()) {
-                    this.props.navigation.navigate({
-                        routeName: 'Order',
-                        params: {type: this.state.type, amount: this.amount},
-                        key: "Order"
-                    });
+                    this.navigateToOrder();
                 } else {
                     this.setState({isOpenLunchWarning: true})
                 }
@@ -408,6 +451,21 @@ class BasketPage extends React.Component {
                 key: "Login"
             });
         }
+    }
+
+    navigateToOrder()
+    {
+        this.props.navigation.navigate({
+            routeName: 'Order',
+            params: this.getParams(),
+            key: "Order"
+        });
+    }
+
+
+    getParams()
+    {
+        return {type: this.state.type, amount: this.amount,dishes:this.dishes.filter(dish=>!dish.disabled) }
     }
 
     _onDeleteDish(dish) {

@@ -91,7 +91,7 @@ class Profile extends React.Component {
                                         this.setState({
                                             userData: {
                                                 ...this.state.userData,
-                                                first_name: text
+                                                first_name: text ? text : ''
                                             }
                                         })
                                     }}
@@ -108,7 +108,7 @@ class Profile extends React.Component {
                                         this.setState({
                                             userData: {
                                                 ...this.state.userData,
-                                                last_name: text
+                                                last_name: text ? text : ''
                                             }
                                         })
                                     }}
@@ -127,28 +127,13 @@ class Profile extends React.Component {
                                         this.setState({
                                             userData: {
                                                 ...this.state.userData,
-                                                email: text
+                                                email: text ? text : ''
                                             }
                                         })
                                     }}
-                                    onFocus={() => {
-
-                                        this.backupEmail = this.state.userData.email;
-
-                                    }}
                                     onBlur={() => {
 
-                                        if (this.state.userData.email.length>0 &&!this.validateEmail(this.state.userData.email)) {
-                                            this.setState({
-                                                userData: {
-                                                    ...this.state.userData,
-                                                    email: this.backupEmail
-                                                }
-                                            })
-                                        } else {
-                                            this.props.updateUserData(_.pick(this.state.userData, ['first_name', 'last_name', 'notifications', 'email']));
-                                        }
-
+                                        this.props.updateUserData(_.pick(this.state.userData, ['first_name', 'last_name', 'notifications', 'email']));
 
                                     }}
 
@@ -236,7 +221,7 @@ class Profile extends React.Component {
                             <Text style={InputBlockStyles.inputLabel}> Версия приложения</Text>
 
                             <View style={{paddingVertical: 16}}>
-                                <Text style={{fontSize: 18}}>2.0</Text>
+                                <Text style={{fontSize: 18}}>2.1</Text>
                             </View>
 
                         </View>

@@ -61,6 +61,9 @@ class Menu extends React.Component {
         if (!this.state.results) {
             return categories.map((item, i) => {
                 if (item.categories) {
+                    item.categories.sort((a, b) => {
+                        return a.sort - b.sort;
+                    });
                     return (
                         <View key={i}>
                             {this._renderHeader(item, true, categories.length - 1 - i)}

@@ -10,6 +10,8 @@ import {signStackStyle} from "../../../routers/SignStack";
 import {connect} from "react-redux";
 import {getOneNews} from "../../../actions/news";
 import Spinner from "react-native-loading-spinner-overlay";
+import ImageWithDefault from "../ImageWithDefault";
+
 
 class OneNewsPageС extends React.Component {
 
@@ -27,7 +29,10 @@ class OneNewsPageС extends React.Component {
             news = this.props.navigation.state.params.news;
             image = news.photos && news.photos.find((image) => image.sort !== -1);
             if (image) {
-                image = {uri: image.s3_url}
+                image = {
+                    uri: image.s3_url,
+                    cache: 'force-cache'
+                }
             }
 
 
@@ -38,7 +43,10 @@ class OneNewsPageС extends React.Component {
             if (news) {
                 image = news.photos && news.photos.main;
                 if (image) {
-                    image = {uri: image}
+                    image = {
+                        uri: image,
+                        cache: 'force-cache'
+                    }
                 }
             }
 
@@ -70,11 +78,30 @@ class OneNewsPageС extends React.Component {
                 <Spinner visible={this.props.isPending}
                          textStyle={{color: '#FFF'}}/>
                 {news && <ScrollView>
-                    {image ? <Image source={image} style={styles.image}>
-                        </Image> :
+                    {image ? <ImageWithDefault
+                            source={image}
+                            style={styles.image}
+                            renderError={(err) => {
+                                return <View style={{
+                                    ...styles.image,
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: "#fff"
+                                }}><Text
+                                    style={{
+                                        color: platform.brandOutline,
+                                        fontFamily: platform.fontFamily,
+                                        fontSize: 28,
+                                        lineHeight: 40
+                                    }}
+                                >Новость - полное фото</Text></View>
+                            }}
+
+                        /> :
                         <View style={{height: 20}}></View>
                     }
-                    <View style={{marginHorizontal: 16}}>
+                    <View style={{marginHorizontal: 16, marginBottom: 16}}>
                         <View style={styles.infoBlock}>
 
                             {news.show_event_date === 1 &&
@@ -133,7 +160,7 @@ const styles = {
     infoBlock: {
         flexDirection: 'row',
         alignItems: 'center',
-        flexWrap:'wrap'
+        flexWrap: 'wrap'
     },
     infoDate: {
         color: platform.brandWarning,

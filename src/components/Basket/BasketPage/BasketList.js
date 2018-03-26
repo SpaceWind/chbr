@@ -113,6 +113,9 @@ export default class BasketList extends React.Component {
                                   active={this.state.active}
                                   basket={true}
                                   noAnimate={true}
+                                  onDisabledDish={()=>{
+                                      this.props.onDisabledDish(item)
+                                  }}
                 />
             </Swipeout>
 

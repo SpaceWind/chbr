@@ -165,8 +165,6 @@ export default class SelectDateOrder extends React.Component {
             selectedDay = 'сегодня';
             selectedHour = this.props.date.format('HH:mm');
 
-
-            let fullHours = this.getFullHours();
             let days = this.getDays().map((day, i) => {
                 let hours = null;
                 if (i === 0) {

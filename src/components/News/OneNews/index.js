@@ -3,9 +3,12 @@ import {
     Body, Button, Card, CardItem, Container, Content, Icon, Left, List, ListItem, Right, Text,
     View
 } from 'native-base';
-import {Image, TouchableOpacity} from "react-native";
+import { TouchableOpacity} from "react-native";
 import platform from "../../../../native-base-theme/variables/platform";
 import moment from "moment";
+
+import ImageWithDefault from "../ImageWithDefault";
+
 
 export default class OneNews extends React.Component {
 
@@ -15,7 +18,10 @@ export default class OneNews extends React.Component {
         let image = this.props.data.photos && this.props.data.photos.find((image) => image.sort === -1);
         let containerStyle = styles.container;
         if (image) {
-            image = {uri: image.s3_url}
+            image = {
+                uri: image.s3_url,
+                cache: 'force-cache',
+            }
         }
         else {
             containerStyle = {...containerStyle, ...styles.containerBordered};
@@ -34,8 +40,27 @@ export default class OneNews extends React.Component {
             <View style={containerStyle}>
 
 
-                {image && <Image source={image} style={styles.image}>
-                </Image>}
+                {image && <ImageWithDefault
+                    source={image} style={styles.image}
+                    renderError={(err) => {
+                        return <View style={{
+                            ...styles.image,
+                            flexDirection:'column',
+                            alignItems:'center',
+                            justifyContent:'center',
+                            backgroundColor:"#fff"
+                        }}><Text
+                            style={{
+                                color:platform.brandOutline,
+                                fontFamily: platform.fontFamily,
+                                fontSize: 28,
+                                lineHeight: 40
+                            }}
+
+                        >Новость миниатюра</Text></View>
+                    }}
+                >
+                </ImageWithDefault>}
                 <View style={{marginHorizontal: 16}}>
                     <View style={styles.infoBlock}>
 
@@ -87,7 +112,7 @@ const styles = {
     infoBlock: {
         flexDirection: 'row',
         alignItems: 'center',
-        flexWrap:'wrap'
+        flexWrap: 'wrap'
     },
     infoDate: {
         color: platform.brandWarning,
