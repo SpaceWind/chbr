@@ -1,4 +1,4 @@
-package com.chesternative;
+package ru.chesterapp.mobile;
 
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen;

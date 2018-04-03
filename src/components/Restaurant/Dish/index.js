@@ -302,7 +302,7 @@ export class DishC extends React.Component {
     addItem() {
 
 
-        if (this.restaurantId === "1070b543-5104-4191-9a42-cbf1e9a1e9f9") {
+        //if (this.restaurantId === "1070b543-5104-4191-9a42-cbf1e9a1e9f9") {
 
             if (!this.dish.available) {
                 this.setState({isOpenOver: true});
@@ -334,11 +334,11 @@ export class DishC extends React.Component {
                 this.props.addDish(this.dish);
             }
             return true;
-        }
+        /*}
         else {
             this.setState({isOpenOnlyRestobarChester: true});
             return false;
-        }
+        }*/
     }
 
     minusItem(item) {

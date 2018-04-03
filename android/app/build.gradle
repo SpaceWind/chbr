@@ -2,6 +2,8 @@ apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
 import com.android.build.OutputFile
 
+
+// ru.chesterapp.mobile
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
@@ -99,9 +101,10 @@ android {
 
     defaultConfig {
         applicationId "ru.chesterapp.mobile"
+
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 15
+        versionCode 17
         versionName "2.1"
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -126,6 +129,9 @@ android {
         }
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+        }
         release {
             minifyEnabled enableProguardInReleaseBuilds
             signingConfig signingConfigs.release

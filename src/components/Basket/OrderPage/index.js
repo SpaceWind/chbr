@@ -97,7 +97,7 @@ class OrderPage extends React.Component {
 
                 <View style={styles.header}>
                     <Text style={styles.headerText}>{this.type === 'out' ? "Заказ на вынос" : "Ланч в ресторане"}</Text>
-                    <Text style={styles.headerRestaurant}>Рестобар Chester</Text>
+					<Text style={styles.headerRestaurant}>{this.restaurant.title_short}</Text>
                 </View>
                 <Spinner visible={this.props.isBuyPending} textStyle={{color: '#FFF'}}/>
 
@@ -229,10 +229,9 @@ class OrderPage extends React.Component {
 
                     />}
 
-
+					
                 </View>
-
-
+				
                 <View style={styles.bottom}>
                     {this.amount.discount && <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Сумма заказа</Text>

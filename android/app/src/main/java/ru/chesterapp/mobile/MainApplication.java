@@ -1,4 +1,4 @@
-package com.chesternative;
+package ru.chesterapp.mobile;
 
 import android.app.Application;
 
