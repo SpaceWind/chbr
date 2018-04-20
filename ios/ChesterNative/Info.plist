@@ -39,7 +39,7 @@
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
 	<key>LSApplicationCategoryType</key>
-	<string></string>
+	<string/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>yandexnavi</string>

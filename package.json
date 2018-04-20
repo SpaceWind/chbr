@@ -1,5 +1,5 @@
 {
-  "name": "ChesterNative",
+  "name": "chesternative",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -39,6 +39,7 @@
     "react-native-loading-spinner-overlay": "^0.5.0",
     "react-native-masked-text": "^1.6.5",
     "react-native-modalbox": "^1.4.1",
+    "react-native-payments": "^0.4.0",
     "react-native-permissions": "^1.1.1",
     "react-native-picker": "^4.3.5",
     "react-native-qrcode": "^0.2.6",
@@ -66,5 +67,13 @@
   },
   "jest": {
     "preset": "react-native"
-  }
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/chester-app"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

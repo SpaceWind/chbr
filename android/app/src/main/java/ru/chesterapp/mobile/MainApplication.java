@@ -3,6 +3,7 @@ package ru.chesterapp.mobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativepayments.ReactNativePaymentsPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.reactlibrary.RNUUIDGeneratorPackage;
@@ -34,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativePaymentsPackage(),
             new SplashScreenReactPackage(),
             new RNDeviceInfo(),
             new RNUUIDGeneratorPackage(),

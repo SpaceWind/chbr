@@ -20,6 +20,7 @@ import SorryModal from "../../Restaurant/common/SorryModal/index";
 import Amount from "../../History/common/Amount/index";
 import TextHelper from "../../../../utilities/TextHelper";
 import Spinner from "react-native-loading-spinner-overlay";
+import {PaymentRequest} from "react-native-payments";
 
 const currentPlatform = Platform.OS;
 
@@ -229,9 +230,9 @@ class OrderPage extends React.Component {
 
                     />}
 
-					
+
                 </View>
-				
+
                 <View style={styles.bottom}>
                     {this.amount.discount && <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Сумма заказа</Text>
@@ -266,7 +267,34 @@ class OrderPage extends React.Component {
 
 
     async _buy() {
+        const METHOD_DATA = [{
+          supportedMethods: ['apple-pay'],
+          data: {
+            merchantIdentifier: this.restaurant.apple_merchant_id,
+            supportedNetworks: ['visa', 'mastercard'],
+            countryCode: 'US',
+            currencyCode: 'USD'
+          }
+        }];
 
+        const DETAILS = {
+          id: "result.order_id",
+          displayItems: [
+              {
+                label: 'oops',
+                amount: { currency: 'USD', value: this.amount.total}
+              }
+          ],
+          total: {
+            label: this.restaurant.title_short,
+            amount: { currency: 'USD', value: this.amount.total }
+          }
+        };
+
+        const paymentRequest = new PaymentRequest(METHOD_DATA, DETAILS);
+        paymentRequest.show().then(result => {
+            result.complete('success');
+        });
 
         let dishes = this.dishes.map(dish => ({
             id: dish.id,
