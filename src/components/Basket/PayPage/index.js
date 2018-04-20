@@ -27,8 +27,6 @@ class PayPageC extends React.Component {
 
     constructor() {
         super();
-
-
         this.state.count = 2;
     }
 

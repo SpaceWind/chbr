@@ -12,7 +12,9 @@ export const BaseNavigationBarStyle = {
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 7,
-        shadowRadius: 8
+        shadowRadius: 8,
+        borderBottomWidth: 0,
+        borderWidth: 0
 
     },
     headerTitleStyle: {

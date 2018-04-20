@@ -113,6 +113,7 @@ export default RestaurantsStack = StackNavigator({
 
             headerLeft: <CloseIcon {...props} />,
             headerRight: <View></View>,
+
             headerStyle: BaseNavigationBarStyle.headerStyle,
             drawerLockMode: 'locked-closed',
 
@@ -125,6 +126,10 @@ export default RestaurantsStack = StackNavigator({
             headerLeft: <CloseIcon {...props} />,
             headerRight: <View></View>,
             drawerLockMode: 'locked-closed',
+            headerStyle: {
+                ...BaseNavigationBarStyle.headerStyle,
+                zIndex: 0
+            }
         })
     },
     Order: {
@@ -225,9 +230,19 @@ export default RestaurantsStack = StackNavigator({
         }),
         drawerLockMode: 'locked-closed'
     },
+	ScanBill: {
+        screen: ScanBillPage,
+        navigationOptions: {
+            title: 'Сканирование чека',
+            headerBackTitleStyle: {
+                color: "transparent"
+            },
+			headerRight: <View></View>,
+            drawerLockMode:'locked-closed'
+        }
+    },
     ...LoginTemplate,
-    ...CardTemplate,
-    ...Common
+    ...CardTemplate
 }, {
     navigationOptions: props => ({
         ...BaseNavigationBarStyle,

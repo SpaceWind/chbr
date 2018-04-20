@@ -125,7 +125,14 @@ class RestaurantServiceImpl {
         return res.body;
     }
 
-
+    async buyApplePay(order_id, paymentData){
+        let base64Data = btoa(paymentData);
+        let res = await this.Api.post('/order/' + order_id + '/applepay', {
+            paymentToken: base64Data
+        });
+        if (res.err) throw res;
+        return res.body;
+    }
 }
 
 export const RestaurantService = new RestaurantServiceImpl();

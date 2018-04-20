@@ -15,12 +15,12 @@ import LinearGradient from "react-native-linear-gradient";
 import BonusIndicator from "../BonusIndicator/index";
 import {NavigationActions} from 'react-navigation'
 
-
 export class ScanBillPageC extends React.Component {
 
 
     state = {
         end: false,
+        isTorchEnabled: false
     };
 
     bonusAmount = 100000;

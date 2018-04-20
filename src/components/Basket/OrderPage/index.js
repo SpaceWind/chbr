@@ -15,12 +15,14 @@ import InputBlock from "../../Common/Form/InputBlock/index";
 import moment from "moment";
 import SelectDateOrder from "./SelectDateOrder";
 import {buy} from "../../../actions/restaurant";
+import {buyApplePay} from "../../../actions/restaurant";
 import {getOrder} from "../../../actions/user";
+import {clearBasket} from "../../../actions/billing";
 import SorryModal from "../../Restaurant/common/SorryModal/index";
 import Amount from "../../History/common/Amount/index";
 import TextHelper from "../../../../utilities/TextHelper";
 import Spinner from "react-native-loading-spinner-overlay";
-import {PaymentRequest} from "react-native-payments";
+import {PaymentRequest} from 'react-native-payments';
 
 const currentPlatform = Platform.OS;
 
@@ -36,8 +38,8 @@ class OrderPage extends React.Component {
         comment: "",
         email: "",
         send_cheque: 0,
-        isOpenOver: false
-
+        isOpenOver: false,
+        typeLabel: ""
     };
 
     constructor() {
@@ -47,8 +49,11 @@ class OrderPage extends React.Component {
         this.state.count = 2;
     }
 
+
+
     componentWillMount() {
         this.type = this.props.navigation.state.params.type;
+        this.typeLabel = this.type === 'out' ? "Заказ на вынос" : "Ланч в ресторане"
         this.amount = this.props.navigation.state.params.amount;
         this.dishes =  this.props.navigation.state.params.dishes;
         this.restaurant = this.props.restaurants[this.props.billing.restaurantId];
@@ -97,8 +102,8 @@ class OrderPage extends React.Component {
             <ScrollView>
 
                 <View style={styles.header}>
-                    <Text style={styles.headerText}>{this.type === 'out' ? "Заказ на вынос" : "Ланч в ресторане"}</Text>
-					<Text style={styles.headerRestaurant}>{this.restaurant.title_short}</Text>
+                    <Text style={styles.headerText}>{this.typeLabel}</Text>
+					          <Text style={styles.headerRestaurant}>{this.restaurant.title_short}</Text>
                 </View>
                 <Spinner visible={this.props.isBuyPending} textStyle={{color: '#FFF'}}/>
 
@@ -187,52 +192,6 @@ class OrderPage extends React.Component {
                     </View>
                 </View>
 
-
-                <View style={{
-                    borderTopWidth: 1,
-                    borderColor: platform.brandDivider,
-                    marginTop: 15,
-                }}>
-                    <View style={inputBlockStyles.inputBlock}>
-                        <Text style={inputBlockStyles.inputLabel}>Получить электронный чек</Text>
-
-                        <View style={{paddingVertical: 16}}>
-                            <Switch value={this.state.send_cheque === 1} onValueChange={(push) => {
-                                this.setState({
-                                    send_cheque: push ? 1 : 0
-                                });
-                                LayoutAnimation.easeInEaseOut();
-                            }}
-                                    onTintColor={platform.brandWarning} {...(currentPlatform !== 'ios' ? {thumbTintColor: '#f4f5f5'} : {})}/>
-                        </View>
-
-                    </View>
-
-                    {this.state.send_cheque === 1 && <InputBlock name="Email"
-                                                                 keyboardType="email-address"
-                                                                 keyboardAppearance="dark"
-                                                                 autoCorrect={false}
-                                                                 value={this.state.email}
-                                                                 onChangeText={(text) => {
-                                                                     this.setState({
-                                                                         email: text
-                                                                     })
-                                                                 }}
-                                                                 onFocus={() => {
-                                                                 }}
-                                                                 onBlur={() => {
-                                                                     if (!this._validateEmail(this.state.email)) {
-                                                                         this.setState({
-                                                                             email: ""
-                                                                         })
-                                                                     }
-                                                                 }}
-
-                    />}
-
-
-                </View>
-
                 <View style={styles.bottom}>
                     {this.amount.discount && <View style={styles.priceRow}>
                         <Text style={styles.priceText}>Сумма заказа</Text>
@@ -248,9 +207,15 @@ class OrderPage extends React.Component {
                         <Text
                             style={styles.priceText}>{this.amount.total} ₽</Text>
                     </View>
+                    {this.isNativePayAvailable() &&
+                      <Button dark full rounded style={styles.submit} onPress={() => this.simpleAPTest()}
+                            disabled={!(this.state.firstname && this.state.firstname.length > 0 )}>
+                        <Text uppercase={false}>Оплатить с ApplePay {this.amount.total} ₽</Text>
+                      </Button>}
+
                     <Button warning full rounded style={styles.submit} onPress={() => this._buy()}
                             disabled={!(this.state.firstname && this.state.firstname.length > 0 )}>
-                        <Text uppercase={false}>Оформить заказ</Text>
+                        <Text uppercase={false}>Перейти к оплате {this.amount.total} ₽</Text>
                     </Button>
                     <Text style={styles.mark}>Вы
                         получите {TextHelper.getBonus(this.amount.total)} {TextHelper.getBonusText(TextHelper.getBonus(this.amount.total))}</Text>
@@ -265,36 +230,36 @@ class OrderPage extends React.Component {
         </ImageBackground>
     }
 
-
-    async _buy() {
+    simpleAPTest() {
         const METHOD_DATA = [{
           supportedMethods: ['apple-pay'],
           data: {
-            merchantIdentifier: this.restaurant.apple_merchant_id,
+            merchantIdentifier: 'my.app.merchant.id',
             supportedNetworks: ['visa', 'mastercard'],
-            countryCode: 'US',
-            currencyCode: 'USD'
+            countryCode: 'RU',
+            currencyCode: 'RUB'
           }
         }];
 
         const DETAILS = {
-          id: "result.order_id",
+          id: 'result.order_id',
           displayItems: [
               {
-                label: 'oops',
-                amount: { currency: 'USD', value: this.amount.total}
+                label: 'abcabc',
+                amount: { currency: 'RUB', value: 500}
               }
           ],
           total: {
-            label: this.restaurant.title_short,
-            amount: { currency: 'USD', value: this.amount.total }
+            label: 'abcabc',
+            amount: { currency: 'RUB', value: 500 }
           }
         };
+        const pReq = new PaymentRequest(METHOD_DATA, DETAILS);
+        pReq.show();
+    }
 
-        const paymentRequest = new PaymentRequest(METHOD_DATA, DETAILS);
-        paymentRequest.show().then(result => {
-            result.complete('success');
-        });
+
+    buyApplePay = () => {
 
         let dishes = this.dishes.map(dish => ({
             id: dish.id,
@@ -311,7 +276,142 @@ class OrderPage extends React.Component {
             email: this.state.email,
             send_cheque: this.state.send_cheque,
             food: dishes
+        };
 
+        const METHOD_DATA = [{
+          supportedMethods: ['apple-pay'],
+          data: {
+            merchantIdentifier: this.restaurant.apple_merchant_id,
+            supportedNetworks: ['visa', 'mastercard'],
+            countryCode: 'RU',
+            currencyCode: 'RUB'
+          }
+        }];
+
+        const DETAILS = {
+          id: "result.order_id",
+          displayItems: [
+              {
+                label: this.typeLabel,
+                amount: { currency: 'RUB', value: this.amount.total}
+              }
+          ],
+          total: {
+            label: this.restaurant.title_short,
+            amount: { currency: 'RUB', value: this.amount.total }
+          }
+        };
+
+      const paymentRequest = new PaymentRequest(METHOD_DATA, DETAILS);
+
+      paymentRequest.show().then(paymentResponse => {
+
+        paymentResponse.complete('success');
+    }).then();
+    }
+
+    _buyApplePay = () => {
+
+            //let result = await this.props.buy(this.props.billing.restaurantId, data);
+
+            const METHOD_DATA = [{
+              supportedMethods: ['apple-pay'],
+              data: {
+                merchantIdentifier: this.restaurant.apple_merchant_id,
+                supportedNetworks: ['visa', 'mastercard'],
+                countryCode: 'RU',
+                currencyCode: 'RUB'
+              }
+            }];
+
+            const DETAILS = {
+              id: "result.order_id",
+              displayItems: [
+                  {
+                    label: this.typeLabel,
+                    amount: { currency: 'RUB', value: this.amount.total}
+                  }
+              ],
+              total: {
+                label: this.restaurant.title_short,
+                amount: { currency: 'RUB', value: this.amount.total }
+              }
+            };
+
+            const paymentRequest = new PaymentRequest(METHOD_DATA, DETAILS);
+            alert('before show');
+            paymentRequest.show();
+            alert('after show');
+            /*
+            paymentRequest.show()
+            .then(paymentResponse => {
+              alert('THE RESPONSE');
+             // paymentResponse.complete('success');
+         });*/
+
+            /*
+            paymentRequest.show().then(async (paymentResponse) => {
+                const { transactionIdentifier, paymentData } = paymentResponse.details;
+
+                let paymentResult = await buyApplePay(result.order_id, paymentData);
+
+                if (paymentResult.success === true) {
+                    //payment successfull
+                    const resetAction = NavigationActions.reset({
+                        index: 1,
+                        actions: [
+                            NavigationActions.navigate({
+                                routeName: 'Restaurants'
+                            }),
+                            NavigationActions.navigate({
+                                routeName: 'RestaurantLunchHistory',
+                                params: {
+                                    name: this.props.navigation.state.params.type === "out" ? "Заказ на вынос" : "Ланч в ресторане",
+                                    operationId: this.operationId,
+                                    resultId: this.orderId
+                                }
+                            })
+                        ]
+                    });
+                    this.props.navigation.dispatch(resetAction);
+
+                } else {
+                    const resetAction = NavigationActions.back();
+                    this.props.navigation.dispatch(resetAction);
+                    Alert.alert(
+                        'Платеж не прошел',
+                        'Повторите еще раз или обратитесь в поддержку',
+                        [
+
+                            {
+                                text: 'Ок', onPress: () => {
+
+                            }
+                            }
+                        ]
+                    );
+                }
+            }).catch(console.warn);;*/
+
+
+    }
+
+    async _buy() {
+        let dishes = this.dishes.map(dish => ({
+            id: dish.id,
+            quantity: dish.count
+        }));
+
+        let data = {
+            type: this.type === 'lunch' ? 2 : 3,
+            people_quantity: this.state.count,
+            timestamp: this.state.date.unix(),
+            comment: this.state.comment,
+            firstname: this.state.firstname,
+            lastname: this.state.lastname,
+            email: this.state.email,
+            send_cheque: this.state.send_cheque,
+            food: dishes
         };
         try {
             let result = await this.props.buy(this.props.billing.restaurantId, data);
@@ -354,6 +454,61 @@ class OrderPage extends React.Component {
         return re.test(email);
     };
 
+    showApplePay = () => {
+
+      const METHOD_DATA = [{
+        supportedMethods: ['apple-pay'],
+        data: {
+          merchantIdentifier: this.restaurant.apple_merchant_id,
+          supportedNetworks: ['visa', 'mastercard'],
+          countryCode: 'RU',
+          currencyCode: 'RUB'
+        }
+      }];
+
+      const DETAILS = {
+        id: 'basic-example',
+        displayItems: [
+            {
+              label: this.typeLabel,
+              amount: { currency: 'RUB', value: this.amount.total}
+            }
+        ],
+        total: {
+          label: this.restaurant.title_short,
+          amount: { currency: 'RUB', value: this.amount.total }
+        }
+      };
+
+      const paymentRequest = new PaymentRequest(METHOD_DATA, DETAILS);
+      paymentRequest.show();
+    }
+
+    isNativePayAvailable = () => {
+        //return false
+      const METHOD_DATA = [{
+        supportedMethods: ['apple-pay'],
+        data: {
+          merchantIdentifier: 'merchant.com.your-app.namespace',
+          supportedNetworks: ['visa', 'mastercard'],
+          countryCode: 'RU',
+          currencyCode: 'RUB'
+        }
+      }];
+      const DETAILS = {
+        id: 'basic-example',
+        displayItems: [
+        ],
+        total: {
+          label: 'Merchant Name',
+          amount: { currency: 'USD', value: '1.00' }
+        }
+      };
+
+      const payment = new PaymentRequest(METHOD_DATA, DETAILS);
+      return payment.canMakePayments();
+    }
+
 
     getAllDish(restaurantId) {
         return this.props.restaurants[restaurantId].menu.categories
@@ -382,9 +537,17 @@ function bindAction(dispatch) {
     return {
         buy: (restaurantId, data) => {
             return dispatch(buy(restaurantId, data));
+        },
+        buyApplePay: (order_id, paymentData) => {
+            return dispatch(buyApplePay(order_id, paymentData));
+        },
+        clearBasket: () => {
+            dispatch(clearBasket());
         }
     };
 }
+
+
 
 const mapStateToProps = state => ({
     restaurants: state.restaurant.restaurants,
@@ -523,6 +686,12 @@ const styles = {
     submit: {
         marginTop: 5,
         justifyContent: 'center'
+    },
+    applePayButton: {
+      marginTop: 5,
+      justifyContent: 'center',
+      backgroundColor: '#000',
+      color: '#000'
     },
     mark: {
         fontSize: 13,

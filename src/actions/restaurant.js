@@ -45,6 +45,13 @@ export const BUY_PENDING = 'BUY_PENDING';
 export const BUY_FULFILLED = 'BUY_FULFILLED';
 export const BUY_REJECTED = 'BUY_REJECTED';
 
+export const BUY_APPLEPAY = 'BUY_APPLEPAY';
+export const BUY_APPLEPAY_PENDING = 'BUY_APPLEPAY_PENDING';
+export const BUY_APPLEPAY_FULFILLED = 'BUY_APPLEPAY_FULFILLED';
+export const BUY_APPLEPAY_REJECTED = 'BUY_APPLEPAY_REJECTED';
+
+
+
 
 export function getDataAction(promise) {
     return {
@@ -168,8 +175,17 @@ export const buy = (restaurantId,data) => {
     }
 };
 
+export function buyApplePayAction(promise) {
+    return {
+        type: BUY,
+        payload: promise
+    }
+}
 
-
-
-
-
+export const buyApplePay = (order_id, paymentData) => {
+    return dispatch => {
+        let promise = RestaurantService.buyApplePay(order_id, paymentData);
+        dispatch(buyApplePayAction(promise));
+        return promise;
+    }
+}

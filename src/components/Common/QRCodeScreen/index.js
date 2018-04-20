@@ -13,24 +13,24 @@ import {
 import Camera from 'react-native-camera';
 import {Button, Text} from "native-base";
 import {Vibration} from "react-native";
+import ChesterIcon from "../ChesterIcon/index";
+
 
 class QRCodeScreen extends React.Component {
 
-    /*props: {
-        cancelButtonVisible: number,
-        cancelButtonTitle: string,
-        onSucess: ()=>{},
-        onCancel:()=>{},
-    },*/
+    constructor(props){
+        super(props);
+        this.state = {torchEnabled: false};
+    }
 
-
+    state: {
+        torchEnabled: false;
+    }
 
     _onPressCancel() {
-
         if (this.props.onCancel) {
             this.props.onCancel();
         }
-
     }
 
     _onBarCodeRead(result) {
@@ -44,6 +44,10 @@ class QRCodeScreen extends React.Component {
         }
     }
 
+    _onToggleTorch() {
+        this.setState(prevState => {return {torchEnabled: !prevState.torchEnabled}});
+    }
+
     render() {
         let cancelButton = null;
         this.barCodeFlag = true;
@@ -54,11 +58,17 @@ class QRCodeScreen extends React.Component {
         }
 
         return (
-            <Camera onBarCodeRead={this._onBarCodeRead.bind(this)} style={styles.camera}>
+            <Camera onBarCodeRead={this._onBarCodeRead.bind(this)} style={styles.camera}
+                torchMode={this.state.torchEnabled ? Camera.constants.TorchMode.on : Camera.constants.TorchMode.off}>
                 <View style={styles.rectangleContainer}>
                     <View style={styles.rectangle}/>
                 </View>
-                {cancelButton}
+                <View style={styles.buttonsView}>
+                    {cancelButton}
+                    <Button warning rounded onPress={this._onToggleTorch.bind(this)}>
+                        <ChesterIcon name="flashlight" size={20} color="#fff"/>
+                    </Button>
+                </View>
             </Camera>
         );
     }
@@ -67,12 +77,10 @@ class QRCodeScreen extends React.Component {
 class CancelButton extends React.Component {
     render() {
         return (
-            <View style={styles.cancelButton}>
-                <Button warning rounded style={{flex: 1, justifyContent: 'center'}}
+                <Button warning rounded
                         onPress={this.props.onPress}>
                     <Text uppercase={false}>{this.props.title}</Text>
                 </Button>
-            </View>
         );
     }
 }
@@ -80,7 +88,7 @@ class CancelButton extends React.Component {
 const styles = {
     camera: {
         flex: 1,
-        alignItems: 'center',
+        alignItems: 'stretch',
     },
 
     rectangleContainer: {
@@ -103,8 +111,18 @@ const styles = {
         justifyContent: 'center',
         padding: 20,
         maxWidth: 200
-
-
+    },
+    torchButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: 20,
+        maxWidth: 50,
+        alignSelf: 'flex-end',
+    },
+    buttonsView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 20
     },
     cancelButtonText: {
         fontSize: 17,

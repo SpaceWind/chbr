@@ -90,42 +90,36 @@ class Category extends React.Component {
 
     addDish(item) {
 
-        if (this.restaurantId === "1070b543-5104-4191-9a42-cbf1e9a1e9f9") {
-            if (!item.available) {
-                this.setState({isOpenOver: true});
-                return false;
-            }
-
-            if (this.props.billing.restaurantId !== this.restaurantId) {
-                if (this.props.billing.restaurantId && this.props.billing.dishes.length > 0) {
-                    Alert.alert(
-                        'Очистить корзину?',
-                        'В корзине есть товары из другого ресторана, очистить корзину?',
-                        [
-                            {text: 'Нет', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                            {
-                                text: 'Да', onPress: () => {
-                                this.props.initBasket(this.restaurantId);
-                                this.props.addDish(item);
-                            }
-                            },
-                        ]
-                    )
-                }
-                else {
-                    this.props.initBasket(this.restaurantId);
-                    this.props.addDish(item);
-                }
-            }
-            else {
-                this.props.addDish(item);
-            }
-            return true;
-        }
-        else {
-            this.setState({isOpen: true});
+        if (!item.available) {
+            this.setState({isOpenOver: true});
             return false;
         }
+
+        if (this.props.billing.restaurantId !== this.restaurantId) {
+            if (this.props.billing.restaurantId && this.props.billing.dishes.length > 0) {
+                Alert.alert(
+                    'Очистить корзину?',
+                    'В корзине есть товары из другого ресторана, очистить корзину?',
+                    [
+                        {text: 'Нет', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                        {
+                            text: 'Да', onPress: () => {
+                            this.props.initBasket(this.restaurantId);
+                            this.props.addDish(item);
+                        }
+                        },
+                    ]
+                )
+            }
+            else {
+                this.props.initBasket(this.restaurantId);
+                this.props.addDish(item);
+            }
+        }
+        else {
+            this.props.addDish(item);
+        }
+        return true;
 
 
     }

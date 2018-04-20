@@ -3,7 +3,8 @@ import {
     BUY_BY_BONUS_REJECTED, BUY_FULFILLED, BUY_PENDING, BUY_REJECTED,
     GET_DATA, GET_DATA_FULFILLED, GET_DATA_PENDING, GET_DATA_REJECTED, GET_DISH, GET_DISH_FULFILLED, GET_DISH_PENDING,
     GET_DISH_REJECTED,
-    GET_TIME_FULFILLED, GET_TIME_PENDING, GET_TIME_REJECTED, LIKE, LIKE_FULFILLED, LIKE_PENDING, LIKE_REJECTED
+    GET_TIME_FULFILLED, GET_TIME_PENDING, GET_TIME_REJECTED, LIKE, LIKE_FULFILLED, LIKE_PENDING, LIKE_REJECTED,
+    BUY_APPLEPAY_PENDING, BUY_APPLEPAY_FULFILLED, BUY_APPLEPAY_REJECTED
 } from "../actions/restaurant";
 import {CLEAR_PENDINGS} from "../actions/user";
 
@@ -125,6 +126,27 @@ export default function (state: State = initialState, action) {
         };
     }
 
+    if (action.type === BUY_APPLEPAY_PENDING){
+        return {
+            ...state,
+            isApplepayPending: true
+        };
+    }
+
+    if (action.type === BUY_APPLEPAY_FULFILLED) {
+        return {
+            ...state,
+            isApplepayPending: false
+        };
+    }
+
+    if (action.type === BUY_APPLEPAY_REJECTED) {
+        return {
+            ...state,
+            isApplepayPending: false
+        };
+    }
+
 
     if (action.type === LIKE_FULFILLED) {
         let newDish = {
@@ -166,4 +188,3 @@ export default function (state: State = initialState, action) {
 
     return state;
 }
-
